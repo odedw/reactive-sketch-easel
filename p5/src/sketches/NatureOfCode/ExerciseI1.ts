@@ -22,14 +22,14 @@ class Walker {
 }
 export class ExerciseI1 extends Sketch {
   backgroundColor = 255;
-  w!: Walker;
+  walker!: Walker;
 
   setup() {
-    this.p.createCanvas(this.width, this.height);
-    this.w = new Walker(this.width / 2, this.height / 2);
+    this.p.createCanvas(this.w, this.h);
+    this.walker = new Walker(this.w / 2, this.h / 2);
   }
   draw() {
-    this.w.step(this.p);
-    this.w.display(this.p);
+    this.walker.step(this.p);
+    this.walker.display(this.p);
   }
 }
