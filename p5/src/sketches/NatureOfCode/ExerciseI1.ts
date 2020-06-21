@@ -1,5 +1,5 @@
 import Sketch from "../Sketch";
-import p5 from "p5";
+import * as p5 from "p5";
 
 class Walker {
   x: number;

@@ -3,7 +3,7 @@ import ReactDOM from "react-dom";
 import "./index.css";
 import App from "./App";
 import * as serviceWorker from "./serviceWorker";
-import "p5/lib/addons/p5.sound";
+import './p5Extensions';
 
 ReactDOM.render(
   <React.StrictMode>
