@@ -20,7 +20,7 @@ class Walker {
     this.y += stepy;
   }
 }
-export class ExerciseI1 extends Sketch {
+export default class ExerciseI1 extends Sketch {
   backgroundColor = 255;
   walker!: Walker;
 

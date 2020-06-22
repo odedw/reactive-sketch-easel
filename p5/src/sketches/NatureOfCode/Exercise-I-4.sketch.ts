@@ -20,7 +20,7 @@ let file: SoundFile;
 let currentLevel = 1;
 
 const circles: Circle[] = [];
-export class ExerciseI4 extends Sketch {
+export default class ExerciseI4 extends Sketch {
   preload() {
     file = this.p.loadSound(require("./assets/tom.wav"));
   }
