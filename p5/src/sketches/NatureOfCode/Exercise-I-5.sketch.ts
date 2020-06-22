@@ -10,7 +10,7 @@ class Walker {
     this.prev = this.current = { x, y };
   }
   display(p: p5) {
-    p.stroke(p.randomColor()).strokeWeight(5);
+    p.stroke(0).strokeWeight(1);
     p.line(this.prev.x, this.prev.y, this.current.x, this.current.y);
     this.prev = this.current;
   }
