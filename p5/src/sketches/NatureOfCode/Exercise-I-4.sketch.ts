@@ -44,7 +44,7 @@ export default class ExerciseI4 extends Sketch {
       circles.push({
         x: p.randomGaussian(this.center.x, sd),
         y: p.randomGaussian(this.center.y, sd),
-        color: p.color(p.random(255), p.random(255), p.random(255), 50),
+        color: p.randomColor(50),
         size: 1,
       });
     }
