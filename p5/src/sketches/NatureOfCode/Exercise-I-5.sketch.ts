@@ -1,23 +1,31 @@
 import Sketch from "../Sketch";
 import * as p5 from "p5";
 
+const STANDARD_DEVIATION = 20;
 class Walker {
-  x: number;
-  y: number;
+  current: { x: number; y: number };
+  prev: { x: number; y: number };
+
   constructor(x: number, y: number) {
-    this.x = x;
-    this.y = y;
+    this.prev = this.current = { x, y };
   }
   display(p: p5) {
     p.stroke(0);
-    p.point(this.x, this.y);
+    p.line(this.prev.x, this.prev.y, this.current.x, this.current.y);
+    this.prev = this.current;
   }
-  step(p: p5) {
-    const stepx = p.min(p.round(p.random(-1, 1.5)), 1);
-    const stepy = p.min(p.round(p.random(-1, 1.5)), 1);
+  step(p: p5, w: number, h: number) {
+    do {
+      const stepx = p.int(p.randomGaussian(0, STANDARD_DEVIATION));
+      const stepy = p.int(p.randomGaussian(0, STANDARD_DEVIATION));
 
-    this.x += stepx;
-    this.y += stepy;
+      this.current = { x: this.prev.x + stepx, y: this.prev.y + stepy };
+    } while (
+      this.current.x <= 0 ||
+      this.current.x > w ||
+      this.current.y < 0 ||
+      this.current.y > h
+    );
   }
 }
 export default class ExerciseI5 extends Sketch {
@@ -29,7 +37,7 @@ export default class ExerciseI5 extends Sketch {
     this.walker = new Walker(this.w / 2, this.h / 2);
   }
   draw() {
-    this.walker.step(this.p);
+    this.walker.step(this.p, this.w, this.h);
     this.walker.display(this.p);
   }
 }
