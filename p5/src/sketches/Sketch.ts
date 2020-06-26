@@ -6,11 +6,19 @@ export default abstract class Sketch {
   h!: number;
   p!: p5;
   center!: Vector;
+  running = true;
   constructor() {
     this.sketch = this.sketch.bind(this);
   }
   abstract setup(): void;
   abstract draw(): void;
+  keyPressed() {
+    if (this.p.keyCode === 32) {
+      if (this.running) this.p.noLoop();
+      else this.p.loop();
+      this.running = !this.running;
+    }
+  }
   preload() {}
 
   sketch(p: p5): void {
@@ -21,13 +29,7 @@ export default abstract class Sketch {
     p.setup = this.setup.bind(this);
     p.draw = this.draw.bind(this);
     p.preload = this.preload.bind(this);
-    p.keyPressed = () => {
-      if (this.p.keyCode === 32) {
-        if (running) this.p.noLoop();
-        else this.p.loop();
-        running = !running;
-      }
-    };
+    p.keyPressed = this.keyPressed.bind(this);
   }
 
   create(): p5 {
