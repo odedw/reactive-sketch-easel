@@ -19,7 +19,8 @@
   "private": true,
   "workspaces": [
     "web",
-    "shared"
+    "shared",
+    "server"
   ],
   "dependencies": {
     "@types/node": "^12.12.47",
