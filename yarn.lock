@@ -4619,6 +4619,11 @@ find-cache-dir@^3.2.0:
     make-dir "^3.0.2"
     pkg-dir "^4.1.0"
 
+find-root@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/find-root/-/find-root-1.1.0.tgz#abcfc8ba76f708c42a97b3d685b7e9450bfb9ce4"
+  integrity sha512-NKfW6bec6GfKc0SGx1e07QZY9PE99u0Bft/0rzSD5k3sO/vwkVUpDUKVm5Gpp5Ue3YfShPFTX2070tDs5kB9Ng==
+
 find-up@4.1.0, find-up@^4.0.0:
   version "4.1.0"
   resolved "https://registry.yarnpkg.com/find-up/-/find-up-4.1.0.tgz#97afe7d6cdc0bc5928584b7c8d7b16e8a9aa5d19"
@@ -4859,6 +4864,15 @@ get-value@^2.0.3, get-value@^2.0.6:
   version "2.0.6"
   resolved "https://registry.yarnpkg.com/get-value/-/get-value-2.0.6.tgz#dc15ca1c672387ca76bd37ac0a395ba2042a2c28"
   integrity sha1-3BXKHGcjh8p2vTesCjlbogQqLCg=
+
+get-yarn-workspaces@^1.0.0:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/get-yarn-workspaces/-/get-yarn-workspaces-1.0.2.tgz#81591bdb392f1c6bac09cdc8491a6d275781aa44"
+  integrity sha512-Auel048Uclfgr74oNXKZWH30UgKDZXQdfUfgD9iWXdoUGJpeWg9lSuX/FZkQ6RB3KnBfAaf70xQXfwOjiE9rPw==
+  dependencies:
+    find-root "^1.1.0"
+    flatten "^1.0.2"
+    glob "^7.1.2"
 
 getpass@^0.1.1:
   version "0.1.7"
@@ -8646,6 +8660,20 @@ react-app-polyfill@^1.0.6:
     raf "^3.4.1"
     regenerator-runtime "^0.13.3"
     whatwg-fetch "^3.0.0"
+
+react-app-rewire-yarn-workspaces@^1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/react-app-rewire-yarn-workspaces/-/react-app-rewire-yarn-workspaces-1.0.3.tgz#6b4c243ff93d8070b8b180e30e309992232acfa9"
+  integrity sha512-51XoM5/MTKny0HmCW635IHfYlbbYdyYH4bZtY3eTs7OQH/5CAGLpfECuyc5xSLhNqqUtIBnDK7kbPxaQL6YLBw==
+  dependencies:
+    get-yarn-workspaces "^1.0.0"
+
+react-app-rewired@^2.1.6:
+  version "2.1.6"
+  resolved "https://registry.yarnpkg.com/react-app-rewired/-/react-app-rewired-2.1.6.tgz#33ee3076a7f34d6a7c94e649cac67e7c8c580de8"
+  integrity sha512-06flj0kK5tf/RN4naRv/sn6j3sQd7rsURoRLKLpffXDzJeNiAaTNic+0I8Basojy5WDwREkTqrMLewSAjcb13w==
+  dependencies:
+    semver "^5.6.0"
 
 react-dev-utils@^10.2.1:
   version "10.2.1"
