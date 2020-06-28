@@ -1,0 +1,30 @@
+{
+  "name": "reactive-sketch-easel",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start-web": "cd ./p5 && npm start"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/odedw/processing-sketches.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/odedw/processing-sketches/issues"
+  },
+  "homepage": "https://github.com/odedw/processing-sketches#readme",
+  "private": true,
+  "workspaces": [
+    "p5",
+    "shared"
+  ],
+  "dependencies": {
+    "@types/node": "^12.12.47",
+    "typescript": "^3.7.5",
+    "color": "^3.1.2",
+    "loglevel": "^1.6.8"
+  }
+}

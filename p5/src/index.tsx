@@ -3,8 +3,9 @@ import ReactDOM from "react-dom";
 import "./index.css";
 import App from "./App";
 import * as serviceWorker from "./serviceWorker";
-import './p5Extensions';
-
+import "./p5Extensions";
+import { log } from "@reactive-sketch-easel/shared";
+log.info("test");
 ReactDOM.render(
   <React.StrictMode>
     <App />

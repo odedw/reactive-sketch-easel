@@ -7,14 +7,15 @@
     "@testing-library/react": "^9.5.0",
     "@testing-library/user-event": "^7.2.1",
     "@types/jest": "^24.9.1",
-    "@types/node": "^12.12.47",
+    "@types/node": "*",
     "@types/react": "^16.9.36",
     "@types/react-dom": "^16.9.8",
     "p5": "^1.0.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-scripts": "3.4.1",
-    "typescript": "^3.7.5"
+    "typescript": "*",
+    "@reactive-sketch-easel/shared": "*"
   },
   "scripts": {
     "start": "react-scripts start",
