@@ -8,14 +8,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/odedw/processing-sketches.git"
+    "url": "git+https://github.com/odedw/reactive-sketch-easel.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/odedw/processing-sketches/issues"
+    "url": "https://github.com/odedw/reactive-sketch-easel/issues"
   },
-  "homepage": "https://github.com/odedw/processing-sketches#readme",
+  "homepage": "https://github.com/odedw/reactive-sketch-easel#readme",
   "private": true,
   "workspaces": [
     "web",
