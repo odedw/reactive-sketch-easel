@@ -24,7 +24,6 @@ export default abstract class Sketch {
   sketch(p: p5): void {
     this.center = p.createVector(this.w / 2, this.h / 2);
 
-    let running = true;
     this.p = p;
     p.setup = this.setup.bind(this);
     p.draw = this.draw.bind(this);
