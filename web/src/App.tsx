@@ -1,8 +1,11 @@
 import React, { useEffect } from "react";
 import "./App.css";
+import SmartLightControls from "./components/SmartLightControls";
 
 function App() {
-  const [sketches, setSketches] = React.useState<Record<string, string[]> | undefined>();
+  const [sketches, setSketches] = React.useState<
+    Record<string, string[]> | undefined
+  >();
   useEffect(() => {
     const name = window.location.pathname.substr(1);
     if (name) {
@@ -35,20 +38,23 @@ function App() {
   return (
     <div id="container">
       {sketches && (
-        <div id="sketches">
-          {Object.keys(sketches).map((title) => (
-            <div key={title}>
-              <h1>{title}</h1>
-              <ul>
-                {sketches[title].map((s) => (
-                  <li key={s}>
-                    <a href={`./${title}/${s}.sketch.ts`}>{s}</a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
-        </div>
+        <>
+          <SmartLightControls />
+          <div id="sketches">
+            {Object.keys(sketches).map((title) => (
+              <div key={title}>
+                <h1>{title}</h1>
+                <ul>
+                  {sketches[title].map((s) => (
+                    <li key={s}>
+                      <a href={`./${title}/${s}.sketch.ts`}>{s}</a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </>
       )}
     </div>
   );

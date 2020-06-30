@@ -15,6 +15,31 @@ export class SmartLightRouter {
       config.device.ip,
       config.device.mac
     );
+    // await this.lifxDevice.turnOn(0);
+    // await this.lifxDevice.setColor("#77bfa3", 0.4);
+    // const device = this.lifxDevice.lifxLanDevice as any;
+
+    // const colors = "00171f-003459-007ea7-00a8e8".split("-").map((h) => `#${h}`);
+    // colors
+    //   .map((hex, i) => ({
+    //     start: (i * 16) / colors.length,
+    //     end: (i * 16) / colors.length + 16 / colors.length - 1,
+    //     color: {
+    //       css: hex,
+    //       brightness: 0.4,
+    //     },
+    //     duration: 0,
+    //     apply: 1,
+    //   }))
+    //   .forEach(async (zone) => await device.multiZoneSetColorZones(zone));
+    // await device.multiZoneSetEffect({
+    //   type: 1,
+    //   speed: 1000,
+    //   duration: 0,
+    //   direction: 1,
+    // });
+
+    // await device.multiZoneSetColorZones(zones);
   }
 
   public route(msg: SmartLightMessage) {

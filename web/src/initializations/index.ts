@@ -1,6 +1,6 @@
 import * as log from "loglevel";
 // import emitters, { EventEmitter } from '../event-emitters';
-import { server, smartLight } from "../services";
+import { server } from "../services";
 // import CgaGlitch from '../routines/CgaGlitch/CgaGlitch';
 // const createInitPromiseForEmitter = (e: EventEmitter) =>
 // e
@@ -12,7 +12,6 @@ export default async () => {
   log.setDefaultLevel(log.levels.INFO);
   // await Promise.all(emitters.map(createInitPromiseForEmitter));
   await server.init();
-  await smartLight.turnOn();
-  await smartLight.setColor("#457b9d", 0.4);
+  
   // new CgaGlitch().init();
 };
