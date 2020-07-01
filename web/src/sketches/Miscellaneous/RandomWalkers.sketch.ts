@@ -1,40 +1,34 @@
 import Sketch from '../Sketch';
-import p5 from 'p5';
+import p5, { Vector } from 'p5';
 
 const NUMBER_OF_WALKERS = 500;
 class Walker {
-  x: any;
-  y: any;
-  px: any;
-  py: any;
-  velocityX: any;
-  velocityY: any;
+  pos: Vector;
+  prevPos: Vector;
+  velocity: Vector;
   stroke: number = 1;
   p: p5;
-  constructor(x, y, p: p5) {
-    this.x = x;
-    this.y = y;
-    this.px = x;
-    this.py = y;
-    this.velocityX = p.random(-5, 5);
-    this.velocityY = p.random(-5, 5);
+  constructor(pos: Vector, p: p5) {
+    this.pos = this.prevPos = pos.copy();
+    this.velocity = p.createVector(p.random(-5, 5), p.random(-5, 5));
     this.p = p;
   }
   isOut() {
-    return this.x < 0 || this.x > this.p.width || this.y < 0 || this.y > this.p.height;
+    return this.pos.x < 0 || this.pos.x > this.p.width || this.pos.y < 0 || this.pos.y > this.p.height;
   }
-  velocity() {
-    this.velocityX += this.p.map(this.p.noise(this.x * 0.003, this.y * 0.003, this.p.millis() * 0.001), 0, 1, -10, 10);
-    this.velocityY += this.p.map(this.p.noise(this.y * 0.003, this.x * 0.003, this.p.millis() * 0.001), 0, 1, -10, 10);
-  }
-  move() {
-    this.x += this.velocityX;
-    this.y += this.velocityY;
+
+  update() {
+    this.velocity.add(
+      this.p.createVector(
+        this.p.map(this.p.noise(this.pos.x * 0.003, this.pos.y * 0.003, this.p.millis() * 0.001), 0, 1, -10, 10),
+        this.p.map(this.p.noise(this.pos.y * 0.003, this.pos.x * 0.003, this.p.millis() * 0.001), 0, 1, -10, 10)
+      )
+    );
+    this.pos.add(this.velocity);
   }
   draw(pg: p5.Graphics) {
-    pg.strokeWeight(1).stroke(0, 255).line(this.x, this.y, this.px, this.py);
-    this.px = this.x;
-    this.py = this.y;
+    pg.strokeWeight(1).stroke(0, 255).line(this.pos.x, this.pos.y, this.prevPos.x, this.prevPos.y);
+    this.prevPos = this.pos.copy();
   }
 }
 
@@ -44,20 +38,22 @@ export default class RandomWalkers extends Sketch {
   imageGraphics: p5.Graphics;
   image: p5.Image;
 
-  populateWalkers() {
-    this.walkers = [];
-
-    for (let i = 0; i < NUMBER_OF_WALKERS; i++) {
-      this.walkers.push(new Walker(this.p.random(0, this.p.width), this.p.random(0, this.p.height), this.p));
-    }
+  addWalker() {
+    this.walkers.push(
+      new Walker(this.p.createVector(this.p.random(0, this.p.width), this.p.random(0, this.p.height)), this.p)
+    );
   }
+
   preload() {
     this.image = this.p.loadImage('/assets/v2osk-1Z2niiBPg5A-unsplash-min.jpg');
   }
+
   setup() {
     const p = this.p;
     p.createCanvas(this.w, this.h);
-    this.populateWalkers();
+    for (let i = 0; i < NUMBER_OF_WALKERS; i++) {
+      this.addWalker();
+    }
     p.background(200);
     this.mask = p.createGraphics(this.w, this.h);
   }
@@ -65,19 +61,14 @@ export default class RandomWalkers extends Sketch {
   draw() {
     const p = this.p;
     this.walkers.forEach((walker) => {
-      if (!walker.isOut()) {
-        walker.velocity();
-        walker.move();
-        walker.draw(this.mask);
-      }
+      walker.update();
+      walker.draw(this.mask);
     });
+
     this.walkers = this.walkers.filter((w) => !w.isOut());
     for (let i = 0; i < NUMBER_OF_WALKERS - this.walkers.length; i++) {
-      this.walkers.push(new Walker(this.p.random(0, this.p.width), this.p.random(0, this.p.height), this.p));
+      this.addWalker();
     }
-    // if (!this.walkers.find((w) => !w.isOut())) {
-    //   this.populateWalkers();
-    // }
     const currentImage = p.createImage(this.image.width, this.image.height);
     currentImage.copy(
       this.image,
