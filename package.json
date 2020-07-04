@@ -1,0 +1,36 @@
+{
+  "name": "reactive-sketch-easel",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start-web": "cd ./web && yarn start",
+    "start-server": "cd ./server && nodemon",
+    "start": "npx run-p start-web start-server"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/odedw/reactive-sketch-easel.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/odedw/reactive-sketch-easel/issues"
+  },
+  "homepage": "https://github.com/odedw/reactive-sketch-easel#readme",
+  "private": true,
+  "workspaces": [
+    "web",
+    "shared",
+    "server"
+  ],
+  "dependencies": {
+    "@types/node": "^12.12.47",
+    "color": "^3.1.2",
+    "loglevel": "^1.6.8",
+    "typescript": "^3.7.5"
+  },
+  "devDependencies": {
+    "npm-run-all": "^4.1.5"
+  }
+}

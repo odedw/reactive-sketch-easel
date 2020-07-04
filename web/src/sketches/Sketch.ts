@@ -1,4 +1,4 @@
-import p5, { Vector } from "p5";
+import p5, { Vector } from 'p5';
 
 export default abstract class Sketch {
   container!: HTMLElement;
@@ -24,7 +24,6 @@ export default abstract class Sketch {
   sketch(p: p5): void {
     this.center = p.createVector(this.w / 2, this.h / 2);
 
-    let running = true;
     this.p = p;
     p.setup = this.setup.bind(this);
     p.draw = this.draw.bind(this);
@@ -33,9 +32,9 @@ export default abstract class Sketch {
   }
 
   create(): p5 {
-    this.container = document.getElementById("container")!;
-    this.w = this.container.clientWidth;
-    this.h = this.container.clientHeight;
+    this.container = document.getElementById('container')!;
+    this.w = 800; //this.container.clientWidth;
+    this.h = 800; //this.container.clientHeight;
     //@ts-ignore
     return new window.p5(this.sketch, this.container);
   }
