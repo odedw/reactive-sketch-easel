@@ -3,7 +3,10 @@ import ReactDOM from "react-dom";
 import "./index.css";
 import App from "./App";
 import * as serviceWorker from "./serviceWorker";
-import './p5Extensions';
+import "./p5Extensions";
+import init from "./initializations";
+
+init();
 
 ReactDOM.render(
   <React.StrictMode>

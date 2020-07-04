@@ -1,0 +1,21 @@
+{
+  "extends": ["tslint-config-prettier"],
+  "defaultSeverity": "warning",
+  "rules": {
+    "curly": {
+      "severity": "error"
+    },
+    "jsx-key": false,
+    "newline-before-return": false,
+    "no-conditional-assignment": {
+      "severity": "error"
+    },
+    "prefer-template": {
+      "severity": "error"
+    },
+    "triple-equals": {
+      "options": "allow-null-check",
+      "severity": "error"
+    }
+  }
+}

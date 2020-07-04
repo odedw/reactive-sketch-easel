@@ -1,2 +1,1 @@
-# processing-sketches
- 
+# reactive-sketch-easel
