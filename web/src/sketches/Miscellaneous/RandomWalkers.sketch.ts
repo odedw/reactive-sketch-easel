@@ -1,7 +1,13 @@
 import Sketch from '../Sketch';
 import p5, { Vector } from 'p5';
 
+const variation = parseInt(new URLSearchParams(window.location.search).get('variation')) || 0;
+
 const NUMBER_OF_WALKERS = 500;
+const NOISE_SCALAR = [0.003, 0.003, 0.3, 0.003][variation];
+let NOISE_Z = [0.001, 0.001, 0.01, 0][variation];
+const MAX_VELOCITY = [1, 25, 25, 50][variation];
+
 class Walker {
   pos: Vector;
   prevPos: Vector;
@@ -10,7 +16,8 @@ class Walker {
   p: p5;
   constructor(pos: Vector, p: p5) {
     this.pos = this.prevPos = pos.copy();
-    this.velocity = p.createVector(p.random(-5, 5), p.random(-5, 5));
+    this.velocity = p.createVector(p.random(-MAX_VELOCITY, MAX_VELOCITY), p.random(-MAX_VELOCITY, MAX_VELOCITY));
+
     this.p = p;
   }
   isOut() {
@@ -18,12 +25,27 @@ class Walker {
   }
 
   update() {
-    this.velocity.add(
-      this.p.createVector(
-        this.p.map(this.p.noise(this.pos.x * 0.003, this.pos.y * 0.003, this.p.millis() * 0.001), 0, 1, -10, 10),
-        this.p.map(this.p.noise(this.pos.y * 0.003, this.pos.x * 0.003, this.p.millis() * 0.001), 0, 1, -10, 10)
+    const newVelocity = this.p.createVector(
+      this.p.map(
+        this.p.noise(this.pos.x * NOISE_SCALAR, this.pos.y * NOISE_SCALAR, this.p.millis() * NOISE_Z),
+        0,
+        1,
+        -MAX_VELOCITY,
+        MAX_VELOCITY
+      ),
+      this.p.map(
+        this.p.noise(this.pos.y * NOISE_SCALAR, this.pos.x * NOISE_SCALAR, this.p.millis() * NOISE_Z),
+        0,
+        1,
+        -MAX_VELOCITY,
+        MAX_VELOCITY
       )
     );
+    if (variation === 0) {
+      this.velocity.add(newVelocity);
+    } else {
+      this.velocity = newVelocity;
+    }
     this.pos.add(this.velocity);
   }
   draw(pg: p5.Graphics) {
@@ -38,14 +60,22 @@ export default class RandomWalkers extends Sketch {
   imageGraphics: p5.Graphics;
   image: p5.Image;
 
-  addWalker() {
-    this.walkers.push(
-      new Walker(this.p.createVector(this.p.random(0, this.p.width), this.p.random(0, this.p.height)), this.p)
-    );
+  addWalker(pos?: Vector) {
+    const p = pos || this.p.createVector(this.p.random(0, this.p.width), this.p.random(0, this.p.height));
+    this.walkers.push(new Walker(p, this.p));
   }
 
   preload() {
-    this.image = this.p.loadImage('/assets/v2osk-1Z2niiBPg5A-unsplash-min.jpg');
+    this.image = this.p.loadImage(
+      `/assets/${
+        [
+          'alexander-andrews-yOIT88xWkbg',
+          'thomas-millot-zndOvUadrTg',
+          'erik-jan-leusink-IcW2ooxn4N4',
+          'jason-leung-UIZQfEZ1wUc',
+        ][variation]
+      }-unsplash.jpg`
+    );
   }
 
   setup() {
