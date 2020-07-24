@@ -33,8 +33,8 @@ export default abstract class Sketch {
 
   create(): p5 {
     this.container = document.getElementById('container')!;
-    this.w = 800; //this.container.clientWidth;
-    this.h = 800; //this.container.clientHeight;
+    this.w = this.container.clientWidth;
+    this.h = this.container.clientHeight;
     //@ts-ignore
     return new window.p5(this.sketch, this.container);
   }
