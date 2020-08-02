@@ -11,6 +11,7 @@
     "@types/node": "*",
     "@types/react": "^16.9.36",
     "@types/react-dom": "^16.9.8",
+    "gsap": "^3.4.2",
     "p5": "^1.0.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
