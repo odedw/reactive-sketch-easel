@@ -31,10 +31,10 @@ export default abstract class Sketch {
     p.keyPressed = this.keyPressed.bind(this);
   }
 
-  create(): p5 {
+  create(w?: number, h?: number): p5 {
     this.container = document.getElementById('container')!;
-    this.w = this.container.clientWidth;
-    this.h = this.container.clientHeight;
+    this.w = w || this.container.clientWidth;
+    this.h = h || this.container.clientHeight;
     //@ts-ignore
     return new window.p5(this.sketch, this.container);
   }
