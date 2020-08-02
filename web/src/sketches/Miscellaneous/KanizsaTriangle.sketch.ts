@@ -1,10 +1,10 @@
 import Sketch from '../Sketch';
 import p5, { Vector } from 'p5';
+import { gsap } from 'gsap';
 
 const TRIANGLE_SIZE = 300;
 const ELLIPSE_SIZE = 100;
 const STROKE_SIZE = 5;
-const ROTATION_SPEED = 0.05;
 class Scene {
   visibleTriangle: Vector[] = [];
   hiddenTriangle: Vector[] = [];
@@ -24,9 +24,9 @@ class Scene {
   }
 
   draw(p: p5, rotation: number) {
-    p.fill(255).stroke(0).strokeWeight(STROKE_SIZE);
+    p.fill(250).stroke(0).strokeWeight(STROKE_SIZE);
     this.drawTriangle(p, this.visibleTriangle);
-    p.fill(255).stroke(0).strokeWeight(0);
+    p.fill(250).stroke(0).strokeWeight(0);
     p.push();
     p.rotate(rotation);
     this.drawTriangle(p, this.hiddenTriangle);
@@ -83,21 +83,38 @@ export default class KanizsaTriangle extends Sketch {
   scenes = [new Scene1(), new Scene2()];
   scene = 1;
   rotation: number = 0;
+  create(): p5 {
+    return super.create(800, 800);
+  }
+
+  rotate() {
+    gsap.fromTo(
+      this,
+      {
+        rotation: 0,
+      },
+      {
+        rotation: this.p.PI * 2,
+        duration: 1.5,
+        ease: 'power2.inOut',
+        onComplete: () => {
+          this.scene = this.scene === 0 ? 1 : 0;
+          this.rotate();
+        },
+      }
+    );
+  }
   setup() {
     const p = this.p;
     p.createCanvas(this.w, this.h);
     p.rectMode(p.CENTER);
     this.scenes.forEach((s) => s.setup(p));
+    this.rotate();
   }
   draw() {
     const p = this.p;
-    p.background(255);
+    p.background(250);
 
-    if (this.rotation > p.PI * 2) {
-      this.rotation = 0;
-      this.scene = this.scene === 0 ? 1 : 0;
-    }
-    this.rotation += ROTATION_SPEED;
     this.scenes[this.scene].draw(p, this.rotation);
   }
 }
