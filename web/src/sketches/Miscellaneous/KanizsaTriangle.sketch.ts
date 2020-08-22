@@ -95,7 +95,7 @@ export default class KanizsaTriangle extends Sketch {
       },
       {
         rotation: this.p.PI * 2,
-        duration: 1.5,
+        duration: 1.983,
         ease: 'power2.inOut',
         onComplete: () => {
           this.scene = this.scene === 0 ? 1 : 0;
@@ -108,6 +108,7 @@ export default class KanizsaTriangle extends Sketch {
     const p = this.p;
     p.createCanvas(this.w, this.h);
     p.rectMode(p.CENTER);
+    p.frameRate(60);
     this.scenes.forEach((s) => s.setup(p));
     this.rotate();
   }
