@@ -25,7 +25,11 @@ class Scene {
 
   draw(p: p5, rotation: number) {
     p.fill(250).stroke(0).strokeWeight(STROKE_SIZE);
+    // p.push();
+    // p.rotate(rotation);
     this.drawTriangle(p, this.visibleTriangle);
+    // p.pop();
+
     p.fill(250).stroke(0).strokeWeight(0);
     p.push();
     p.rotate(rotation);
