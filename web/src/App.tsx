@@ -1,11 +1,9 @@
-import React, { useEffect } from "react";
-import "./App.css";
-import SmartLightControls from "./components/SmartLightControls";
+import React, { useEffect } from 'react';
+import './App.css';
+import SmartLightControls from './components/SmartLightControls';
 
 function App() {
-  const [sketches, setSketches] = React.useState<
-    Record<string, string[]> | undefined
-  >();
+  const [sketches, setSketches] = React.useState<Record<string, string[]> | undefined>();
   useEffect(() => {
     const name = window.location.pathname.substr(1);
     if (name) {
@@ -14,32 +12,28 @@ function App() {
         new SketchClass().create();
       }
     } else {
-      const sketchModules = require
-        .context("./sketches/", true, /\.sketch.ts$/)
-        .keys();
+      const sketchModules = require.context('./sketches/', true, /\.sketch.ts$/).keys();
       //@ts-ignore
-      const groupedModules = sketchModules.reduce<Record<string, string[]>>(
-        (prev, curr) => {
-          const lastIndex = curr.lastIndexOf("/");
-          const key = curr.substr(2, lastIndex - 2);
-          if (!prev[key]) {
-            prev[key] = [];
-          }
+      const groupedModules = sketchModules.reduce<Record<string, string[]>>((prev, curr) => {
+        const lastIndex = curr.lastIndexOf('/');
+        const key = curr.substr(2, lastIndex - 2);
+        if (!prev[key]) {
+          prev[key] = [];
+        }
 
-          prev[key].push(curr.substr(lastIndex + 1).replace(".sketch.ts", ""));
+        prev[key].push(curr.substr(lastIndex + 1).replace('.sketch.ts', ''));
 
-          return prev;
-        },
-        {}
-      );
+        return prev;
+      }, {});
       setSketches(groupedModules);
     }
   }, []);
+
   return (
     <div id="container">
+      <SmartLightControls />
       {sketches && (
         <>
-          <SmartLightControls />
           <div id="sketches">
             {Object.keys(sketches).map((title) => (
               <div key={title}>

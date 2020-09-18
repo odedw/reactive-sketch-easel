@@ -12,12 +12,15 @@
     "@types/react": "^16.9.36",
     "@types/react-dom": "^16.9.8",
     "gsap": "^3.4.2",
+    "loglevel": "^1.7.0",
     "p5": "^1.0.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-scripts": "3.4.1",
-    "styled-components": "^5.1.1",
-    "typescript": "*"
+    "rxjs": "^6.6.3",
+    "styled-components": "^5.2.0",
+    "typescript": "*",
+    "webmidi": "^2.5.1"
   },
   "scripts": {
     "start": "react-app-rewired start",
