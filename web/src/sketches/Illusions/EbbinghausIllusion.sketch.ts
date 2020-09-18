@@ -2,10 +2,11 @@ import Sketch from '../Sketch';
 import { gsap } from 'gsap';
 import p5 from 'p5';
 
-const CENTRAL_DISC_SIZE = 100;
-const SMALL_INDUCER_SIZE = 50;
+const CENTRAL_DISC_SIZE = 70;
+const SMALL_INDUCER_SIZE = 30;
 const LARGE_INDUCER_SIZE = 130;
-const DISTANCE_FROM_CENTER = 180;
+const LARGE_INDUCER_DISTANCE_MULTIPLIER = 1.2;
+const DISTANCE_FROM_CENTER = 160;
 const NUMBER_OF_SMALL_INDUCERS = 8;
 const NUMBER_OF_LARGE_INDUCERS = 6;
 
@@ -30,13 +31,13 @@ export default class EbbinghausIllusion extends Sketch {
 
     const tl = gsap.timeline({ repeat: -1 });
     tl.to(data, { centralDiscOpacity: 255, duration: 0 }, '+=2')
-      .to(data, { centralDiscX: DISTANCE_FROM_CENTER, duration: 1 }, '+=2')
+      .to(data, { centralDiscX: DISTANCE_FROM_CENTER, duration: 0.5 }, '+=2')
       .to(data, { inducerDistancePercent: 100, duration: 1 }, '+=2')
       .to(data, { inducerSizePercent: 100, duration: 1 }, '-=1')
-      .to(data, { centralDiscAngle: 180, duration: 5, ease: 'power1.inOut' }, '+=5')
-      .to(data, { inducerDistancePercent: 0, duration: 1 }, '+=3')
+      // .to(data, { centralDiscAngle: 180, duration: 5, ease: 'power1.inOut' }, '+=5')
+      .to(data, { inducerDistancePercent: 0, duration: 1 }, '+=10')
       .to(data, { inducerSizePercent: 0, duration: 1 }, '-=1')
-      .to(data, { centralDiscX: 0, duration: 1 }, '+=2')
+      .to(data, { centralDiscX: 0, duration: 0.5 }, '+=2')
       .to(data, { centralDiscOpacity: 0, duration: 0 }, '+=2');
   }
   draw() {
@@ -44,13 +45,13 @@ export default class EbbinghausIllusion extends Sketch {
     p.background(200);
 
     //right disc
-    this.drawSide(data.centralDiscX, SMALL_INDUCER_SIZE, NUMBER_OF_SMALL_INDUCERS, 90);
+    this.drawSide(data.centralDiscX, SMALL_INDUCER_SIZE, NUMBER_OF_SMALL_INDUCERS);
 
     //left disc
-    this.drawSide(-data.centralDiscX, LARGE_INDUCER_SIZE, NUMBER_OF_LARGE_INDUCERS, 270);
+    this.drawSide(-data.centralDiscX, LARGE_INDUCER_SIZE, NUMBER_OF_LARGE_INDUCERS, LARGE_INDUCER_DISTANCE_MULTIPLIER);
   }
 
-  drawSide(dx: number, inducerSize: number, numOfInducers: number, startAngle: number) {
+  drawSide(dx: number, inducerSize: number, numOfInducers: number, inducerDistanceMultiplier = 1) {
     const p = this.p;
 
     p.push();
@@ -62,7 +63,8 @@ export default class EbbinghausIllusion extends Sketch {
     p.strokeWeight(0).fill(145, 164, 185);
     for (let i = 0; i < numOfInducers; i++) {
       // p.push();
-      const distance = ((CENTRAL_DISC_SIZE + (inducerSize * 3) / 2) * data.inducerDistancePercent) / 100;
+      const distance =
+        ((CENTRAL_DISC_SIZE + (inducerSize * 3 * inducerDistanceMultiplier) / 2) * data.inducerDistancePercent) / 100;
       const x = (distance / 2) * p.cos(angle);
       const y = (distance / 2) * p.sin(angle);
       p.ellipse(x, y, (inducerSize * data.inducerSizePercent) / 100);
