@@ -10,7 +10,7 @@ export default class MidiEventEmitter {
   static CONTROL_CHANGE_EVENT = 'MidiEventEmitter.CONTROL_CHANGE_EVENT';
   static CLOCK_EVENT = 'MidiEventEmitter.CLOCK_EVENT';
 
-  init(): Promise<void> {
+  static init(): Promise<void> {
     return new Promise((resolve, reject) => {
       WebMidi.enable((err) => {
         if (err) reject(err);
@@ -19,8 +19,8 @@ export default class MidiEventEmitter {
         WebMidi.inputs.forEach((i) => log.info(i.name));
 
         const midiInput = WebMidi.inputs.find(
-          // (i) => i.name === 'Arturia KeyStep 32'
-          (i) => i.name === 'loopMIDI Port'
+          (i) => i.name === 'Arturia KeyStep 32'
+          // (i) => i.name === 'loopMIDI Port'
         );
         if (!midiInput) return;
 

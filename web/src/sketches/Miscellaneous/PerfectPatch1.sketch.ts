@@ -1,6 +1,7 @@
-import Sketch from '../Sketch';
+import MidiSketch from '../MidiSketch';
+import MidiEventEmitter from '../../midi/MidiEventEmitter';
 
-export default class PerfectPatch1 extends Sketch {
+export default class PerfectPatch1 extends MidiSketch {
   setup() {
     const p = this.p;
     p.createCanvas(this.w, this.h);
