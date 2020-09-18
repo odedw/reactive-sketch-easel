@@ -31,9 +31,9 @@ function App() {
 
   return (
     <div id="container">
-      <SmartLightControls />
       {sketches && (
         <>
+          <SmartLightControls />
           <div id="sketches">
             {Object.keys(sketches).map((title) => (
               <div key={title}>
