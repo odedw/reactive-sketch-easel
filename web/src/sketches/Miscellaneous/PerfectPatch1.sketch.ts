@@ -7,42 +7,42 @@ class Data {
 }
 
 interface Shape {
-  draw(p: p5, x: number, y: number, size: number);
+  draw(p: p5, size: number);
 }
 
 class Square implements Shape {
-  draw(p: p5, x: number, y: number, size: number) {
-    p.fill(0).square(x, y, size);
+  draw(p: p5, size: number) {
+    p.fill(0).square(0, 0, size);
   }
 }
 
 class Circle implements Shape {
-  draw(p: p5, x: number, y: number, size: number) {
-    p.fill(0).ellipse(x, y, size);
+  draw(p: p5, size: number) {
+    p.fill(0).ellipse(0, 0, size);
   }
 }
 
 class Triangle implements Shape {
-  draw(p: p5, x: number, y: number, size: number) {
+  draw(p: p5, size: number) {
     const altitude = (size * Math.sqrt(3)) / 2;
-    p.push();
-    p.translate(x, y);
     p.fill(0).triangle(0, -(altitude * 2) / 3, -size / 2, +altitude / 3, +size / 2, +altitude / 3);
-    p.pop();
   }
 }
 
 class UpsideDownTriangle implements Shape {
-  draw(p: p5, x: number, y: number, size: number) {
+  draw(p: p5, size: number) {
     const altitude = (size * Math.sqrt(3)) / 2;
-    p.push();
-    p.translate(x, y);
     p.fill(0).triangle(0, (altitude * 2) / 3, -size / 2, -altitude / 3, +size / 2, -altitude / 3);
-    p.pop();
   }
 }
 
-const shapes = [new UpsideDownTriangle(), new Triangle(), new Square(), new Circle()];
+class Diamond implements Shape {
+  draw(p: p5, size: number) {
+    p.fill(0).quad((-size * 2) / 3, 0, 0, -size / 2, (size * 2) / 3, 0, 0, size / 2);
+  }
+}
+
+const shapes = [new UpsideDownTriangle(), new Triangle(), new Square(), new Circle(), new Diamond()];
 
 type Variation = {
   locations: Vector[];
@@ -107,12 +107,10 @@ class Scene1 implements Scene {
     let locIndex = 0;
     for (let i = 0; i <= step; i++) {
       for (let j = 0; j < this.var.take[i]; j++) {
-        this.shape.draw(
-          p,
-          p.width * this.var.locations[locIndex].x,
-          p.height * this.var.locations[locIndex].y,
-          this.var.size + d.bd
-        );
+        p.push();
+        p.translate(p.width * this.var.locations[locIndex].x, p.height * this.var.locations[locIndex].y);
+        this.shape.draw(p, this.var.size + d.bd);
+        p.pop();
         locIndex++;
       }
     }
@@ -133,6 +131,7 @@ export default class PerfectPatch1 extends MidiSketch {
     p.createCanvas(this.w, this.h);
     p.strokeWeight(0);
     p.frameRate(60);
+    p.strokeJoin(p.BEVEL);
     MidiEventEmitter.noteOn('D4').subscribe(() => {
       this.step++;
     });
