@@ -12,33 +12,33 @@ interface Shape {
 
 class Square implements Shape {
   draw(p: p5, size: number) {
-    p.fill(0).square(0, 0, size);
+    p.square(0, 0, size);
   }
 }
 
 class Circle implements Shape {
   draw(p: p5, size: number) {
-    p.fill(0).ellipse(0, 0, size);
+    p.ellipse(0, 0, size);
   }
 }
 
 class Triangle implements Shape {
   draw(p: p5, size: number) {
     const altitude = (size * Math.sqrt(3)) / 2;
-    p.fill(0).triangle(0, -(altitude * 2) / 3, -size / 2, +altitude / 3, +size / 2, +altitude / 3);
+    p.triangle(0, -(altitude * 2) / 3, -size / 2, +altitude / 3, +size / 2, +altitude / 3);
   }
 }
 
 class UpsideDownTriangle implements Shape {
   draw(p: p5, size: number) {
     const altitude = (size * Math.sqrt(3)) / 2;
-    p.fill(0).triangle(0, (altitude * 2) / 3, -size / 2, -altitude / 3, +size / 2, -altitude / 3);
+    p.triangle(0, (altitude * 2) / 3, -size / 2, -altitude / 3, +size / 2, -altitude / 3);
   }
 }
 
 class Diamond implements Shape {
   draw(p: p5, size: number) {
-    p.fill(0).quad((-size * 2) / 3, 0, 0, -size / 2, (size * 2) / 3, 0, 0, size / 2);
+    p.quad((-size * 2) / 3, 0, 0, -size / 2, (size * 2) / 3, 0, 0, size / 2);
   }
 }
 
@@ -91,23 +91,28 @@ const variations: Variation[] = [
   },
 ];
 
-interface Scene {
-  draw(p: p5, step: number, data: Data);
-}
-
-class Scene1 implements Scene {
+abstract class Scene {
   shape: Shape;
   var: Variation;
   constructor() {
     this.shape = shapes.random();
     this.var = variations.random() as Variation;
+  }
+  abstract draw(p: p5, step: number, data: Data);
+}
+
+class Scene1 extends Scene {
+  constructor() {
+    super();
     this.var.locations = this.var.locations.sort(() => Math.random() - 0.5);
   }
   draw(p: p5, step: number, d: Data) {
+    p.background(200);
     let locIndex = 0;
     for (let i = 0; i <= step; i++) {
       for (let j = 0; j < this.var.take[i]; j++) {
         p.push();
+        p.fill(0);
         p.translate(p.width * this.var.locations[locIndex].x, p.height * this.var.locations[locIndex].y);
         this.shape.draw(p, this.var.size + d.bd);
         p.pop();
@@ -117,13 +122,46 @@ class Scene1 implements Scene {
   }
 }
 
+class Scene2 extends Scene {
+  color: number;
+  constructor() {
+    super();
+  }
+  draw(p: p5, step: number, data: Data) {
+    this.color = step % 2 === 0 ? 200 : 0;
+    p.background(200 - this.color);
+    p.push();
+    p.fill(this.color);
+    p.translate(p.width / 2, p.height / 2);
+    this.shape.draw(p, this.var.size * 1.5);
+    p.pop();
+  }
+}
+
+class Scene3 extends Scene {
+  color: number;
+  constructor() {
+    super();
+  }
+  draw(p: p5, step: number, data: Data) {
+    this.color = step % 2 === 0 ? 200 : 0;
+    p.background(200 - this.color);
+    p.push();
+    p.fill(this.color);
+    p.translate(p.width / 2, p.height / 2);
+    this.shape.draw(p, this.var.size * 1.5);
+    p.pop();
+  }
+}
+
 export default class PerfectPatch1 extends MidiSketch {
   step: number;
   scene: Scene;
   d = new Data();
   reset() {
     this.step = -1;
-    this.scene = new Scene1();
+    // this.scene = new Scene1();
+    this.scene = new Scene2();
   }
   setup() {
     const p = this.p;
@@ -143,7 +181,7 @@ export default class PerfectPatch1 extends MidiSketch {
   }
   draw() {
     const p = this.p;
-    p.background(200);
+    // skip(x).every(y) to determine end of 4 bars
     this.scene.draw(p, this.step, this.d);
   }
 }
