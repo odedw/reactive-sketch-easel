@@ -1,7 +1,7 @@
 import WebMidi, { InputEventNoteon, IMidiChannel, InputEventControlchange, InputEventClock } from 'webmidi';
 import { EventSubjectRepository } from './EventSubjectRepository';
 import { Observable, Subscription } from 'rxjs';
-import { filter, bufferCount, buffer, pairwise, map } from 'rxjs/operators';
+import { filter, bufferCount, pairwise, map } from 'rxjs/operators';
 import { isMatch } from './MidiUtils';
 import * as log from 'loglevel';
 
@@ -19,8 +19,8 @@ export default class MidiEventEmitter {
         WebMidi.inputs.forEach((i) => log.info(i.name));
 
         const midiInput = WebMidi.inputs.find(
-          (i) => i.name === 'Arturia KeyStep 32'
-          // (i) => i.name === 'loopMIDI Port'
+          // (i) => i.name === 'Arturia KeyStep 32'
+          (i) => i.name === 'loopMIDI Port'
         );
         if (!midiInput) return;
 
@@ -49,7 +49,7 @@ export default class MidiEventEmitter {
   static cc(ccNumber: number, channel: IMidiChannel = 'all'): Observable<InputEventControlchange> {
     return EventSubjectRepository.subjectFor<InputEventControlchange>(MidiEventEmitter.CONTROL_CHANGE_EVENT).pipe(
       filter((e) => {
-        return (channel === 'all' || e.channel === channel) && e.controller.number == ccNumber;
+        return (channel === 'all' || e.channel === channel) && e.controller.number === ccNumber;
       })
     );
   }
@@ -57,7 +57,7 @@ export default class MidiEventEmitter {
   static ccTriger(ccNumber: number, threshold: number = 1, channel: IMidiChannel = 'all'): Observable<boolean> {
     return EventSubjectRepository.subjectFor<InputEventControlchange>(MidiEventEmitter.CONTROL_CHANGE_EVENT).pipe(
       filter((e) => {
-        return (channel === 'all' || e.channel === channel) && e.controller.number == ccNumber;
+        return (channel === 'all' || e.channel === channel) && e.controller.number === ccNumber;
       }),
       pairwise(),
       filter((pair) => {
