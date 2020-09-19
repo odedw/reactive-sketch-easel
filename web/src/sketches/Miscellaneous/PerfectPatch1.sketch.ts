@@ -2,6 +2,10 @@ import MidiSketch from '../MidiSketch';
 import MidiEventEmitter from '../../midi/MidiEventEmitter';
 import p5, { Vector } from 'p5';
 
+class Data {
+  bd: number = 0;
+}
+
 interface Shape {
   draw(p: p5, x: number, y: number, size: number);
 }
@@ -88,7 +92,7 @@ const variations: Variation[] = [
 ];
 
 interface Scene {
-  draw(p: p5, step: number);
+  draw(p: p5, step: number, data: Data);
 }
 
 class Scene1 implements Scene {
@@ -99,7 +103,7 @@ class Scene1 implements Scene {
     this.var = variations.random() as Variation;
     this.var.locations = this.var.locations.sort(() => Math.random() - 0.5);
   }
-  draw(p: p5, step: number) {
+  draw(p: p5, step: number, d: Data) {
     let locIndex = 0;
     for (let i = 0; i <= step; i++) {
       for (let j = 0; j < this.var.take[i]; j++) {
@@ -107,7 +111,7 @@ class Scene1 implements Scene {
           p,
           p.width * this.var.locations[locIndex].x,
           p.height * this.var.locations[locIndex].y,
-          this.var.size
+          this.var.size + d.bd
         );
         locIndex++;
       }
@@ -118,6 +122,7 @@ class Scene1 implements Scene {
 export default class PerfectPatch1 extends MidiSketch {
   step: number;
   scene: Scene;
+  d = new Data();
   reset() {
     this.step = -1;
     this.scene = new Scene1();
@@ -135,10 +140,11 @@ export default class PerfectPatch1 extends MidiSketch {
       this.reset();
     });
     this.reset();
+    MidiEventEmitter.ccBind<Data>(51, 'bd', this.d, 1);
   }
   draw() {
     const p = this.p;
     p.background(200);
-    this.scene.draw(p, this.step);
+    this.scene.draw(p, this.step, this.d);
   }
 }

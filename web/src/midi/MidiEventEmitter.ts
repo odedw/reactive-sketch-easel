@@ -19,8 +19,8 @@ export default class MidiEventEmitter {
         WebMidi.inputs.forEach((i) => log.info(i.name));
 
         const midiInput = WebMidi.inputs.find(
-          // (i) => i.name === 'Arturia KeyStep 32'
-          (i) => i.name === 'loopMIDI Port'
+          (i) => i.name === 'Arturia KeyStep 32'
+          // (i) => i.name === 'loopMIDI Port'
         );
         if (!midiInput) return;
 
