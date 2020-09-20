@@ -1,6 +1,6 @@
 import MidiSketch from '../MidiSketch';
 import MidiEventEmitter from '../../midi/MidiEventEmitter';
-import { Scene, Scene2 } from './PerfectPatch1.sketch/scenes';
+import { Scene, Scene2, Scene3 } from './PerfectPatch1.sketch/scenes';
 import { MidiData } from './PerfectPatch1.sketch/data';
 
 export default class PerfectPatch1 extends MidiSketch {
@@ -10,7 +10,7 @@ export default class PerfectPatch1 extends MidiSketch {
   reset() {
     this.step = -1;
     // this.scene = new Scene1();
-    this.scene = new Scene2();
+    this.scene = new Scene3();
   }
   setup() {
     const p = this.p;
@@ -21,6 +21,7 @@ export default class PerfectPatch1 extends MidiSketch {
     p.strokeJoin(p.BEVEL);
     MidiEventEmitter.noteOn('D4').subscribe(() => {
       this.step++;
+      this.scene.setStep(this.step);
     });
     MidiEventEmitter.noteOn('C4').subscribe(() => {
       this.reset();
@@ -31,6 +32,6 @@ export default class PerfectPatch1 extends MidiSketch {
   draw() {
     const p = this.p;
     // skip(x).every(y) to determine end of 4 bars
-    this.scene.draw(p, this.step, this.d);
+    this.scene.draw(p, this.d);
   }
 }
