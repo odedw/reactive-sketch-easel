@@ -50,3 +50,28 @@ export const variations: Variation[] = [
     take: [2, 2, 2, 3],
   },
 ];
+
+const colorPairs = [
+  ['#E5DADA', '#E59500'],
+  ['#E5DADA', '#B54B19'],
+  ['#E5DADA', '#840032'],
+  ['#E5DADA', '#002642'],
+];
+
+export class Palette {
+  b: string;
+  f: string;
+  constructor(b: string, f: string) {
+    this.b = b;
+    this.f = f;
+  }
+  switch() {
+    const f = this.f;
+    this.f = this.b;
+    this.b = f;
+  }
+}
+export const randomPalette = (): Palette => {
+  const pair = colorPairs.random().randomize();
+  return new Palette(pair[0], pair[1]);
+};
