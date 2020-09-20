@@ -1,6 +1,6 @@
 import shapes, { Shape } from './shapes';
 import p5 from 'p5';
-import { MidiData, Variation, variations } from './data';
+import { MidiData, Variation, variations, Palette, randomPalette } from './data';
 
 const randomBoolean = () => Math.random() > 0.5;
 
@@ -8,9 +8,11 @@ export abstract class Scene {
   shape: Shape;
   var: Variation;
   step: number;
+  palette: Palette;
   constructor() {
     this.shape = shapes.random();
     this.var = variations.random() as Variation;
+    this.palette = randomPalette();
   }
   abstract draw(p: p5, MidiData);
 
@@ -19,18 +21,18 @@ export abstract class Scene {
   }
 }
 
-class Scene1 extends Scene {
+export class Scene1 extends Scene {
   constructor() {
     super();
-    this.var.locations = this.var.locations.sort(() => Math.random() - 0.5);
+    this.var.locations = this.var.locations.randomize();
   }
   draw(p: p5, d: MidiData) {
-    p.background(200);
+    p.background(this.palette.b);
     let locIndex = 0;
     for (let i = 0; i <= this.step; i++) {
       for (let j = 0; j < this.var.take[i]; j++) {
         p.push();
-        p.fill(0);
+        p.fill(this.palette.f);
         p.translate(p.width * this.var.locations[locIndex].x, p.height * this.var.locations[locIndex].y);
         this.shape.draw(p, this.var.size + d.bd);
         p.pop();
@@ -44,13 +46,16 @@ export class Scene2 extends Scene {
   constructor() {
     super();
   }
-  draw(p: p5, data: MidiData) {
-    const color = this.step % 2 === 0 ? 200 : 0;
-    p.background(200 - color);
+  setStep(step: number) {
+    super.setStep(step);
+    this.palette.switch();
+  }
+  draw(p: p5, d: MidiData) {
+    p.background(this.palette.b);
     p.push();
-    p.fill(color);
+    p.fill(this.palette.f);
     p.translate(p.width / 2, p.height / 2);
-    this.shape.draw(p, this.var.size * 1.5);
+    this.shape.draw(p, this.var.size * 1.5 + d.bd);
     p.pop();
   }
 }
@@ -63,18 +68,18 @@ export class Scene3 extends Scene {
 
   setStep(step: number) {
     super.setStep(step);
-    this.color = 200 - this.color;
+    this.palette = randomPalette();
     if (randomBoolean()) {
       this.shape = shapes.random();
     }
   }
 
-  draw(p: p5, data: MidiData) {
-    p.background(200 - this.color);
+  draw(p: p5, d: MidiData) {
+    p.background(this.palette.b);
     p.push();
-    p.fill(this.color);
+    p.fill(this.palette.f);
     p.translate(p.width / 2, p.height / 2);
-    this.shape.draw(p, this.var.size * 1.5);
+    this.shape.draw(p, this.var.size * 1.5 + d.bd);
     p.pop();
   }
 }
