@@ -1,17 +1,21 @@
 import MidiSketch from '../MidiSketch';
 import MidiEventEmitter from '../../midi/MidiEventEmitter';
 import { Scene, Scene2, Scene3, Scene1 } from './PerfectPatch1.sketch/scenes';
-import { MidiData } from './PerfectPatch1.sketch/data';
+import { MidiData, randomBoolean } from './PerfectPatch1.sketch/data';
 
 export default class PerfectPatch1 extends MidiSketch {
   step: number;
   scene: Scene;
+  sceneIndex = -1;
   d = new MidiData();
   reset() {
     this.step = -1;
-    // this.scene = new Scene1();
-    // this.scene = new Scene2();
-    this.scene = new Scene3();
+    this.sceneIndex = (this.sceneIndex + 1) % 2;
+    if (this.sceneIndex === 0) {
+      this.scene = randomBoolean() ? new Scene2() : new Scene3();
+    } else {
+      this.scene = new Scene1();
+    }
   }
   setup() {
     const p = this.p;
@@ -29,6 +33,7 @@ export default class PerfectPatch1 extends MidiSketch {
     });
     this.reset();
     MidiEventEmitter.ccBind<MidiData>(51, 'bd', this.d, 1);
+    MidiEventEmitter.ccBind<MidiData>(52, 'bass', this.d, 0.2);
   }
   draw() {
     const p = this.p;

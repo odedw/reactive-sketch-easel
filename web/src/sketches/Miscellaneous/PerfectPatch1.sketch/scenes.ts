@@ -1,8 +1,6 @@
 import shapes, { Shape } from './shapes';
 import p5 from 'p5';
-import { MidiData, Variation, variations, Palette, randomPalette } from './data';
-
-const randomBoolean = () => Math.random() > 0.5;
+import { MidiData, Variation, variations, Palette, randomPalette, randomBoolean } from './data';
 
 export abstract class Scene {
   shape: Shape;
@@ -34,6 +32,7 @@ export class Scene1 extends Scene {
         p.push();
         p.fill(this.palette.f);
         p.translate(p.width * this.var.locations[locIndex].x, p.height * this.var.locations[locIndex].y);
+        p.translate(p.random(0, d.bass), p.random(0, d.bass));
         this.shape.draw(p, this.var.size + d.bd);
         p.pop();
         locIndex++;
@@ -55,6 +54,7 @@ export class Scene2 extends Scene {
     p.push();
     p.fill(this.palette.f);
     p.translate(p.width / 2, p.height / 2);
+    p.translate(p.random(0, d.bass), p.random(0, d.bass));
     this.shape.draw(p, this.var.size * 1.5 + d.bd);
     p.pop();
   }
@@ -79,6 +79,7 @@ export class Scene3 extends Scene {
     p.push();
     p.fill(this.palette.f);
     p.translate(p.width / 2, p.height / 2);
+    p.translate(p.random(0, d.bass), p.random(0, d.bass));
     this.shape.draw(p, this.var.size * 1.5 + d.bd);
     p.pop();
   }

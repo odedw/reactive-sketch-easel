@@ -1,7 +1,10 @@
 import { Vector } from 'p5';
 
+export const randomBoolean = () => Math.random() > 0.5;
+
 export class MidiData {
   bd: number = 0;
+  bass: number = 0;
 }
 
 export type Variation = {
