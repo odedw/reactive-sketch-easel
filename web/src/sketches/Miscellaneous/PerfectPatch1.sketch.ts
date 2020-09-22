@@ -32,12 +32,11 @@ export default class PerfectPatch1 extends MidiSketch {
       this.reset();
     });
     this.reset();
-    MidiEventEmitter.ccBind<MidiData>(51, 'bd', this.d, 1);
+    MidiEventEmitter.ccBind<MidiData>(51, 'bd', this.d, 3);
     MidiEventEmitter.ccBind<MidiData>(52, 'bass', this.d, 0.2);
   }
   draw() {
     const p = this.p;
-    // skip(x).every(y) to determine end of 4 bars
     this.scene.draw(p, this.d);
   }
 }
