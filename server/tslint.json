@@ -16,6 +16,7 @@
     "triple-equals": {
       "options": "allow-null-check",
       "severity": "error"
-    }
+    },
+    "no-extend-native": false
   }
 }
