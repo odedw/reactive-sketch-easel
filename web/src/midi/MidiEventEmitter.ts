@@ -21,6 +21,7 @@ export default class MidiEventEmitter {
         const midiInput = WebMidi.inputs.find(
           // (i) => i.name === 'Arturia KeyStep 32'
           (i) => i.name === 'loopMIDI Port'
+          // (i) => i.name === 'Elektron Digitakt'
         );
         if (!midiInput) return;
 
@@ -75,7 +76,7 @@ export default class MidiEventEmitter {
     channel: IMidiChannel = 'all'
   ): Subscription {
     return MidiEventEmitter.cc(ccNumber, channel).subscribe((e) => {
-      // log.info(`${key} = ${e.value}`);
+      log.info(`${key} = ${e.value}`);
       //@ts-ignore
       t[key] = e.value * factor;
     });

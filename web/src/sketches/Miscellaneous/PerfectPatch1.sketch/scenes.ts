@@ -42,9 +42,6 @@ export class Scene1 extends Scene {
 }
 
 export class Scene2 extends Scene {
-  constructor() {
-    super();
-  }
   setStep(step: number) {
     super.setStep(step);
     this.palette.switch();
@@ -62,9 +59,6 @@ export class Scene2 extends Scene {
 
 export class Scene3 extends Scene {
   color: number = 0;
-  constructor() {
-    super();
-  }
 
   setStep(step: number) {
     super.setStep(step);
