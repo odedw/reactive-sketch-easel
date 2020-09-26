@@ -1,5 +1,5 @@
-import Sketch from "../Sketch";
-import p5, { Vector } from "p5";
+import ProcessingSketch from '../ProcessingSketch';
+import p5, { Vector } from 'p5';
 
 class Mover {
   location: Vector;
@@ -39,7 +39,7 @@ class Mover {
   }
 }
 
-export default class ExerciseI9 extends Sketch {
+export default class ExerciseI9 extends ProcessingSketch {
   mover!: Mover;
   setup() {
     const p = this.p;

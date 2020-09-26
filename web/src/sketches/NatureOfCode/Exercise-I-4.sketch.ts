@@ -1,6 +1,6 @@
-import Sketch from "../Sketch";
-import "p5/lib/addons/p5.sound";
-import { Color, SoundFile } from "p5";
+import ProcessingSketch from '../ProcessingSketch';
+import 'p5/lib/addons/p5.sound';
+import { Color, SoundFile } from 'p5';
 type Circle = {
   x: number;
   y: number;
@@ -20,9 +20,9 @@ let file: SoundFile;
 let currentLevel = 1;
 
 const circles: Circle[] = [];
-export default class ExerciseI4 extends Sketch {
+export default class ExerciseI4 extends ProcessingSketch {
   preload() {
-    file = this.p.loadSound(require("./assets/tom.wav"));
+    file = this.p.loadSound(require('./assets/tom.wav'));
   }
   setup() {
     const p = this.p;

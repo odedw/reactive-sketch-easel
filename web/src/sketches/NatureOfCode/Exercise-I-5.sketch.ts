@@ -1,5 +1,5 @@
-import Sketch from "../Sketch";
-import * as p5 from "p5";
+import ProcessingSketch from '../ProcessingSketch';
+import * as p5 from 'p5';
 
 const STANDARD_DEVIATION = 20;
 class Walker {
@@ -20,15 +20,10 @@ class Walker {
       const stepy = p.int(p.randomGaussian(0, STANDARD_DEVIATION));
 
       this.current = { x: this.prev.x + stepx, y: this.prev.y + stepy };
-    } while (
-      this.current.x <= 0 ||
-      this.current.x > w ||
-      this.current.y < 0 ||
-      this.current.y > h
-    );
+    } while (this.current.x <= 0 || this.current.x > w || this.current.y < 0 || this.current.y > h);
   }
 }
-export default class ExerciseI5 extends Sketch {
+export default class ExerciseI5 extends ProcessingSketch {
   backgroundColor = 255;
   walker!: Walker;
 
