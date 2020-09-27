@@ -16,14 +16,16 @@ export default class MidiEventEmitter {
         if (err) reject(err);
 
         // list inputs
-        WebMidi.inputs.forEach((i) => log.info(i.name));
+        // WebMidi.inputs.forEach((i) => log.info(i.name));
 
-        const midiInput = WebMidi.inputs.find(
-          // (i) => i.name === 'Arturia KeyStep 32'
-          (i) => i.name === 'loopMIDI Port'
-          // (i) => i.name === 'Elektron Digitakt'
-        );
-        if (!midiInput) return;
+        // const input = 'Arturia KeyStep 32';
+        const input = 'loopMIDI Port';
+        // const input = 'Elektron Digitakt';
+        const midiInput = WebMidi.inputs.find((i) => i.name === input);
+        if (!midiInput) {
+          log.error(`MIDI input '${input}' was not found`);
+          return;
+        }
 
         midiInput.addListener('noteon', 'all', (e) => {
           log.debug(`channel: ${e.channel}, note: ${e.note.name}${e.note.octave}`);
@@ -76,7 +78,7 @@ export default class MidiEventEmitter {
     channel: IMidiChannel = 'all'
   ): Subscription {
     return MidiEventEmitter.cc(ccNumber, channel).subscribe((e) => {
-      log.info(`${key} = ${e.value}`);
+      // log.info(`${key} = ${e.value}`);
       //@ts-ignore
       t[key] = e.value * factor;
     });

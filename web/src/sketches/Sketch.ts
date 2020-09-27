@@ -1,3 +1,10 @@
 export default abstract class Sketch {
-  abstract create(w?: number, h?: number);
+  container: HTMLElement;
+  w: number;
+  h: number;
+  create() {
+    this.container = document.getElementById('container')!;
+    this.w = this.container.clientWidth;
+    this.h = this.container.clientHeight;
+  }
 }
