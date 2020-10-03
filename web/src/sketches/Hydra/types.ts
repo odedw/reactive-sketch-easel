@@ -10,10 +10,54 @@ export type CallbackObject = {
 export type NumberParameter = number | ((CallbackObject) => number) | number[];
 export type HydraStream = {
   // Color
+  /**
+   * @param amount default 1.6
+   */
   contrast: (amount?: NumberParameter) => HydraStream;
+  /**
+   * @param {NumberParameter} threshold default 0.5
+   * @param {NumberParameter} tolerance default 0.1
+   */
   luma: (threshold?: NumberParameter, tolerance?: NumberParameter) => HydraStream;
+  /**
+   * @param {NumberParameter} amount default 1.0
+   */
   invert: (amount?: NumberParameter) => HydraStream;
+  /**
+   * @param {NumberParameter} amount default 0.4
+   */
   brightness: (amount?: NumberParameter) => HydraStream;
+  /**
+   * Colorize texture. Values between 0-1.
+   */
+  color: (r: number, g: number, b: number) => HydraStream;
+  /**
+   * @param {NumberParameter} bins default 3.0
+   * @param {NumberParameter} gamma default 0.6
+   */
+  posterize: (bins?: NumberParameter, gamma?: NumberParameter) => HydraStream;
+  /**
+   * Shift HSV values.
+   * @param {NumberParameter} amount default 0.005
+   */
+  colorama: (amount?: NumberParameter) => HydraStream;
+  /**
+   * @param {NumberParameter} amount default 2.0
+   */
+  saturate: (amount?: NumberParameter) => HydraStream;
+  /**
+   * @param {NumberParameter} r default 0.5
+   * @param {NumberParameter} g default 0.5
+   * @param {NumberParameter} b default 0.5
+   * @param {NumberParameter} a default 0.5
+   */
+  shift: (r?: NumberParameter, g?: NumberParameter, b?: NumberParameter, a?: NumberParameter) => HydraStream;
+  /**
+   * @param {NumberParameter} threshold default 0.5
+   * @param {NumberParameter} tolerance default 0.04
+   */
+  thresh: (threshold?: NumberParameter, tolerance?: NumberParameter) => HydraStream;
+
   // Geometry
   scale: (size?: NumberParameter, xMult?: NumberParameter, yMult?: NumberParameter) => HydraStream;
   kaleid: (nSides?: NumberParameter) => HydraStream;
@@ -49,6 +93,7 @@ declare global {
   const gradient: (speed?: NumberParameter) => HydraStream;
   /**
    * Generate Perlin noise.
+   * @param {NumberParameter} scale default value
    */
   const noise: (scale?: NumberParameter, offset?: NumberParameter) => HydraStream;
   const shape: (sides?: NumberParameter, radius?: NumberParameter, smoothing?: NumberParameter) => HydraStream;
