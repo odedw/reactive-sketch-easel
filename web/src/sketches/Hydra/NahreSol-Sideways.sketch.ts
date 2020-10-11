@@ -1,11 +1,7 @@
 import HydraSketch from './HydraSketch';
-import MidiEventEmitter from '../../midi/MidiEventEmitter';
 
 export default class TestSketch extends HydraSketch {
-  setup() {
-    // MidiEventEmitter.init();
-    // MidiEventEmitter.ccBind<MidiData>(51, 'bd', this.d, 0.01);
-  }
+  setup() {}
   run() {
     s0.initScreen();
     src(s0)

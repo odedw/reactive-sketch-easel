@@ -30,7 +30,7 @@ export type HydraStream = {
   /**
    * Colorize texture. Values between 0-1.
    */
-  color: (r: number, g: number, b: number) => HydraStream;
+  color: (r: NumberParameter, g: NumberParameter, b: NumberParameter) => HydraStream;
   /**
    * @param {NumberParameter} bins default 3.0
    * @param {NumberParameter} gamma default 0.6
@@ -75,12 +75,18 @@ export type HydraStream = {
   scrollY: (scrollY?: NumberParameter, speed?: NumberParameter) => HydraStream;
 
   // Modulators
+  /**
+   * @param {NumberParameter} amount default 0.1
+   */
+  modulate: (texture: HydraStream, amount?: NumberParameter) => HydraStream;
   modulatePixelate: (texture: HydraStream, multiple?: NumberParameter, offset?: NumberParameter) => HydraStream;
   modulateKaleid: (texture: HydraStream, nSides: NumberParameter) => HydraStream;
+  modulateScale: (texture: HydraStream, multiple?: NumberParameter, offset?: NumberParameter) => HydraStream;
 
   // Operators
   add: (texture: HydraStream, amount?: NumberParameter) => HydraStream;
   blend: (texture: HydraStream, amount?: NumberParameter) => HydraStream;
+  diff: (texture: HydraStream, amount?: NumberParameter) => HydraStream;
 
   // Out
   out: (buffer?: OutputBuffer) => void;

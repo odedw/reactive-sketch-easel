@@ -1,4 +1,5 @@
 import Sketch from '../Sketch';
+import './types';
 const Hydra = require('hydra-synth');
 
 export default abstract class HydraSketch extends Sketch {
