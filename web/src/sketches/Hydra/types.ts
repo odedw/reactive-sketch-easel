@@ -82,6 +82,7 @@ export type HydraStream = {
   modulatePixelate: (texture: HydraStream, multiple?: NumberParameter, offset?: NumberParameter) => HydraStream;
   modulateKaleid: (texture: HydraStream, nSides: NumberParameter) => HydraStream;
   modulateScale: (texture: HydraStream, multiple?: NumberParameter, offset?: NumberParameter) => HydraStream;
+  modulateRepeat: (texture: HydraStream, repeatX?: NumberParameter, repeatY?: NumberParameter, offsetX?: NumberParameter, offsetY?: NumberParameter ) => HydraStream;
 
   // Operators
   add: (texture: HydraStream, amount?: NumberParameter) => HydraStream;

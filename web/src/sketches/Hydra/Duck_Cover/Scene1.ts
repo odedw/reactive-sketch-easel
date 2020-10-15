@@ -24,7 +24,7 @@ export default class Scene1 extends Scene {
       .modulateScale(osc(10, 0.1, 1))
 
       .repeat()
-      .pixelate(200, 200)
+      .pixelate(300, 300)
       //   .blend(noise(), () => d.braids)
       .out();
   }
