@@ -12,7 +12,7 @@ export class Scene2 extends Scene {
       .rotate(Math.PI, 0.1)
       .kaleid()
       .pixelate(50, 50)
-      .scale(({ time }) => 1 + Math.sin(time / 6) * 0.5)
+      .scale(({ time }) => 1 + Math.sin(time / 3) * 0.5)
       // .brightness(0)
       .color(0.8, 0.8, 0.8)
       // .color(
@@ -25,7 +25,7 @@ export class Scene2 extends Scene {
       .modulateScale(noise(), 0.1)
 
       .repeat()
-      .pixelate(150, 150)
+      .pixelate(300, 300)
 
       .out();
   }
