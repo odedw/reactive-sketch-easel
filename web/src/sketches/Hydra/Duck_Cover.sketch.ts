@@ -22,7 +22,7 @@ export default class Duck_Cover extends HydraSketch {
     MidiEventEmitter.ccBind<MidiData>(51, 'bd', d, 0.05);
     MidiEventEmitter.ccBind<MidiData>(59, 'braids', d, 0.1);
     MidiEventEmitter.ccBind<MidiData>(60, 'tunnelFade', d, 1 / 127);
-    MidiEventEmitter.ccBind<MidiData>(59, 'introFade', d, 1 / 127);
+    MidiEventEmitter.ccBind<MidiData>(61, 'introFade', d, 1 / 127);
     MidiEventEmitter.noteOn('C4').subscribe(() => {
       this.sceneIndex = (this.sceneIndex + 1) % this.scenes.length;
       this.setScene(this.scenes[this.sceneIndex]);
@@ -42,10 +42,10 @@ export default class Duck_Cover extends HydraSketch {
   run() {
     this.tunnel.render(d);
     this.intro.render(d);
-    src(o1).out();
-    // src(o1)
-    //   .blend(src(o2), () => d.tunnelFade)
-    //   .blend(src(o3), () => d.introFade)
-    //   .out();
+    // src(o2).out();
+    src(o1)
+      .blend(src(o2), () => d.tunnelFade)
+      .blend(src(o3), () => d.introFade)
+      .out();
   }
 }
