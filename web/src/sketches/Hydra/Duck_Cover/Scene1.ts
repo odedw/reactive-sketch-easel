@@ -26,6 +26,6 @@ export default class Scene1 extends Scene {
       .repeat()
       .pixelate(300, 300)
       //   .blend(noise(), () => d.braids)
-      .out();
+      .out(o2);
   }
 }

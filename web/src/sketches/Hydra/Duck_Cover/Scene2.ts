@@ -27,6 +27,6 @@ export class Scene2 extends Scene {
       .repeat()
       .pixelate(300, 300)
 
-      .out();
+      .out(o2);
   }
 }

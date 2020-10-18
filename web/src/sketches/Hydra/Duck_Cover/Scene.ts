@@ -1,5 +1,6 @@
 import { Subscription } from 'rxjs';
 import { MidiData } from './types';
+import '../types';
 
 export default abstract class Scene {
   subscriptions: Subscription[] = [];
