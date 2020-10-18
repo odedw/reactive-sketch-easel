@@ -1,6 +1,6 @@
-import MidiEventEmitter from '../../../midi/MidiEventEmitter';
+import MidiEventEmitter from '../../../../midi/MidiEventEmitter';
 import Scene from './Scene';
-import { MidiData } from './types';
+import { MidiData } from '../types';
 
 export class Scene2 extends Scene {
   invert = 0;
