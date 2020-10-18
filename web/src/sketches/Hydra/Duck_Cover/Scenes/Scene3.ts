@@ -1,6 +1,6 @@
-import MidiEventEmitter from '../../../midi/MidiEventEmitter';
+import MidiEventEmitter from '../../../../midi/MidiEventEmitter';
 import Scene from './Scene';
-import { MidiData } from './types';
+import { MidiData } from '../types';
 
 export default class Scene3 extends Scene {
   rotation = 0;

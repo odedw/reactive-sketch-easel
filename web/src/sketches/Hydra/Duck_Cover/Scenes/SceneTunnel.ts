@@ -1,6 +1,6 @@
-import MidiEventEmitter from '../../../midi/MidiEventEmitter';
+import MidiEventEmitter from '../../../../midi/MidiEventEmitter';
 import Scene from './Scene';
-import { MidiData } from './types';
+import { MidiData } from '../types';
 
 export default class SceneTunnel extends Scene {
   render(d: MidiData) {
@@ -22,7 +22,11 @@ export default class SceneTunnel extends Scene {
           .scale(1, 1, 1.5)
           .colorama(({ time }) => Math.sin(time / 5))
       )
-      .color(1, 1, 1)
+      .color(
+        () => 1 + d.bd,
+        () => 1 + d.bd,
+        () => 1 + d.bd
+      )
       .out(o1);
   }
   load() {}
