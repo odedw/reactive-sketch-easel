@@ -1,6 +1,6 @@
-import Sketch from '../Sketch';
+import ProcessingSketch from '../ProcessingSketch';
 
-export default class MusicVisualizer extends Sketch {
+export default class MusicVisualizer extends ProcessingSketch {
   audioIn: any;
   setup() {
     const p = this.p;

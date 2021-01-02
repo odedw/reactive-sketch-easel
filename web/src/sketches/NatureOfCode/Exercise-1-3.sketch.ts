@@ -1,8 +1,8 @@
-import Sketch from "../Sketch";
-import { Vector } from "p5";
+import ProcessingSketch from '../ProcessingSketch';
+import { Vector } from 'p5';
 
 const SPHERE_SIZE = 70;
-export default class ExerciseI9 extends Sketch {
+export default class ExerciseI9 extends ProcessingSketch {
   location!: Vector;
   velocity!: Vector;
   setup() {
@@ -22,22 +22,13 @@ export default class ExerciseI9 extends Sketch {
     p.sphere(70);
     p.pop();
     this.location.add(this.velocity);
-    if (
-      this.location.x > this.w / 2 - SPHERE_SIZE / 2 ||
-      this.location.x < -this.w / 2 + SPHERE_SIZE / 2
-    ) {
+    if (this.location.x > this.w / 2 - SPHERE_SIZE / 2 || this.location.x < -this.w / 2 + SPHERE_SIZE / 2) {
       this.velocity.x = this.velocity.x * -1;
     }
-    if (
-      this.location.y > this.h / 2 - SPHERE_SIZE / 2 ||
-      this.location.y < -this.h / 2 + SPHERE_SIZE / 2
-    ) {
+    if (this.location.y > this.h / 2 - SPHERE_SIZE / 2 || this.location.y < -this.h / 2 + SPHERE_SIZE / 2) {
       this.velocity.y = this.velocity.y * -1;
     }
-    if (
-      this.location.z > this.h - SPHERE_SIZE / 2 ||
-      this.location.z < 0 + SPHERE_SIZE / 2
-    ) {
+    if (this.location.z > this.h - SPHERE_SIZE / 2 || this.location.z < 0 + SPHERE_SIZE / 2) {
       this.velocity.z = this.velocity.z * -1;
     }
   }

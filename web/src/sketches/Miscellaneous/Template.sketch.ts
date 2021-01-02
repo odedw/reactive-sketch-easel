@@ -1,6 +1,6 @@
-import Sketch from '../Sketch';
+import ProcessingSketch from '../ProcessingSketch';
 
-export default class Template extends Sketch {
+export default class Template extends ProcessingSketch {
   setup() {
     const p = this.p;
     p.createCanvas(this.w, this.h);

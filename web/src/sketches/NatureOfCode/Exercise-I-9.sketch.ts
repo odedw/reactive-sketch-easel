@@ -1,6 +1,6 @@
-import Sketch from "../Sketch";
+import ProcessingSketch from '../ProcessingSketch';
 
-export default class ExerciseI9 extends Sketch {
+export default class ExerciseI9 extends ProcessingSketch {
   zoff: number = 0;
   setup() {
     this.p.createCanvas(this.w, this.h);
@@ -15,9 +15,7 @@ export default class ExerciseI9 extends Sketch {
       let yoff = 0.0;
 
       for (let y = 0; y < this.h; y++) {
-        let bright = this.p.int(
-          this.p.map(this.p.noise(xoff, yoff, this.zoff), 0, 1, 0, 255)
-        );
+        let bright = this.p.int(this.p.map(this.p.noise(xoff, yoff, this.zoff), 0, 1, 0, 255));
         this.p.pixels[x * 4 + y * this.w * 4] = bright;
         this.p.pixels[x * 4 + y * this.w * 4 + 1] = bright;
         this.p.pixels[x * 4 + y * this.w * 4 + 2] = bright;
