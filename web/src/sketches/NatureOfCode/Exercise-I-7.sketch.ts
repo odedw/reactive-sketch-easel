@@ -1,5 +1,5 @@
-import Sketch from "../Sketch";
-import * as p5 from "p5";
+import ProcessingSketch from '../ProcessingSketch';
+import * as p5 from 'p5';
 
 class Walker {
   current: { x: number; y: number };
@@ -26,15 +26,10 @@ class Walker {
       this.current = { x: this.prev.x + stepx, y: this.prev.y + stepy };
       this.offx += offsetSize;
       this.offy += offsetSize;
-    } while (
-      this.current.x <= 0 ||
-      this.current.x > w ||
-      this.current.y < 0 ||
-      this.current.y > h
-    );
+    } while (this.current.x <= 0 || this.current.x > w || this.current.y < 0 || this.current.y > h);
   }
 }
-export default class ExerciseI7 extends Sketch {
+export default class ExerciseI7 extends ProcessingSketch {
   backgroundColor = 255;
   walker!: Walker;
 

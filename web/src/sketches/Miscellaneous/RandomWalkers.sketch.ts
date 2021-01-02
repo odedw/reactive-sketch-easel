@@ -1,4 +1,4 @@
-import Sketch from '../Sketch';
+import ProcessingSketch from '../ProcessingSketch';
 import p5, { Vector } from 'p5';
 
 const variation = parseInt(new URLSearchParams(window.location.search).get('variation')) || 0;
@@ -54,7 +54,7 @@ class Walker {
   }
 }
 
-export default class RandomWalkers extends Sketch {
+export default class RandomWalkers extends ProcessingSketch {
   walkers: Walker[] = [];
   mask: p5.Graphics;
   imageGraphics: p5.Graphics;

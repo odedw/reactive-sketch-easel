@@ -1,4 +1,4 @@
-import Sketch from '../Sketch';
+import ProcessingSketch from '../ProcessingSketch';
 import { gsap } from 'gsap';
 import p5 from 'p5';
 
@@ -18,7 +18,7 @@ const data = {
   inducerSizePercent: 0,
   centralDiscAngle: 0,
 };
-export default class EbbinghausIllusion extends Sketch {
+export default class EbbinghausIllusion extends ProcessingSketch {
   create(): p5 {
     return super.create(800, 800);
   }

@@ -1,6 +1,6 @@
-import Sketch from "../Sketch";
+import ProcessingSketch from '../ProcessingSketch';
 
-export class RandomDistribution extends Sketch {
+export class RandomDistribution extends ProcessingSketch {
   backgroundColor = 255;
   randomCounts: number[] = new Array(20).fill(0);
 
@@ -18,12 +18,7 @@ export class RandomDistribution extends Sketch {
     // Graphing the results
 
     for (let x = 0; x < this.randomCounts.length; x++) {
-      this.p.rect(
-        x * w,
-        this.h - this.randomCounts[x],
-        w - 1,
-        this.randomCounts[x]
-      );
+      this.p.rect(x * w, this.h - this.randomCounts[x], w - 1, this.randomCounts[x]);
     }
   }
 }

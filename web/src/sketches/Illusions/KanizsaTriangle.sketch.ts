@@ -1,4 +1,4 @@
-import Sketch from '../Sketch';
+import ProcessingSketch from '../ProcessingSketch';
 import p5, { Vector } from 'p5';
 import { gsap } from 'gsap';
 
@@ -83,7 +83,7 @@ class Scene2 extends Scene {
   }
 }
 
-export default class KanizsaTriangle extends Sketch {
+export default class KanizsaTriangle extends ProcessingSketch {
   scenes = [new Scene1(), new Scene2()];
   scene = 1;
   rotation: number = 0;

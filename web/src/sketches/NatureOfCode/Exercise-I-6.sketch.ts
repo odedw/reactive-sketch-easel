@@ -1,5 +1,5 @@
-import Sketch from "../Sketch";
-import * as p5 from "p5";
+import ProcessingSketch from '../ProcessingSketch';
+import * as p5 from 'p5';
 
 class Walker {
   current: { x: number; y: number };
@@ -24,7 +24,7 @@ class Walker {
     this.current = { x: this.prev.x + stepx, y: this.prev.y + stepy };
   }
 }
-export default class ExerciseI6 extends Sketch {
+export default class ExerciseI6 extends ProcessingSketch {
   backgroundColor = 255;
   walker!: Walker;
 

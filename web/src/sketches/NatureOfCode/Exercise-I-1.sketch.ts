@@ -1,5 +1,5 @@
-import Sketch from "../Sketch";
-import * as p5 from "p5";
+import ProcessingSketch from '../ProcessingSketch';
+import * as p5 from 'p5';
 
 class Walker {
   x: number;
@@ -20,7 +20,7 @@ class Walker {
     this.y += stepy;
   }
 }
-export default class ExerciseI1 extends Sketch {
+export default class ExerciseI1 extends ProcessingSketch {
   backgroundColor = 255;
   walker!: Walker;
 
