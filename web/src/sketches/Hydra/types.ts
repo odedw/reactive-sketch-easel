@@ -2,6 +2,7 @@ export type OutputBuffer = {};
 export type SourceBuffer = {
   initCam: (index?: number) => void;
   initScreen: () => void;
+  init: (options: { src: any; dyanmic: boolean }) => void;
 };
 export type Buffer = OutputBuffer | SourceBuffer;
 export type CallbackObject = {
@@ -82,7 +83,13 @@ export type HydraStream = {
   modulatePixelate: (texture: HydraStream, multiple?: NumberParameter, offset?: NumberParameter) => HydraStream;
   modulateKaleid: (texture: HydraStream, nSides: NumberParameter) => HydraStream;
   modulateScale: (texture: HydraStream, multiple?: NumberParameter, offset?: NumberParameter) => HydraStream;
-  modulateRepeat: (texture: HydraStream, repeatX?: NumberParameter, repeatY?: NumberParameter, offsetX?: NumberParameter, offsetY?: NumberParameter ) => HydraStream;
+  modulateRepeat: (
+    texture: HydraStream,
+    repeatX?: NumberParameter,
+    repeatY?: NumberParameter,
+    offsetX?: NumberParameter,
+    offsetY?: NumberParameter
+  ) => HydraStream;
 
   // Operators
   add: (texture: HydraStream, amount?: NumberParameter) => HydraStream;
