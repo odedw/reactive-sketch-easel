@@ -1,11 +1,13 @@
 {
-  "name": "@reactive-sketch-easel/shared",
+  "name": "@reactive-sketch-easel/midi",
   "version": "1.0.0",
   "main": "./src/index.ts",
   "scripts": {},
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "loglevel": "*"
+    "loglevel": "*",
+    "rxjs": "^6.6.3",
+    "webmidi": "^2.5.1"
   }
 }

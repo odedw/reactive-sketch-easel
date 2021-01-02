@@ -5,7 +5,7 @@ import { filter, bufferCount, pairwise, map } from 'rxjs/operators';
 import { isMatch } from './MidiUtils';
 import * as log from 'loglevel';
 
-export default class MidiEventEmitter {
+export class MidiEventEmitter {
   static NOTE_ON_EVENT = 'MidiEventEmitter.NOTE_ON_EVENT';
   static CONTROL_CHANGE_EVENT = 'MidiEventEmitter.CONTROL_CHANGE_EVENT';
   static CLOCK_EVENT = 'MidiEventEmitter.CLOCK_EVENT';

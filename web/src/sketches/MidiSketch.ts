@@ -1,5 +1,5 @@
 import ProcessingSketch from './ProcessingSketch';
-import MidiEventEmitter from '../midi/MidiEventEmitter';
+import { MidiEventEmitter } from '@reactive-sketch-easel/midi';
 
 export default abstract class MidiSketch extends ProcessingSketch {
   constructor() {

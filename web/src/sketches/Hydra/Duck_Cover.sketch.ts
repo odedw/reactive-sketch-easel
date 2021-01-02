@@ -1,5 +1,6 @@
 import HydraSketch from './HydraSketch';
-import MidiEventEmitter from '../../midi/MidiEventEmitter';
+import { MidiEventEmitter } from '@reactive-sketch-easel/midi';
+
 import { MidiData } from './Duck_Cover/types';
 import Scene from './Duck_Cover/Scenes/Scene';
 import Scene1 from './Duck_Cover/Scenes/Scene1';

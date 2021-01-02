@@ -1,6 +1,7 @@
-import MidiEventEmitter from '../../midi/MidiEventEmitter';
+import { MidiEventEmitter } from '@reactive-sketch-easel/midi';
+
 import HydraSketch from './HydraSketch';
-// import MidiEventEmitter from '../../midi/MidiEventEmitter';
+// import { MidiEventEmitter } from '@reactive-sketch-easel/midi';
 
 class MidiData {
   bd = 0;
