@@ -22,7 +22,8 @@
   "workspaces": [
     "web",
     "shared",
-    "server"
+    "server",
+    "midi"
   ],
   "dependencies": {
     "@types/node": "^12.12.47",

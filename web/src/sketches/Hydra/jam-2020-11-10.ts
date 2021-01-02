@@ -1,5 +1,5 @@
 import HydraSketch from './HydraSketch';
-// import MidiEventEmitter from '../../midi/MidiEventEmitter';
+// import { MidiEventEmitter } from '@reactive-sketch-easel/midi';
 
 // class MidiData {}
 export default class TestSketch extends HydraSketch {
@@ -9,6 +9,6 @@ export default class TestSketch extends HydraSketch {
   }
   run() {
     s0.initScreen();
-    src(s0)
+    src(s0);
   }
 }

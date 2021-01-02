@@ -1,5 +1,6 @@
 import MidiSketch from '../MidiSketch';
-import MidiEventEmitter from '../../midi/MidiEventEmitter';
+import { MidiEventEmitter } from '@reactive-sketch-easel/midi';
+
 import { Scene, Scene2, Scene3, Scene1 } from './PerfectPatch1.sketch/scenes';
 import { MidiData, randomBoolean } from './PerfectPatch1.sketch/data';
 

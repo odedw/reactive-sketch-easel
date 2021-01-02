@@ -1,4 +1,5 @@
-import MidiEventEmitter from '../../../../midi/MidiEventEmitter';
+import { MidiEventEmitter } from '@reactive-sketch-easel/midi';
+
 import Scene from './Scene';
 import { MidiData } from '../types';
 
