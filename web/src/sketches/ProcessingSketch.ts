@@ -19,6 +19,8 @@ export default abstract class ProcessingSketch extends Sketch {
       this.running = !this.running;
     }
   }
+
+  keyReleased() {}
   preload() {}
 
   sketch(p: p5): void {
@@ -28,6 +30,7 @@ export default abstract class ProcessingSketch extends Sketch {
     p.draw = this.draw.bind(this);
     p.preload = this.preload.bind(this);
     p.keyPressed = this.keyPressed.bind(this);
+    p.keyReleased = this.keyReleased.bind(this);
   }
 
   create(): p5 {
