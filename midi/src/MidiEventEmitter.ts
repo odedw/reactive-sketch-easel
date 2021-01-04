@@ -4,42 +4,37 @@ import { Observable, Subscription } from 'rxjs';
 import { filter, bufferCount, pairwise, map } from 'rxjs/operators';
 import { isMatch } from './MidiUtils';
 import * as log from 'loglevel';
+import init from './initWebMidi';
 
 export class MidiEventEmitter {
   static NOTE_ON_EVENT = 'MidiEventEmitter.NOTE_ON_EVENT';
   static CONTROL_CHANGE_EVENT = 'MidiEventEmitter.CONTROL_CHANGE_EVENT';
   static CLOCK_EVENT = 'MidiEventEmitter.CLOCK_EVENT';
 
-  static init(): Promise<void> {
-    return new Promise((resolve, reject) => {
-      WebMidi.enable((err) => {
-        if (err) reject(err);
+  static async init(): Promise<void> {
+    await init();
+    // list inputs
+    // WebMidi.inputs.forEach((i) => log.info(i.name));
 
-        // list inputs
-        // WebMidi.inputs.forEach((i) => log.info(i.name));
+    // const input = 'Arturia KeyStep 32';
+    const input = 'loopMIDI Port';
+    // const input = 'Elektron Digitakt';
+    const midiInput = WebMidi.inputs.find((i) => i.name === input);
+    if (!midiInput) {
+      log.error(`MIDI input '${input}' was not found`);
+      return;
+    }
 
-        // const input = 'Arturia KeyStep 32';
-        const input = 'loopMIDI Port';
-        // const input = 'Elektron Digitakt';
-        const midiInput = WebMidi.inputs.find((i) => i.name === input);
-        if (!midiInput) {
-          log.error(`MIDI input '${input}' was not found`);
-          return;
-        }
+    midiInput.addListener('noteon', 'all', (e) => {
+      log.debug(`channel: ${e.channel}, note: ${e.note.name}${e.note.octave}`);
+      EventSubjectRepository.subjectFor<InputEventNoteon>(MidiEventEmitter.NOTE_ON_EVENT).next(e);
+    });
+    midiInput.addListener('controlchange', 'all', (e) => {
+      EventSubjectRepository.subjectFor<InputEventControlchange>(MidiEventEmitter.CONTROL_CHANGE_EVENT).next(e);
+    });
 
-        midiInput.addListener('noteon', 'all', (e) => {
-          log.debug(`channel: ${e.channel}, note: ${e.note.name}${e.note.octave}`);
-          EventSubjectRepository.subjectFor<InputEventNoteon>(MidiEventEmitter.NOTE_ON_EVENT).next(e);
-        });
-        midiInput.addListener('controlchange', 'all', (e) => {
-          EventSubjectRepository.subjectFor<InputEventControlchange>(MidiEventEmitter.CONTROL_CHANGE_EVENT).next(e);
-        });
-
-        midiInput.addListener('clock', 'all', (e) => {
-          EventSubjectRepository.subjectFor<InputEventClock>(MidiEventEmitter.CLOCK_EVENT).next(e);
-        });
-      });
-      resolve();
+    midiInput.addListener('clock', 'all', (e) => {
+      EventSubjectRepository.subjectFor<InputEventClock>(MidiEventEmitter.CLOCK_EVENT).next(e);
     });
   }
 
