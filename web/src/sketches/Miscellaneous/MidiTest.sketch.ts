@@ -1,5 +1,5 @@
 import MidiSketch from '../MidiSketch';
-import { listOutputs, Output } from '@reactive-sketch-easel/midi';
+import { Output } from '@reactive-sketch-easel/midi';
 export default class MidiTest extends MidiSketch {
   output: Output;
   constructor() {
@@ -13,7 +13,7 @@ export default class MidiTest extends MidiSketch {
     p.frameRate(60);
   }
   draw() {
-    const p = this.p;
+    // const p = this.p;
   }
 
   keyPressed() {
@@ -29,6 +29,4 @@ export default class MidiTest extends MidiSketch {
     super.keyReleased();
     this.output.noteOff();
   }
-
-
 }
