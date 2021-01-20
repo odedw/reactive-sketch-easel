@@ -70,11 +70,12 @@ export class Input {
     );
   }
 
-  ccBind<T>(ccNumber: number, key: keyof T, t: T, factor: number = 1, channel: IMidiChannel = 'all'): Subscription {
+  ccBind<T>(ccNumber: number, key: keyof T, t: T, min = 0, max = 127, channel: IMidiChannel = 'all'): Subscription {
     return this.cc(ccNumber, channel).subscribe((e) => {
       // log.info(`${key} = ${e.value}`);
+      const unit = (max - min) / 127;
       //@ts-ignore
-      t[key] = e.value * factor;
+      t[key] = min + unit * e.value;
     });
   }
 
