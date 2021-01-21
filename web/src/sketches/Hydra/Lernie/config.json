@@ -1,0 +1,34 @@
+{
+  "sources": [
+    {
+      "blendLevel": 77,
+      "mod1": 13,
+      "mod2": 14,
+      "mod3": 15,
+      "rotate": 16,
+      "kaleid": 29,
+      "pixelate": 30,
+      "scale": 31,
+      "colorama": 32,
+      "modulate": 49,
+      "modulateHue": 50,
+      "modulateKaleid": 51,
+      "modulateScale": 52
+    },
+    {
+      "blendLevel": 84,
+      "mod1": 17,
+      "mod2": 18,
+      "mod3": 19,
+      "rotate": 20,
+      "kaleid": 33,
+      "pixelate": 34,
+      "scale": 35,
+      "colorama": 36,
+      "modulate": 53,
+      "modulateHue": 54,
+      "modulateKaleid": 55,
+      "modulateScale": 56
+    }
+  ]
+}
