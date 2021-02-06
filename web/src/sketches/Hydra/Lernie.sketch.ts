@@ -46,7 +46,6 @@ export default class TestSketch extends HydraSketch {
         if (sourceData.angle > Math.PI) {
           sourceData.angle -= Math.PI * 2;
         }
-        log.info(sourceData.angle);
         return sourceData.angle;
       }, 0)
       .kaleid(() => sourceData.kaleid)
