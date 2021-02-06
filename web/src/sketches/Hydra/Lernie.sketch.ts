@@ -16,7 +16,7 @@ export default class TestSketch extends HydraSketch {
     this.input.ccBind<SourceData>(config.mod1, 'mod1', md, 0, 80);
     this.input.ccBind<SourceData>(config.mod2, 'mod2', md, -0.5, 0.5);
     this.input.ccBind<SourceData>(config.mod3, 'mod3', md, 0, 10);
-    this.input.ccBind<SourceData>(config.rotate, 'rotate', md, -5, 5);
+    this.input.ccBind<SourceData>(config.rotate, 'rotate', md, -0.1, 0.1);
     this.input.ccBind<SourceData>(config.kaleid, 'kaleid', md, 1, 50);
     this.input.ccBind<SourceData>(config.pixelate, 'pixelate', md, 10, 1500);
     this.input.ccBind<SourceData>(config.scale, 'scale', md, 0.5, 10);
@@ -35,14 +35,20 @@ export default class TestSketch extends HydraSketch {
     });
     listInputs();
   }
-  runOsc(sourceCreator: any, o: OutputBuffer, sourceData: SourceData, modulationSource: OutputBuffer) {
-    // osc(
-    //   () => sourceData.mod1,
-    //   () => sourceData.mod2,
-    //   () => sourceData.mod3
-    // )
-    sourceCreator()
-      .rotate(0, () => sourceData.rotate)
+  runOsc(o: OutputBuffer, sourceData: SourceData, modulationSource: OutputBuffer) {
+    osc(
+      () => sourceData.mod1,
+      () => sourceData.mod2,
+      () => sourceData.mod3
+    )
+      .rotate(() => {
+        sourceData.angle += sourceData.rotate;
+        if (sourceData.angle > Math.PI) {
+          sourceData.angle -= Math.PI * 2;
+        }
+        log.info(sourceData.angle);
+        return sourceData.angle;
+      }, 0)
       .kaleid(() => sourceData.kaleid)
       .pixelate(
         () => sourceData.pixelate,
@@ -57,10 +63,8 @@ export default class TestSketch extends HydraSketch {
       .out(o);
   }
   run() {
-    s0.initScreen();
-    s1.initScreen();
-    this.runOsc(() => src(s0), o1, this.d.sources[0], o2);
-    this.runOsc(() => src(s1), o2, this.d.sources[1], o1);
+    this.runOsc(o1, this.d.sources[0], o2);
+    this.runOsc(o2, this.d.sources[1], o1);
 
     solid(0, 0, 0, 0)
       .blend(src(o1), () => this.d.sources[0].blendLevel)
