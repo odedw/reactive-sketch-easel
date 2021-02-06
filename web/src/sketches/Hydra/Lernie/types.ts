@@ -4,6 +4,7 @@ export class SourceData {
   mod2: number;
   mod3: number;
   rotate: number;
+  angle: number = 0;
   kaleid: number;
   pixelate: number;
   scale: number;
