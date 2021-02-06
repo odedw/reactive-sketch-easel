@@ -35,12 +35,13 @@ export default class TestSketch extends HydraSketch {
     });
     listInputs();
   }
-  runOsc(o: OutputBuffer, sourceData: SourceData, modulationSource: OutputBuffer) {
-    osc(
-      () => sourceData.mod1,
-      () => sourceData.mod2,
-      () => sourceData.mod3
-    )
+  runOsc(sourceCreator: any, o: OutputBuffer, sourceData: SourceData, modulationSource: OutputBuffer) {
+    // osc(
+    //   () => sourceData.mod1,
+    //   () => sourceData.mod2,
+    //   () => sourceData.mod3
+    // )
+    sourceCreator()
       .rotate(0, () => sourceData.rotate)
       .kaleid(() => sourceData.kaleid)
       .pixelate(
@@ -56,8 +57,10 @@ export default class TestSketch extends HydraSketch {
       .out(o);
   }
   run() {
-    this.runOsc(o1, this.d.sources[0], o2);
-    this.runOsc(o2, this.d.sources[1], o1);
+    s0.initScreen();
+    s1.initScreen();
+    this.runOsc(() => src(s0), o1, this.d.sources[0], o2);
+    this.runOsc(() => src(s1), o2, this.d.sources[1], o1);
 
     solid(0, 0, 0, 0)
       .blend(src(o1), () => this.d.sources[0].blendLevel)
