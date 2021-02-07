@@ -1,0 +1,36 @@
+{
+  "sources": [
+    {
+      "blendLevel": 0.8110236220472441,
+      "mod1": 60,
+      "mod2": 0.34251968503937,
+      "mod3": 1.7322834645669292,
+      "rotate": 0,
+      "angle": 0,
+      "kaleid": 1,
+      "pixelate": 1500,
+      "scale": 1,
+      "colorama": 0,
+      "modulate": 0,
+      "modulateHue": 0,
+      "modulateKaleid": 0,
+      "modulateScale": 0
+    },
+    {
+      "blendLevel": 0.13385826771653542,
+      "mod1": 60,
+      "mod2": 0,
+      "mod3": 0,
+      "rotate": 0,
+      "angle": 0,
+      "kaleid": 1,
+      "pixelate": 1500,
+      "scale": 1,
+      "colorama": 0,
+      "modulate": 0,
+      "modulateHue": 0,
+      "modulateKaleid": 0,
+      "modulateScale": 0
+    }
+  ]
+}
