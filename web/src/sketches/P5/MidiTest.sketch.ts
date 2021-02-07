@@ -1,4 +1,4 @@
-import MidiSketch from '../MidiSketch';
+import MidiSketch from './MidiSketch';
 import { Output } from '@reactive-sketch-easel/midi';
 export default class MidiTest extends MidiSketch {
   output: Output;
