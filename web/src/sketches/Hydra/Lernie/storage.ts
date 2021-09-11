@@ -1,4 +1,4 @@
-import { SourceData, SystemData } from './types';
+import { SystemData } from './types';
 import moment from 'moment';
 // Function to download data to a file
 function download(data, filename, type) {
@@ -26,21 +26,21 @@ export const save = (data: SystemData) => {
   download(JSON.stringify(data, null, 2), `${moment().format('YYYY-MM-DD_h:mm:ss')}.json`, 'text/plain');
 };
 
-function readSingleFile(e) {
-  var file = e.target.files[0];
-  if (!file) {
-    return;
-  }
-  var reader = new FileReader();
-  reader.onload = function (e) {
-    var contents = e.target.result;
-    console.log('===========================');
-    console.log(contents);
-    console.log('===========================');
-  };
-  reader.readAsText(file);
-}
+// function readSingleFile(e) {
+//   var file = e.target.files[0];
+//   if (!file) {
+//     return;
+//   }
+//   var reader = new FileReader();
+//   reader.onload = function (e) {
+//     var contents = e.target.result;
+//     console.log('===========================');
+//     console.log(contents);
+//     console.log('===========================');
+//   };
+//   reader.readAsText(file);
+// }
 
 export const load = () => {
-  readSingleFile();
+  // readSingleFile();
 };

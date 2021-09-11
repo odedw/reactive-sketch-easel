@@ -6,6 +6,7 @@ import * as log from 'loglevel';
 import { load, save } from './Lernie/storage';
 
 const config: SystemData = require('./Lernie/config.json');
+// eslint-disable-next-line
 const debug = (val: number): number => {
   log.info(val);
   return val;
@@ -35,25 +36,26 @@ export default class TestSketch extends HydraSketch {
     //midi
     Input.create('Launch Control XL').then((i) => {
       this.input = i;
+
       this.bindOsc(this.d.sources[0], config.sources[0]);
       this.bindOsc(this.d.sources[1], config.sources[1]);
     });
 
     // patch memory
-    Input.create('loopMIDI Port').then((i) => {
-      this.bufferInput = i;
-      this.bufferInput.noteOn(null, 1).subscribe((evt) => {
-        log.info(evt.note);
-        if (evt.note.number === 60) {
-          this.d = this.dataBuffers[0];
-          this.run();
-        } else if (evt.note.number === 62) {
-          this.d = this.dataBuffers[1];
-          this.run();
-        }
-      });
-    });
-    // listInputs();
+    // Input.create('loopMIDI Port').then((i) => {
+    //   this.bufferInput = i;
+    //   this.bufferInput.noteOn(null, 1).subscribe((evt) => {
+    //     log.info(evt.note);
+    //     if (evt.note.number === 60) {
+    //       this.d = this.dataBuffers[0];
+    //       this.run();
+    //     } else if (evt.note.number === 62) {
+    //       this.d = this.dataBuffers[1];
+    //       this.run();
+    //     }
+    //   });
+    // });
+    listInputs();
 
     // load
     this.dataBuffers[0] = require('./Lernie/patches/2021-02-06_12_09_46.json');
