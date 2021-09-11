@@ -31,6 +31,13 @@ export class SourceData {
   }
 }
 
+type A = {
+  a: number;
+};
+type B = {
+  [K in keyof A]: number;
+};
+
 export class SystemData {
   sources: SourceData[];
   constructor() {
