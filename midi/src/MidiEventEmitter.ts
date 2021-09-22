@@ -17,7 +17,7 @@ export class MidiEventEmitter {
     // WebMidi.inputs.forEach((i) => log.info(i.name));
 
     // const input = 'Arturia KeyStep 32';
-    const input = 'loopMIDI Port';
+    const input = 'p5';
     // const input = 'Elektron Digitakt';
     const midiInput = WebMidi.inputs.find((i) => i.name === input);
     if (!midiInput) {
