@@ -1,12 +1,14 @@
 import p5 from 'p5';
 import { Matrix } from '../../utils/Matrix';
-import ProcessingSketch from '../ProcessingSketch';
+import MidiSketch from './MidiSketch';
 import '../../utils/extensions';
+import { MidiEventEmitter } from '@reactive-sketch-easel/midi';
 
-const SIZE = 15;
+const SIZE = 14;
 const SQ_SIZE = 20;
-const FRAME_DELAY = 60;
-export default class Template extends ProcessingSketch {
+const FRAME_DELAY = 30;
+let subscribed = false;
+export default class Template extends MidiSketch {
   values: Matrix<boolean>;
   empty = { i: 0, j: 0 };
   squares: Matrix<Square>;
@@ -33,6 +35,12 @@ export default class Template extends ProcessingSketch {
     this.values.set(this.empty.i, this.empty.j, false);
     this.squares = new Matrix(SIZE, SIZE, (i, j) => new Square(p, j * SQ_SIZE * 2, i * SQ_SIZE * 2));
     this.overalSize = SQ_SIZE * SIZE + SQ_SIZE * (SIZE - 1);
+    if (!subscribed) {
+      subscribed = true;
+      MidiEventEmitter.noteOn().subscribe(() => {
+        this.calculateMove();
+      });
+    }
   }
   draw() {
     const p = this.p;
@@ -131,19 +139,25 @@ class Square {
   step(p: p5) {
     if (this.x < this.targetX) {
       this.x++;
+      // this.x++;
     } else if (this.x > this.targetX) {
       this.x--;
+      // this.x--;
     }
     if (this.y < this.targetY) {
       this.y++;
+      // this.y++;
     } else if (this.y > this.targetY) {
       this.y--;
+      // this.y--;
     }
   }
   render(p: p5) {
     const distance = Math.abs(this.targetY - this.y) + Math.abs(this.targetX - this.x);
-    const fill = 255 - (100 * distance) / (SQ_SIZE * 2);
-    p.fill(fill).strokeWeight(0).square(this.x, this.y, SQ_SIZE);
+    const fill = 255 - (200 * distance) / (SQ_SIZE * 2);
+    // p.fill(fill).strokeWeight(0).square(this.x, this.y, SQ_SIZE);
+
+    p.fill(fill, fill, 255).strokeWeight(0).(this.x, this.y, SQ_SIZE);
   }
 
   isMoving() {
