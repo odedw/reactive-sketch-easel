@@ -59,4 +59,12 @@ export class Matrix<T> {
     this.values[i1][j1] = this.values[i2][j2];
     this.values[i2][j2] = temp;
   }
+
+  clone(): Matrix<T> {
+    return new Matrix<T>(this.w, this.h, (i, j) => {
+      let item = this.get(i, j);
+      item = item['clone'] ? item['clone']() : item;
+      return item;
+    });
+  }
 }

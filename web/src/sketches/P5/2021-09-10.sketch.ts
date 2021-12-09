@@ -58,15 +58,6 @@ let mode: Mode = Mode.Vanila;
 const SIZE = 25;
 const SQ_SIZE = 12;
 const FRAME_DELAY = 20;
-const colors = [
-  { r: 249, g: 65, b: 68 },
-  { r: 63, g: 46, b: 59 },
-  { r: 248, g: 150, b: 30 },
-  { r: 249, g: 199, b: 79 },
-  { r: 144, g: 190, b: 109 },
-  { r: 67, g: 170, b: 139 },
-  { r: 87, g: 117, b: 144 },
-];
 let subscribed = false;
 export default class Template extends MidiSketch {
   values: Matrix<boolean>;
@@ -99,7 +90,7 @@ export default class Template extends MidiSketch {
       SIZE,
       SIZE,
       (i, j) =>
-        new Square(p, j * SQ_SIZE * 2, i * SQ_SIZE * 2, {
+        new Square(j * SQ_SIZE * 2, i * SQ_SIZE * 2, {
           r: p.random(50, 255),
           g: p.random(50, 255),
           b: p.random(50, 255),
@@ -159,43 +150,44 @@ export default class Template extends MidiSketch {
   }
 
   calculateMove(p: p5) {
-    let unmoving = [];
+    let iterations = 0;
     do {
-      const neighborsIndices = this.values.getNeighborIndices(this.empty.i, this.empty.j);
-      unmoving = neighborsIndices.filter((index) => !this.squares.get(index.i, index.j).isMoving());
-      if (unmoving.length === 0) {
-        break;
+      let unmoving = [];
+      let backupValues = this.values.clone();
+      let backupSquares = this.squares.clone();
+      let backupEmpty = { ...this.empty };
+      iterations = 0;
+      do {
+        const neighborsIndices = this.values.getNeighborIndices(this.empty.i, this.empty.j);
+        unmoving = neighborsIndices.filter((index) => !this.squares.get(index.i, index.j).isMoving());
+        if (unmoving.length === 0) {
+          break;
+        }
+
+        const random = p.random(unmoving);
+        //move square
+        let s1 = this.squares.get(random.i, random.j);
+        let s2 = this.squares.get(this.empty.i, this.empty.j);
+        s1.targetX = s2.x;
+        s1.targetY = s2.y;
+        s2.x = s2.targetX = s1.x;
+        s2.y = s2.targetY = s1.y;
+
+        //swap square
+        this.squares.switch(this.empty.i, this.empty.j, random.i, random.j);
+        this.values.switch(this.empty.i, this.empty.j, random.i, random.j);
+        this.empty = random;
+
+        iterations++;
+      } while (unmoving.length > 0);
+      if (iterations < 50) {
+        this.values = backupValues;
+        this.squares = backupSquares;
+        this.empty = backupEmpty;
       }
+    } while (iterations < 50);
 
-      const random = p.random(unmoving);
-      //move square
-      let s1 = this.squares.get(random.i, random.j);
-      let s2 = this.squares.get(this.empty.i, this.empty.j);
-      s1.targetX = s2.x;
-      s1.targetY = s2.y;
-      s2.x = s2.targetX = s1.x;
-      s2.y = s2.targetY = s1.y;
-
-      //swap square
-      this.squares.switch(this.empty.i, this.empty.j, random.i, random.j);
-      this.values.switch(this.empty.i, this.empty.j, random.i, random.j);
-      this.empty = random;
-    } while (unmoving.length > 0);
-    this.logState();
-  }
-
-  logState() {
-    for (let i = 0; i < SIZE; i++) {
-      let line = `${i} `;
-      for (let j = 0; j < SIZE; j++) {
-        line +=
-          i === this.empty.i && j === this.empty.j
-            ? 'empty  '
-            : this.squares.get(i, j).isMoving()
-            ? 'moving '
-            : 'static ';
-      }
-    }
+    console.log(iterations);
   }
 }
 
@@ -210,7 +202,7 @@ class Square {
     b: number;
   };
 
-  constructor(p: p5, x: number, y: number, color = { r: 255, g: 255, b: 255 }) {
+  constructor(x: number, y: number, color = { r: 255, g: 255, b: 255 }) {
     this.x = this.targetX = x;
     this.y = this.targetY = y;
     this.color = color;
@@ -247,5 +239,9 @@ class Square {
 
   isMoving() {
     return this.targetY !== this.y || this.targetX !== this.x;
+  }
+
+  clone(): Square {
+    return new Square(this.x, this.y, this.color);
   }
 }

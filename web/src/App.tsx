@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import './App.css';
-import SmartLightControls from './components/SmartLightControls';
+// import SmartLightControls from './components/SmartLightControls';
 
 function App() {
   const [sketches, setSketches] = React.useState<Record<string, string[]> | undefined>();
@@ -33,7 +33,7 @@ function App() {
     <div id="container">
       {sketches && (
         <>
-          <SmartLightControls />
+          {/* <SmartLightControls /> */}
           <div id="sketches">
             {Object.keys(sketches).map((title) => (
               <div key={title}>
