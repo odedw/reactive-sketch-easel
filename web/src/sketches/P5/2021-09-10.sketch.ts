@@ -10,6 +10,9 @@ enum Mode {
   ColorsShake,
   ColorsNoErase,
   ColorsNoEraseShake,
+  Shear,
+  Mess,
+  MessBlinkingNoErase,
 }
 
 const shouldErase: Record<Mode, boolean> = {
@@ -19,6 +22,9 @@ const shouldErase: Record<Mode, boolean> = {
   3: true,
   4: false,
   5: false,
+  6: false,
+  7: true,
+  8: false,
 };
 const shouldUseColors: Record<Mode, boolean> = {
   0: false,
@@ -27,6 +33,9 @@ const shouldUseColors: Record<Mode, boolean> = {
   3: true,
   4: true,
   5: true,
+  6: true,
+  7: true,
+  8: true,
 };
 const shouldShake: Record<Mode, boolean> = {
   0: false,
@@ -35,6 +44,9 @@ const shouldShake: Record<Mode, boolean> = {
   3: true,
   4: false,
   5: true,
+  6: false,
+  7: false,
+  8: false,
 };
 const shouldClearOnChange: Record<Mode, boolean> = {
   0: true,
@@ -42,18 +54,29 @@ const shouldClearOnChange: Record<Mode, boolean> = {
   2: true,
   3: true,
   4: true,
-  5: false,
+  5: true,
+  6: true,
+  7: true,
+  8: false,
 };
 
 const movesPerMode: Record<Mode, number> = {
-  0: 8,
-  1: 16,
-  2: 8,
-  3: 8,
-  4: 16,
-  5: 16,
+  0: 8, // //8,
+  1: 16, // //16,
+  2: 8, // //8,
+  3: 8, // //8,
+  4: 16, // //16,
+  5: 16, // //16,
+  6: 16, //
+  7: 8, //,
+  8: 160, //0,
 };
 
+const randomColor = (p) => ({
+  r: p.random(50, 255),
+  g: p.random(50, 255),
+  b: p.random(50, 255),
+});
 let mode: Mode = Mode.Vanila;
 const SIZE = 25;
 const SQ_SIZE = 12;
@@ -89,12 +112,7 @@ export default class Template extends MidiSketch {
     this.squares = new Matrix(
       SIZE,
       SIZE,
-      (i, j) =>
-        new Square(j * SQ_SIZE * 2, i * SQ_SIZE * 2, {
-          r: p.random(50, 255),
-          g: p.random(50, 255),
-          b: p.random(50, 255),
-        })
+      (i, j) => new Square(j * SQ_SIZE * 2, i * SQ_SIZE * 2, randomColor(p), p.random(0.8, 1.2))
     );
     this.overalSize = SQ_SIZE * SIZE + SQ_SIZE * (SIZE - 1);
     if (!subscribed) {
@@ -104,7 +122,7 @@ export default class Template extends MidiSketch {
         this.moves++;
         if (this.moves === movesPerMode[mode]) {
           mode++;
-          this.moves = -1;
+          this.moves = 0;
           this.justSwitchedMode = true;
         }
       });
@@ -143,7 +161,7 @@ export default class Template extends MidiSketch {
     for (let i = 0; i < is.length; i++) {
       const element = is[i];
       if (this.values.get(element.i, element.j)) {
-        this.squares.get(element.i, element.j).render(p);
+        this.squares.get(element.i, element.j).render(p, element.i, element.j);
       }
     }
     p.pop();
@@ -168,10 +186,10 @@ export default class Template extends MidiSketch {
         //move square
         let s1 = this.squares.get(random.i, random.j);
         let s2 = this.squares.get(this.empty.i, this.empty.j);
-        s1.targetX = s2.x;
-        s1.targetY = s2.y;
-        s2.x = s2.targetX = s1.x;
-        s2.y = s2.targetY = s1.y;
+        s1.targetX = s2.x + (mode === Mode.Mess || mode === Mode.MessBlinkingNoErase ? p.random(-10, 10) : 0);
+        s1.targetY = s2.y + (mode === Mode.Mess || mode === Mode.MessBlinkingNoErase ? p.random(-10, 10) : 0);
+        s2.x = s2.targetX = s1.x + (mode === Mode.Mess || mode === Mode.MessBlinkingNoErase ? p.random(-10, 10) : 0);
+        s2.y = s2.targetY = s1.y + (mode === Mode.Mess || mode === Mode.MessBlinkingNoErase ? p.random(-10, 10) : 0);
 
         //swap square
         this.squares.switch(this.empty.i, this.empty.j, random.i, random.j);
@@ -201,11 +219,13 @@ class Square {
     g: number;
     b: number;
   };
+  scale: number;
 
-  constructor(x: number, y: number, color = { r: 255, g: 255, b: 255 }) {
+  constructor(x: number, y: number, color, scale) {
     this.x = this.targetX = x;
     this.y = this.targetY = y;
     this.color = color;
+    this.scale = scale;
   }
   step(p: p5) {
     if (this.x < this.targetX) {
@@ -219,18 +239,24 @@ class Square {
       this.y--;
     }
   }
-  render(p: p5) {
+  render(p: p5, i: number, j: number) {
     p.push();
     let translate = mode > Mode.ColorsShake ? 3 : 1;
     if (shouldShake[mode]) {
       p.translate(p.random(-translate, translate), p.random(-translate, translate));
     }
-    // p.shearX(p.sin(p.frameCount / 100) / 10);
-    // p.shearY(p.cos(p.frameCount / 100) / 10);
-    // p.scale(p.random(0, translate), p.random(0, translate));
+    if (mode === Mode.Shear) {
+      p.shearX(p.sin(p.frameCount / 100) / 10);
+      p.shearY(p.cos(p.frameCount / 100) / 10);
+    }
+    if (mode === Mode.MessBlinkingNoErase) {
+      if (this.isMoving() && p.frameCount % 5 === 0) {
+        this.color = randomColor(p);
+      }
+    }
+
     const distance = Math.abs(this.targetY - this.y) + Math.abs(this.targetX - this.x);
     const fillDiff = mode === Mode.NoErase ? (200 * distance) / (SQ_SIZE * 2) : 0;
-    // p.fill(fill).strokeWeight(0).square(this.x, this.y, SQ_SIZE);
     const color = shouldUseColors[mode] ? this.color : { r: 255, g: 255, b: 255 };
     p.fill(color.r - fillDiff, color.g - fillDiff, color.b - fillDiff);
     p.strokeWeight(0).circle(this.x, this.y, SQ_SIZE);
@@ -242,6 +268,6 @@ class Square {
   }
 
   clone(): Square {
-    return new Square(this.x, this.y, this.color);
+    return new Square(this.x, this.y, this.color, this.scale);
   }
 }
