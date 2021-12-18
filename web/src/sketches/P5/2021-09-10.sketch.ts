@@ -4,10 +4,10 @@ import MidiSketch from './MidiSketch';
 import '../../utils/extensions';
 import { MidiEventEmitter } from '@reactive-sketch-easel/midi';
 enum Mode {
-  Vanila,
+  Vanila = 2,
   NoErase,
-  Colors,
-  ColorsShake,
+  // Colors,
+  // ColorsShake,
   ColorsNoErase,
   ColorsNoEraseShake,
   Shear,
@@ -16,10 +16,10 @@ enum Mode {
 }
 
 const shouldErase: Record<Mode, boolean> = {
-  0: true,
-  1: false,
   2: true,
-  3: true,
+  3: false,
+  // 2: true,
+  // 3: true,
   4: false,
   5: false,
   6: false,
@@ -27,10 +27,10 @@ const shouldErase: Record<Mode, boolean> = {
   8: false,
 };
 const shouldUseColors: Record<Mode, boolean> = {
-  0: false,
-  1: false,
-  2: true,
-  3: true,
+  2: false,
+  3: false,
+  // 2: true,
+  // 3: true,
   4: true,
   5: true,
   6: true,
@@ -38,10 +38,10 @@ const shouldUseColors: Record<Mode, boolean> = {
   8: true,
 };
 const shouldShake: Record<Mode, boolean> = {
-  0: false,
-  1: false,
   2: false,
-  3: true,
+  3: false,
+  // 2: false,
+  // 3: true,
   4: false,
   5: true,
   6: false,
@@ -49,10 +49,10 @@ const shouldShake: Record<Mode, boolean> = {
   8: false,
 };
 const shouldClearOnChange: Record<Mode, boolean> = {
-  0: true,
-  1: true,
   2: true,
   3: true,
+  // 2: true,
+  // 3: true,
   4: true,
   5: true,
   6: true,
@@ -61,10 +61,10 @@ const shouldClearOnChange: Record<Mode, boolean> = {
 };
 
 const movesPerMode: Record<Mode, number> = {
-  0: 8, // //8,
-  1: 16, // //16,
   2: 8, // //8,
-  3: 8, // //8,
+  3: 16, // //16,
+  // 2: 8, // //8,
+  // 3: 8, // //8,
   4: 16, // //16,
   5: 16, // //16,
   6: 16, //
@@ -78,10 +78,11 @@ const randomColor = (p) => ({
   b: p.random(50, 255),
 });
 let mode: Mode = Mode.Vanila;
-const SIZE = 25;
+const SIZE = 22;
 const SQ_SIZE = 12;
 const FRAME_DELAY = 20;
 let subscribed = false;
+let elapsed = 0;
 export default class Template extends MidiSketch {
   values: Matrix<boolean>;
   empty = { i: 0, j: 0 };
@@ -117,23 +118,32 @@ export default class Template extends MidiSketch {
     this.overalSize = SQ_SIZE * SIZE + SQ_SIZE * (SIZE - 1);
     if (!subscribed) {
       subscribed = true;
-      MidiEventEmitter.noteOn().subscribe(() => {
-        this.calculateMove(p);
-        this.moves++;
-        if (this.moves === movesPerMode[mode]) {
-          mode++;
-          this.moves = 0;
-          this.justSwitchedMode = true;
-        }
-      });
+      // MidiEventEmitter.noteOn().subscribe((e) => {
+      //   this.beat();
+      // });
     }
     p.background(0);
+  }
+  beat() {
+    const p = this.p;
+    this.calculateMove(p);
+    this.moves++;
+    if (this.moves === movesPerMode[mode]) {
+      mode++;
+      this.moves = 0;
+      this.justSwitchedMode = true;
+    }
   }
   draw() {
     const p = this.p;
     if ((this.justSwitchedMode && shouldClearOnChange[mode]) || shouldErase[mode]) {
       p.background(0);
       this.justSwitchedMode = false;
+    }
+    elapsed += p.deltaTime;
+    if (elapsed > 600) {
+      elapsed = 0;
+      this.beat();
     }
     // p.circle(p.width / 2, p.height / 2, 5);
 
