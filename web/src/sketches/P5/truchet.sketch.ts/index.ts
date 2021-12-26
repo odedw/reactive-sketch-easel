@@ -4,12 +4,13 @@ import { Cell, TILE_SIZE } from './cell';
 const NUMBER_OF_TILES = 10;
 
 export default class Template extends ProcessingSketch {
-  matrix = new Matrix<Cell>(NUMBER_OF_TILES, NUMBER_OF_TILES, () => new Cell());
+  matrix: Matrix<Cell>;
   setup() {
     const p = this.p;
     p.createCanvas(this.w, this.h);
     p.frameRate(60);
     p.rectMode(p.CENTER);
+    this.matrix = new Matrix<Cell>(NUMBER_OF_TILES, NUMBER_OF_TILES, () => new Cell(p));
   }
   draw() {
     const p = this.p;
