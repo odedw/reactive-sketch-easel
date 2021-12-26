@@ -2,7 +2,6 @@ import p5 from 'p5';
 import { Matrix } from '../../utils/Matrix';
 import MidiSketch from './MidiSketch';
 import '../../utils/extensions';
-import { MidiEventEmitter } from '@reactive-sketch-easel/midi';
 enum Mode {
   Vanila = 2,
   NoErase,
