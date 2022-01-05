@@ -42,7 +42,7 @@ export default abstract class ProcessingSketch extends Sketch {
       this.setup.call(this);
     };
     p.draw = this.draw.bind(this);
-    let preloadRun = false;
+    // let preloadRun = false;
 
     p.preload = () => {
       // if (preloadRun) return;
