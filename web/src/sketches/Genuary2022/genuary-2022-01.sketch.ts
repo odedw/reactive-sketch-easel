@@ -2,7 +2,6 @@ import { Image } from 'p5';
 import ProcessingSketch from '../ProcessingSketch';
 
 let count = 0;
-let time = 0;
 let CIRCLES_PER_FRAME = 10;
 export default class Template extends ProcessingSketch {
   img: Image;
@@ -11,7 +10,6 @@ export default class Template extends ProcessingSketch {
     this.img = this.p.loadImage('/assets/pdfma9-pdfamouspainting082001-image_1.jpg');
   }
   async setup() {
-    time = new Date().getTime();
     const p = this.p;
     const cnv = p.createCanvas(this.img.width, this.img.height);
     let canvasX = p.windowWidth / 2 - this.img.width / 2;
