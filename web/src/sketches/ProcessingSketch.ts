@@ -17,6 +17,10 @@ export default abstract class ProcessingSketch extends Sketch {
       if (this.running) this.p.noLoop();
       else this.p.loop();
       this.running = !this.running;
+    } else if (this.p.keyCode === 83) {
+      let img = this.p.get();
+      let name = window.location.href.split('/').at(-1).replace('.sketch.ts', '.jpg');
+      this.p.save(img, name);
     }
   }
 
@@ -26,9 +30,26 @@ export default abstract class ProcessingSketch extends Sketch {
   sketch(p: p5): void {
     this.center = p.createVector(this.w / 2, this.h / 2);
     this.p = p;
-    p.setup = this.setup.bind(this);
+    // let setupRun = false;
+    // let resolve, reject;
+    // const preloadPromise = new Promise((rslv, rjct) => {
+    //   resolve = rslv;
+    //   reject = rjct;
+    // });
+    p.setup = () => {
+      // if (setupRun) return;
+      // setupRun = true;
+      this.setup.call(this);
+    };
     p.draw = this.draw.bind(this);
-    p.preload = this.preload.bind(this);
+    let preloadRun = false;
+
+    p.preload = () => {
+      // if (preloadRun) return;
+      // preloadRun = true;
+      this.preload.call(this);
+    };
+
     p.keyPressed = this.keyPressed.bind(this);
     p.keyReleased = this.keyReleased.bind(this);
   }

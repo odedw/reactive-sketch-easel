@@ -1,7 +1,7 @@
 import p5 from 'p5';
 
 export const TILE_SIZE = 30;
-const FRAME = 60 * 5;
+// const FRAME = 60 * 5;
 
 export class Cell {
   type: number;
