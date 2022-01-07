@@ -5,7 +5,6 @@ let count = 0;
 let CIRCLES_PER_FRAME = 10;
 export default class Template extends ProcessingSketch {
   img: Image;
-  preloadPromise: Promise<void>;
   preload() {
     this.img = this.p.loadImage('/assets/pdfma9-pdfamouspainting082001-image_1.jpg');
   }
