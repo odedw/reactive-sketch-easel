@@ -18,7 +18,7 @@ export class CelestialObject {
 
   update(p: p5) {
     this.moons.forEach((m) => m.update(p));
-    this.angle += this.speed / 100;
+    this.angle += this.speed;
   }
 
   draw(p: p5) {
