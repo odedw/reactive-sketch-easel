@@ -11,16 +11,17 @@ export class Twinkle {
   }
 
   init(p: p5) {
-    this.pos = p.createVector(p.int(p.random(0, p.width)), p.int(p.random(0, p.height)));
-    this.rate = p.random(20, 80);
-    this.min = 30;
-    this.max = 120;
+    this.pos = p.createVector(p.int(p.random(-p.width, p.width)), p.int(p.random(-p.height, p.height)));
+    this.rate = p.random(0.25, 3);
+    this.min = 50;
+    this.max = 200;
     this.size = p.random(0.2, 1.5);
   }
   update(p: p5) {}
 
   draw(p: p5) {
-    p.fill((p.sin(p.frameCount / this.rate) + 1 / 2) * (this.max - this.min) + this.min);
+    const current = ((p.sin(p.frameCount * this.rate) + 1) / 2) * (this.max - this.min);
+    p.fill(current + this.min);
     p.circle(this.pos.x, this.pos.y, this.size);
   }
 }
