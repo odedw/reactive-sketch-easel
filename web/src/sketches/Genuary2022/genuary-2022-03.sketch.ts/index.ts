@@ -97,6 +97,7 @@ export default class Template extends ProcessingSketch {
     for (let i = 0; i < NUM_TWINKLES; i++) {
       this.twinkles.push(new Twinkle(p));
     }
+    
   }
   draw() {
     const p = this.p;
