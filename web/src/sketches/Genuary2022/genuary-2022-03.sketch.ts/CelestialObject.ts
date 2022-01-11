@@ -1,22 +1,31 @@
 import p5, { Color } from 'p5';
+import { Output } from '@reactive-sketch-easel/midi';
 
 export class CelestialObject {
   distance: number;
   radius: number;
   moons: CelestialObject[] = [];
-  fill: p5.Color;
   angle: number;
   speed: number;
   img: p5.Image;
+  onTrigger: (c: CelestialObject) => void;
 
-  constructor(p: p5, r: number, d: number, f: Color, s: number, m: CelestialObject[] = [], img: p5.Image = null) {
+  constructor(
+    p: p5,
+    r: number,
+    d: number,
+    s: number,
+    img: p5.Image,
+    onTrigger: (c: CelestialObject) => void,
+    m: CelestialObject[] = [],
+  ) {
     this.distance = d;
     this.radius = r;
-    this.fill = f;
     this.moons = m;
     this.angle = p.random(0, 360);
     this.speed = s; //p.random(5, 20);
     this.img = img;
+    this.onTrigger = onTrigger;
   }
 
   update(p: p5) {
@@ -24,7 +33,7 @@ export class CelestialObject {
     const prevAngle = this.angle;
     this.angle = (this.angle + this.speed) % 360;
     if (this.angle > 270 && prevAngle < 270) {
-      console.log('pass');
+      this.onTrigger(this);
     }
   }
 
