@@ -9,6 +9,8 @@ export class CelestialObject {
   speed: number;
   img: p5.Image;
   onTrigger: (c: CelestialObject) => void;
+  hasRings: boolean;
+  glow = 0;
 
   constructor(
     p: p5,
@@ -18,6 +20,7 @@ export class CelestialObject {
     img: p5.Image,
     onTrigger: (c: CelestialObject) => void,
     m: CelestialObject[] = [],
+    hasRings: boolean = false
   ) {
     this.distance = d;
     this.radius = r;
@@ -26,6 +29,7 @@ export class CelestialObject {
     this.speed = s; //p.random(5, 20);
     this.img = img;
     this.onTrigger = onTrigger;
+    this.hasRings = hasRings;
   }
 
   update(p: p5) {
@@ -34,6 +38,7 @@ export class CelestialObject {
     this.angle = (this.angle + this.speed) % 360;
     if (this.angle > 270 && prevAngle < 270) {
       this.onTrigger(this);
+      this.glow = 255;
     }
   }
 
@@ -41,11 +46,43 @@ export class CelestialObject {
     p.push();
     p.noStroke();
     p.translate(this.distance * p.cos(this.angle), this.distance * p.sin(this.angle));
-    // p.translate(this.distance * p.cos(0), this.distance * p.sin(0));
+    if (this.glow > 0) {
+      p.fill(this.glow).circle(0, 0, this.radius + 4);
+      this.glow -= 3;
+    }
     p.texture(this.img);
     p.push();
+
     p.rotateY(p.frameCount);
     p.sphere(this.radius);
+    if (this.hasRings) {
+      // p.rotateY(-p.frameCount);
+      p.rotateX(90);
+      p.noFill().strokeWeight(1);
+      let offset = 0;
+      p.scale(0.5);
+      [
+        ['#605448', 2],
+        ['#4C453F', 2],
+        ['#736152', 2],
+        ['#1B1F28', 2],
+        ['#D6AE8A', 2],
+        ['#7C6452', 2],
+        ['#9B7E64', 2],
+        ['#C9A47F', 2],
+        ['#1B1F28', 2],
+        ['#AA9484', 2],
+        ['#847364', 2],
+        ['#706355', 2],
+        ['#000000', 1],
+        ['#3C3D41', 1],
+      ].forEach((c) => {
+        p.stroke(c[0] as string)
+          .strokeWeight(c[1] as number)
+          .circle(0, 0, this.radius * 4 + offset);
+        offset += c[1] as number;
+      });
+    }
     p.pop();
 
     this.moons.forEach((m) => m.draw(p));
