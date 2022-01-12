@@ -40,7 +40,16 @@ export default class Template extends MidiSketch {
       new CelestialObject(p, 9, Math.log(10) * pd, (1 / Math.log(365)) * su, this.images[3], this.onTrigger), //earth
       new CelestialObject(p, 6, Math.log(15.2) * pd, (1 / Math.log(687)) * su, this.images[4], this.onTrigger), //mars
       new CelestialObject(p, 15, Math.log(52) * pd, (1 / Math.log(4333)) * su, this.images[5], this.onTrigger), //jupiter
-      new CelestialObject(p, 14, Math.log(95.4) * pd, (1 / Math.log(10759)) * su, this.images[6], this.onTrigger), //saturn
+      new CelestialObject(
+        p,
+        14,
+        Math.log(95.4) * pd,
+        (1 / Math.log(10759)) * su,
+        this.images[6],
+        this.onTrigger,
+        [],
+        true
+      ), //saturn
       new CelestialObject(p, 10, Math.log(192) * pd, (1 / Math.log(30687)) * su, this.images[7], this.onTrigger), //uranus
       new CelestialObject(p, 10, Math.log(300.6) * pd, (1 / Math.log(60190)) * su, this.images[8], this.onTrigger), //neptune
     ];

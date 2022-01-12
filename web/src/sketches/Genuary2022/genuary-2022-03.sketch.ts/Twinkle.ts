@@ -21,6 +21,7 @@ export class Twinkle {
 
   draw(p: p5) {
     const current = ((p.sin(p.frameCount * this.rate) + 1) / 2) * (this.max - this.min);
+    p.noStroke();
     p.fill(current + this.min);
     p.circle(this.pos.x, this.pos.y, this.size);
   }
