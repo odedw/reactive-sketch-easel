@@ -1,5 +1,4 @@
-import p5, { Color } from 'p5';
-import { Output } from '@reactive-sketch-easel/midi';
+import p5 from 'p5';
 
 export class CelestialObject {
   distance: number;
