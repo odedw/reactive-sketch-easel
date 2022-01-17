@@ -1,25 +1,25 @@
 export class Matrix<T> {
-  w: number;
-  h: number;
+  cols: number;
+  rows: number;
   values: T[][] = [];
   size: number;
-  constructor(w: number, h: number, init: (i: number, j: number) => T) {
-    this.w = w;
-    this.h = h;
+  constructor(cols: number, rows: number, init: (row: number, col: number) => T) {
+    this.cols = cols;
+    this.rows = rows;
     // this.values = Array(h).fill(Array(w).fill(zero));
-    for (let i = 0; i < h; i++) {
+    for (let i = 0; i < rows; i++) {
       if (!this.values[i]) {
         this.values[i] = [];
       }
-      for (let j = 0; j < w; j++) {
+      for (let j = 0; j < cols; j++) {
         this.values[i][j] = init(i, j);
       }
     }
-    this.size = w * h;
+    this.size = cols * rows;
   }
 
-  get(i: number, j: number): T {
-    return this.values[i][j];
+  get(row: number, col: number): T {
+    return this.values[row][col];
   }
 
   set(i: number, j: number, value: T) {
@@ -28,8 +28,8 @@ export class Matrix<T> {
 
   randomIndex() {
     return {
-      i: Math.floor(Math.random() * this.h),
-      j: Math.floor(Math.random() * this.w),
+      i: Math.floor(Math.random() * this.rows),
+      j: Math.floor(Math.random() * this.cols),
     };
   }
 
@@ -42,13 +42,13 @@ export class Matrix<T> {
     if (i - 1 >= 0) {
       result.push({ i: i - 1, j });
     }
-    if (i + 1 < this.h) {
+    if (i + 1 < this.rows) {
       result.push({ i: i + 1, j });
     }
     if (j - 1 >= 0) {
       result.push({ i: i, j: j - 1 });
     }
-    if (j + 1 < this.w) {
+    if (j + 1 < this.cols) {
       result.push({ i: i, j: j + 1 });
     }
     return result;
@@ -61,10 +61,18 @@ export class Matrix<T> {
   }
 
   clone(): Matrix<T> {
-    return new Matrix<T>(this.w, this.h, (i, j) => {
+    return new Matrix<T>(this.cols, this.rows, (i, j) => {
       let item = this.get(i, j);
       item = item['clone'] ? item['clone']() : item;
       return item;
     });
+  }
+
+  forEach(cb: (item: T, row: number, col: number) => void) {
+    for (let i = 0; i < this.rows; i++) {
+      for (let j = 0; j < this.cols; j++) {
+        cb(this.get(i, j), i, j);
+      }
+    }
   }
 }

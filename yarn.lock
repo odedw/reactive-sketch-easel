@@ -7156,6 +7156,11 @@ moment@^2.29.1:
   resolved "https://registry.yarnpkg.com/moment/-/moment-2.29.1.tgz#b2be769fa31940be9eeea6469c075e35006fa3d3"
   integrity sha512-kHmoybcPV8Sqy59DwNDY3Jefr64lK/by/da0ViFcuA4DH0vQg5Q6Ze5VimxkfQNSC+Mls/Kx53s7TjP1RhFEDQ==
 
+moore@~1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/moore/-/moore-1.0.0.tgz#1d2b298c32cfd330db0fe81a0b5bac319fd9eb65"
+  integrity sha1-HSspjDLP0zDbD+gaC1usMZ/Z62U=
+
 mouse-change@^1.4.0:
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/mouse-change/-/mouse-change-1.4.0.tgz#c2b77e5bfa34a43ce1445c8157a4e4dc9895c14f"
@@ -8008,6 +8013,13 @@ pnp-webpack-plugin@1.6.4:
   integrity sha512-7Wjy+9E3WwLOEL30D+m8TSTF7qJJUJLONBnwQp0518siuMxUQUbgZwssaFX+QKlZkjHZcw/IpZCt/H0srrntSg==
   dependencies:
     ts-pnp "^1.1.6"
+
+poisson-disk-sampling@^2.2.2:
+  version "2.2.2"
+  resolved "https://registry.yarnpkg.com/poisson-disk-sampling/-/poisson-disk-sampling-2.2.2.tgz#d326f6be7e1704e1d54e6a024bd44a3fb33120e5"
+  integrity sha512-N+P2Tydw9leBaTyOwKQv12sgLGkvsZTfa6pHRD8QlbdzFN5gJ0ByzkQrwwKr3W2bxenWgktf9hb4m/RqQ+id4Q==
+  dependencies:
+    moore "~1.0.0"
 
 portfinder@^1.0.25:
   version "1.0.26"
