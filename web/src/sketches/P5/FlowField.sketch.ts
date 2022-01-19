@@ -4,29 +4,75 @@ import PoissonDiskSampling from 'poisson-disk-sampling';
 import { Color, Graphics, Image } from 'p5';
 let matrix: Matrix<number>;
 
+const imageName = 'michele-caliani-iLAAT1E-H_8-unsplash.jpg';
+const NUM_VARIANTS = 1;
+
 export default class Template extends ProcessingSketch {
-  leftX: number;
-  rightX: number;
-  topY: number;
-  bottomY: number;
-  cols: number;
-  rows: number;
-  resolution: number;
-  STEP_LENGTH: number;
-  NUM_STEPS: number;
   i = 0;
   j = 0;
   img: Image;
   colorMatrix: Matrix<Color>;
   index: number;
-  points: any;
   pcg: Graphics;
+  config: {
+    resolution: number;
+    numSteps: number;
+    stepLength: number;
+    leftX: number;
+    rightX: number;
+    topY: number;
+    bottomY: number;
+    cols: number;
+    rows: number;
+    // points: [number, number][];
+    strokeWeight: number;
+    noiseScale: number;
+  };
+  points: [number, number][];
+
   preload() {
-    this.img = this.p.loadImage('/assets/pd19-20031_1.jpg');
+    this.img = this.p.loadImage(`/assets/${imageName}`);
+  }
+
+  createSettings() {
+    const p = this.p;
+    const options = {
+      scale: 0.01, //p.random(0.01, 0.1),
+      stepLength: p.random(0.0001, 0.0001),
+      numSteps: 1000, //p.floor(p.randomGaussian(1000, 50)),
+      minDistance: 5, //p.random(5, 10),
+      maxDistance: 10, //p.random(11, 20),
+      tries: 30,
+    };
+    const strokeWeight = 2; //p.floor(p.abs(p.randomGaussian(0, 3)) + 1);
+    const noiseScale = 0.045; //p.random(0.04, 0.07);
+    const resolution = p.int(p.width * options.scale);
+    const stepLength = p.width * options.stepLength;
+    const numSteps = options.numSteps;
+    const leftX = p.int(p.width * -0.25);
+    const rightX = p.int(p.width * 1.25);
+    const topY = p.int(p.height * -0.25);
+    const bottomY = p.int(p.height * 1.25);
+    const cols = p.int((rightX - leftX) / resolution);
+    const rows = p.int((bottomY - topY) / resolution);
+
+    return {
+      resolution,
+      numSteps,
+      stepLength,
+      leftX,
+      rightX,
+      topY,
+      bottomY,
+      cols,
+      rows,
+      // points,
+      strokeWeight,
+      noiseScale,
+    };
   }
   setup() {
     const p = this.p;
-    // document.getElementById('#container').style.background = 'black';
 
     // canvas
     const w = 800;
@@ -42,67 +88,68 @@ export default class Template extends ProcessingSketch {
     this.pcg = p.createGraphics(w, h);
     this.pcg.image(this.img, 0, 0, this.pcg.width, this.pcg.height);
 
-    p.image(this.pcg, 0, 0);
-    // p.noiseDetail(p.random(2, 10), p.random(0, 0.75));
-    // this.colorMatrix = new Matrix(this.img.width, this.img.height, (row, col) => {
-    //   if (col === 0) {
-    //     console.log(row);
-    //   }
-    //   return p.color(this.img.get(col, row));
-    // });
+    this.colorMatrix = new Matrix(this.pcg.width, this.pcg.height, (row, col) => {
+      return p.color(this.pcg.get(col, row));
+    });
+    // console.log(`===========================finished color matrix`);
 
-    // this.resolution = p.int(p.width * 0.01);
-    // this.STEP_LENGTH = p.width * 0.0001;
-    // this.NUM_STEPS = 1000;
+    const pds = new PoissonDiskSampling({
+      shape: [p.width * 1.5, p.height * 1.5],
+      minDistance: 5,
+      maxDistance: 15,
+      tries: 30,
+    });
+    this.points = pds.fill().map((pt) => [pt[0] - p.width * 0.25, pt[1] - p.height * 0.25]);
 
-    // this.leftX = p.int(p.width * -0.25);
-    // this.rightX = p.int(p.width * 1.25);
-    // this.topY = p.int(p.height * -0.25);
-    // this.bottomY = p.int(p.height * 1.25);
-    // this.cols = p.int((this.rightX - this.leftX) / this.resolution);
-    // this.rows = p.int((this.bottomY - this.topY) / this.resolution);
-    // matrix = new Matrix(this.cols, this.rows, (row, col) => p.noise(row * 0.01, col * 0.01) * p.TWO_PI);
-    // console.log('===========================');
-    // console.log(`p.width ${p.width}`);
-    // console.log(`p.height ${p.height}`);
-    // console.log(`leftX ${this.leftX}`);
-    // console.log(`rightX ${this.rightX}`);
-    // console.log(`topY ${this.topY}`);
-    // console.log(`bottomY ${this.bottomY}`);
-    // console.log(`resolution ${this.resolution}`);
-    // console.log(`cols ${this.cols}`);
-    // console.log(`rows ${this.rows}`);
-    // console.log('===========================');
-
-    // p.background(0);
-    // p.image(this.img, 0, 0);
-    // let pds = new PoissonDiskSampling({
-    //   shape: [p.width, p.height],
-    //   minDistance: 5,
-    //   maxDistance: 15,
-    //   tries: 30,
-    // });
-    // this.points = pds.fill();
-    // this.index = 0;
-    // console.log(this.points.length);
-    // for (const pt of points) {
-    //   i++;
-    //   if (i % 1000 === 0) console.log(i);
-    //   this.drawCurve(pt[0], pt[1]);
+    // for (let i = 0; i < NUM_VARIANTS; i++) {
+    //   this.drawVariant(i);
     // }
+  }
+  drawVariant(variant: number) {
+    console.log(`===========================Variant ${variant}`);
+
+    const p = this.p;
+    // settings
+
+    this.config = this.createSettings();
+    // console.log('===========================');
+    console.table(this.config);
+    console.log('===========================');
+
+    matrix = new Matrix(
+      this.config.cols,
+      this.config.rows,
+      (row, col) =>
+        p.noise(
+          row * this.config.noiseScale,
+          col * this.config.noiseScale,
+          (p.frameCount * this.config.noiseScale) / 5
+        ) * p.TWO_PI
+    );
+    // p.noiseDetail(p.random(2, 10), p.random(0, 0.75));
+    p.background(0);
+    // p.image(this.pcg, 0, 0);
+
+    this.index = 0;
+    // console.log(this.config.points.length);
+    this.points.forEach((pt, i) => {
+      // if (i % 500 === 0) console.log(`${p.floor((100 * i) / this.config.points.length)}%`);
+      this.drawCurve(pt[0], pt[1]);
+    });
     // let img = this.p.get();
-    // let name = window.location.href.split('/').at(-1).replace('.sketch.ts', '.jpg');
+    // let name = `FlowField-${imageName.split('.')[0]}-variante-${String(variant).padStart(2, '0')}.jpg`;
     // this.p.save(img, name);
   }
+
   drawCurve(x: number, y: number) {
     const p = this.p;
-    p.noFill().strokeWeight(10).beginShape();
-    for (let i = 0; i < this.NUM_STEPS; i++) {
+    p.noFill().strokeWeight(this.config.strokeWeight).beginShape();
+    for (let i = 0; i < this.config.numSteps; i++) {
       p.vertex(x, y);
-      const xOffset = x - this.leftX;
-      const yOffset = y - this.topY;
-      const col = p.int(xOffset / this.resolution);
-      const row = p.int(yOffset / this.resolution);
+      const xOffset = x - this.config.leftX;
+      const yOffset = y - this.config.topY;
+      const col = p.int(xOffset / this.config.resolution);
+      const row = p.int(yOffset / this.config.resolution);
 
       if (
         col >= matrix.cols ||
@@ -118,7 +165,7 @@ export default class Template extends ProcessingSketch {
       }
       const angle = matrix.get(row, col);
       const c = this.colorMatrix.get(p.int(y), p.int(x));
-      c.setAlpha(100);
+      // c.setAlpha(100);
       p.stroke(c);
       // p.stroke(
       //   p.map(row, 0, this.rows, 0, 255),
@@ -126,8 +173,8 @@ export default class Template extends ProcessingSketch {
       //   p.map(row, 0, this.rows + this.cols, 0, 255)
       // );
 
-      const xStep = this.STEP_LENGTH * p.cos(angle);
-      const yStep = this.STEP_LENGTH * p.sin(angle);
+      const xStep = this.config.stepLength * p.cos(angle);
+      const yStep = this.config.stepLength * p.sin(angle);
       x += xStep;
       y += yStep;
     }
@@ -138,7 +185,8 @@ export default class Template extends ProcessingSketch {
     const p = this.p;
     // const num = 10;
     // for (let i = 0; i < num; i++) {
-    //   if (this.index % 1000 === 0) console.log(this.index);
+    //   const percentage = p.floor((this.index / this.points.length) * 100);
+    //   if (percentage % 5 === 0) console.log(`${percentage}%`);
     //   this.drawCurve(this.points[this.index][0], this.points[this.index][1]);
     //   this.index++;
     //   if (this.index >= this.points.length) {
@@ -146,5 +194,6 @@ export default class Template extends ProcessingSketch {
     //     break;
     //   }
     // }
+    this.drawVariant(p.frameCount);
   }
 }
