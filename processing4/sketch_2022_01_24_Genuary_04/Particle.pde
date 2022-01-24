@@ -1,10 +1,13 @@
 public class Particle {
-  ArrayList<PVector> history = new ArrayList<PVector>();
-  
+  ArrayList<PVector> vertices = new ArrayList<PVector>();
+  float size;
+  color myFill;
   Particle(PVector start) {
-    
     float x = start.x;
     float y = start.y;
+    size = random(minSize, maxSize);
+    ArrayList<PVector> history = new ArrayList<PVector>();
+    myFill = colors[floor(random(colors.length))];
     
     for (int i = 0; i < numSteps; i++) {
       history.add(new PVector(x, y));
@@ -22,7 +25,24 @@ public class Particle {
         x >= width || 
         y < 0 || 
         y >= height
-     ) {
+     ){
+        break;
+      }
+      
+      boolean shouldBreak = false;
+      for (Particle p : particles) {
+        if (p == this) {
+          continue;
+        }
+        for (PVector point : p.vertices) {
+          float d = dist(x, y, point.x, point.y);
+          if (d < minDistance) {
+            shouldBreak = true;
+            break;
+          }
+        }
+      }
+      if (shouldBreak) {
         break;
       }
       float angle = matrix[col][row];
@@ -32,16 +52,43 @@ public class Particle {
       x += xStep;
       y += yStep;
     }
+    
+    for (int i = 0; i < history.size(); ++i) {
+      PVector v = history.get(i);
+      float xOffset = v.x - leftX;
+      float yOffset = v.y - topY;
+      int col = int(xOffset / resolution);
+      int row = int(yOffset / resolution);
+      float angle = matrix[col][row] - PI / 2;
+      x = cos(angle) * size + v.x;
+      y = sin(angle) * size + v.y;
+      
+      vertices.add(new PVector(x,y));
+    }
+    for (int i = history.size() - 1; i >= 0; --i) {
+      PVector v = history.get(i);
+      float xOffset = v.x - leftX;
+      float yOffset = v.y - topY;
+      int col = int(xOffset / resolution);
+      int row = int(yOffset / resolution);
+      float angle = matrix[col][row] + PI / 2;
+      x = cos(angle) * size + v.x;
+      y = sin(angle) * size + v.y;
+      vertices.add(new PVector(x,y));
+      
+      
+    }
   }
   
   void draw() {
-    stroke(255);
-    noFill();
+    noStroke();
+    fill(myFill);
     strokeWeight(2);
     beginShape();
-    for (PVector v : history) {
+    for (PVector v : vertices) {
       vertex(v.x, v.y);
     }
-    endShape();
+    
+    endShape(CLOSE);
   }
 }
