@@ -2,6 +2,8 @@ public class Particle {
   ArrayList<PVector> vertices = new ArrayList<PVector>();
   float size;
   color myFill;
+  float r = 0;
+  PVector t = new PVector();
   Particle(PVector start) {
     float x = start.x;
     float y = start.y;
@@ -80,8 +82,13 @@ public class Particle {
     }
   }
   
-  void draw() {
+  void draw(float max) {
+    t.x += random( -max, max);
+    t.y += random( -max, max);
     noStroke();
+    pushMatrix();
+    translate(t.x, t.y);
+    // rotate(r);
     fill(myFill);
     strokeWeight(2);
     beginShape();
@@ -90,5 +97,6 @@ public class Particle {
     }
     
     endShape(CLOSE);
+    popMatrix();
   }
 }

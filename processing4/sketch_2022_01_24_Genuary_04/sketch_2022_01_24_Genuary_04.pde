@@ -20,35 +20,56 @@ void setup() {
   size(1000, 1000);  
   noFill();
   strokeWeight(strokeWeight);
-  
+  rectMode(CENTER);
   flowField = new FlowField();
   
   // for (int i = 0; i < numParticles; ++i) {
-  float jumps = floor(width / gridResolution);
-  for (int row = 0; row < gridResolution; ++row) {
-    for (int col = 0; col < gridResolution; ++col) {
-      // PVector start = new PVector(jumps * col,jumps * row);
-      PVector start = new PVector(random(width),random(height));
-      startPoints.add(start);
+  // float jumps = floor(width / gridResolution);
+  // for (int row = 0; row < gridResolution; ++row) {
+  //   for (int col = 0; col < gridResolution; ++col) {
+  //     // PVector start = new PVector(jumps * col,jumps * row);
+  //     PVector start = new PVector(random(width),random(height));
+  //     startPoints.add(start);
+  //   }
+  // }
+  
+  for (int i = 0; i < numParticles; ++i) {
+    PVector start = new PVector(random(width),random(height));
+    Particle p = new Particle(start);
+    if (p.vertices.size() >= 100) {
+      particles.add(p);
+    }
+    if (i % 100 == 0) {
+      println("i: " + i);
     }
   }
+  println("added " + particles.size() + " curves");
+  background(#EBE4D8);
+  
 }
 
 void draw() {
-  background(#EBE4D8);
   if (debug) {
     flowField.draw();
   }
   
-  if (index < startPoints.size()) {
-    // flowField.rotate(PI / 8);
-    Particle p = new Particle(startPoints.get(index));
-    if (p.vertices.size() >= 200) {
-      particles.add(p);
-    }
+  if (index < particles.size()) {
+    Particle p = particles.get(index);
+    p.draw(0);
     index++;
+  } else {
+    background(#EBE4D8);
+    
+    float max = 30 - map(cos(frameCount / 700.0), -1,1,0,30);
+    println(max);
+    
+    for (Particle p : particles) {
+      p.draw(max);
+    }
+    if (max >= 29.9) {
+      noLoop();
+    }
   }
-  for (Particle p : particles) {
-    p.draw();
-  }
+  saveFrame("output-3/genuary-04-03-######.png");
+  
 }
