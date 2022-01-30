@@ -27,7 +27,8 @@ class Quadtree{
   Quadtree northwest;
   Quadtree southeast;
   Quadtree southwest;
-  Quadtree(Rect boundary, State state, int level, int initialScale) {
+  ArrayList<Pixel> pixels;
+  Quadtree(Rect boundary, State state, int level, int initialScale, ArrayList<Pixel> pixels) {
     this.boundary = boundary;
     this.state = state;
     this.moveDelay = 15;
@@ -37,7 +38,11 @@ class Quadtree{
     this.subdivideDelay = 15;
     this.zoomDelay = 15;
     this.divideSpeed = max(this.boundary.w / 20.0, 1);
-    this.dest = new PVector(random(boundary.w / 2, width - boundary.w / 2), random(boundary.h, height - boundary.h / 2));
+    // this.dest = new PVector(random(boundary.w / 2, width - boundary.w / 2), random(boundary.h, height - boundary.h / 2));
+    // println(pixels.size());
+    this.pixels = pixels;
+    int index = int(abs(randomGaussian() * 0.1 * pixels.size()));
+    this.dest = pixels.get(index).pos;
     this.level = level;
     this.scale = initialScale;
     this.initialPos = new PVector(this.boundary.x, this.boundary.y);
@@ -47,10 +52,10 @@ class Quadtree{
   }
   
   void spawnTrees() {
-    northeast = new Quadtree(new Rect(this.boundary.x + this.boundary.w / 4, this.boundary.y - this.boundary.h / 4, this.boundary.w / 2, this.boundary.h / 2), State.PRE_MOVING, this.level + 1, 1);
-    northwest = new Quadtree(new Rect(this.boundary.x - this.boundary.w / 4, this.boundary.y - this.boundary.h / 4, this.boundary.w / 2, this.boundary.h / 2), State.PRE_MOVING, this.level + 1, 1);
-    southeast = new Quadtree(new Rect(this.boundary.x + this.boundary.w / 4, this.boundary.y + this.boundary.h / 4, this.boundary.w / 2, this.boundary.h / 2), State.PRE_MOVING, this.level + 1, 1);
-    southwest = new Quadtree(new Rect(this.boundary.x - this.boundary.w / 4, this.boundary.y + this.boundary.h / 4, this.boundary.w / 2, this.boundary.h / 2), State.PRE_MOVING, this.level + 1, 1);
+    northeast = new Quadtree(new Rect(this.boundary.x + this.boundary.w / 4, this.boundary.y - this.boundary.h / 4, this.boundary.w / 2, this.boundary.h / 2), State.PRE_MOVING, this.level + 1, 1, this.pixels);
+    northwest = new Quadtree(new Rect(this.boundary.x - this.boundary.w / 4, this.boundary.y - this.boundary.h / 4, this.boundary.w / 2, this.boundary.h / 2), State.PRE_MOVING, this.level + 1, 1, this.pixels);
+    southeast = new Quadtree(new Rect(this.boundary.x + this.boundary.w / 4, this.boundary.y + this.boundary.h / 4, this.boundary.w / 2, this.boundary.h / 2), State.PRE_MOVING, this.level + 1, 1, this.pixels);
+    southwest = new Quadtree(new Rect(this.boundary.x - this.boundary.w / 4, this.boundary.y + this.boundary.h / 4, this.boundary.w / 2, this.boundary.h / 2), State.PRE_MOVING, this.level + 1, 1, this.pixels);
   }
   
   void draw() {
