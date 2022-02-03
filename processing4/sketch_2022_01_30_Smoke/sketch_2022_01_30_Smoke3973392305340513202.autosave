@@ -4,11 +4,10 @@ boolean[][] visited, colorMatrixVisited;
 color[][] colorMatrix;
 Point[][] pixelToColorMatrix;
 Point[][] pixelToPrev;
-boolean[][] bfsVisited;
 
 void setup() {
-  size(1000,1000);
-  img = loadImage("michele-caliani-iLAAT1E-H_8-unsplash.jpg");
+  size(500,500);
+  img = loadImage("jason-leung-UIZQfEZ1wUc-unsplash.jpg");
   noStroke();
   background(#e6e6e6); 
   
@@ -17,7 +16,6 @@ void setup() {
   colorMatrixVisited = new boolean[width][height];
   pixelToColorMatrix = new Point[width][height];
   pixelToPrev = new Point[width][height];
-  bfsVisited = new boolean[width][height];
   for (int i = 0; i < width; ++i) {
     for (int j = 0; j < height; ++j) {
       visited[i][j] = false; 
@@ -53,7 +51,6 @@ void setup() {
   
 }
 
-
 ArrayList<Point> getNeighbours(Point pos, boolean desiredState, boolean[][] visitedMatrix) {
   ArrayList<Point> result = new ArrayList<Point>();
   if (pos.x > 0 && visitedMatrix[pos.x - 1][pos.y] == desiredState) {
@@ -68,37 +65,42 @@ ArrayList<Point> getNeighbours(Point pos, boolean desiredState, boolean[][] visi
   if (pos.y + 1 < height && visitedMatrix[pos.x][pos.y + 1] == desiredState) {
     result.add(new Point(pos.x, pos.y + 1));
   }
+  // for (int i = pos.x - 1; i <= pos.x + 1; ++i) {
+  //   for (int j = pos.y - 1; j <= pos.y + 1; ++j) {
+  
+  //     // out of bounds
+  //     if (i < 0 || j < 0 || (i == pos.x && j == pos.y) || i >= width || j >= height) {
+  //       continue;
+  //     }
+  
+  //     if (visitedMatrix[i][j] != desiredState) {
+  //       continue;
+  //     }
+  
+  //     result.add(new Point(i, j));
+  //   } 
+  // }
+  
+  // for (Point p : result) {
+  //   pixelToPrev[p.x][p.y] = pos;
+  // }
   
   return result;
 }
 
-static int dRow[] = { - 1, 0, 1, 0 };
-static int dCol[] = { 0, 1, 0, -1 };
-
 Point findClosestUnvisitedColor(Point currentColor) {
   // println("findClosestUnvisited colorPos: " + pos);
-  for (int i = 0; i < width; ++i) {
-    for (int j = 0; j < height; ++j) {
-      bfsVisited[i][j] = false;
-    }
-  }  
-  ArrayList<Point> toCheck = new ArrayList<Point>();// getNeighbours(currentColor, false, bfsVisited);
-  toCheck.add(currentColor);
-  bfsVisited[currentColor.x][currentColor.y] = true;
+  ArrayList<Point> toCheck = getNeighbours(currentColor, false, colorMatrixVisited);
   while(toCheck.size() > 0) {
-    // if (toCheck.size() > width * height)
-    // print(toCheck.size() + " ");
-    Point p = toCheck.get(0);
-    if (!colorMatrixVisited[p.x][p.y]) {
-      return p;
+    ArrayList<Point> currentList = (ArrayList<Point>)(toCheck.clone());
+    toCheck.clear();
+    for (int i = 0; i < currentList.size(); ++i) {
+      Point current = currentList.get(i);
+      if (!colorMatrixVisited[current.x][current.y]) {
+        return current;
+      }
+      toCheck.addAll(getNeighbours(current, false, colorMatrixVisited));
     }
-    ArrayList<Point> neighbours = getNeighbours(p, false, bfsVisited);
-    for (Point n : neighbours) {
-      bfsVisited[n.x][n.y] = true;
-    }
-    
-    toCheck.addAll(neighbours);
-    toCheck.remove(0);
   }
   return null;
 }
@@ -106,6 +108,7 @@ Point findClosestUnvisitedColor(Point currentColor) {
 void setFill(Point next, Point current) {
   // println("======================setFill");
   // println("pos: " + pos);
+  // fill(colorMatrix[pos.x][pos.y]);
   Point currentColor = pixelToColorMatrix[current.x][current.y];
   Point closestColor = findClosestUnvisitedColor(currentColor);
   if (closestColor == null) {
@@ -116,6 +119,31 @@ void setFill(Point next, Point current) {
   pixelToColorMatrix[next.x][next.y] = closestColor;
   color c = colorMatrix[closestColor.x][closestColor.y];
   fill(c);
+  
+  // Point prev = pixelToPrev[int(pos.x)][int(pos.y)];
+  // Point colorPos;
+  // // first pixel
+  // println("prev: " + prev);
+  // if (prev == null) {
+  //   println("first pixel");
+  //   colorPos = new Point(int(random(width)), int(random(height)));
+  // } else {
+  //   // find the closest color to the previous color pixel 
+  //   println("finding closest color");
+  //   Point prevColorPos = pixelToColorMatrix[int(prev.x)][int(prev.y)];
+  //   println("prevColorPos: " + prevColorPos);
+  
+  //   colorPos = findClosestUnvisited(prevColorPos, colorMatrixVisited);
+  // }
+  // println("colorPos: " + colorPos);
+  
+  // if (colorPos == null) {
+  //   return;
+  // }
+  // pixelToColorMatrix[int(pos.x)][int(pos.y)] = colorPos;
+  // colorMatrixVisited[int(colorPos.x)][int(colorPos.y)] = true; 
+  // fill(colorMatrix[int(colorPos.x)][int(colorPos.y)]);
+  
 }
 
 void step() {
@@ -145,13 +173,21 @@ void step() {
   
   visited[next.x][next.y] = true;
   positions.add(next);
-  setFill(next, pixel);
+  setFill(next);
   rect(next.x, next.y, 1,1);
   
+  // positions.remove(index);
+  // visited[int(pos.x)][int(pos.y)] = true;
+  
+  // setFill(pos);
+  // rect(pos.x, pos.y, 1, 1);
+  
+  // // add neighbours
+  // positions.addAll(getNeighbours(pos));
 }
 
 void draw() {
-  for (int i = 0; i < 10000; ++i) {
+  for (int i = 0; i < 1000; ++i) {
     
     step();
   }
