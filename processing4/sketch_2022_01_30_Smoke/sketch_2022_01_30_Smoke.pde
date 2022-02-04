@@ -7,8 +7,9 @@ Point[][] pixelToPrev;
 boolean[][] bfsVisited;
 
 void setup() {
-  size(1000,1000);
-  img = loadImage("michele-caliani-iLAAT1E-H_8-unsplash.jpg");
+  size(1200 ,1200);
+  img = loadImage("jason-leung-UIZQfEZ1wUc-unsplash.jpg");
+  // img = loadImage("Mona-Lisa-770x876.jpg");
   noStroke();
   background(#e6e6e6); 
   
@@ -118,11 +119,11 @@ void setFill(Point next, Point current) {
   fill(c);
 }
 
-void step() {
+boolean step() {
   // println("======step");
   int size = positions.size();
   if (size == 0) {
-    return;
+    return false;
   }
   // get random pixel
   int index = int(random(size));
@@ -132,7 +133,9 @@ void step() {
   // println("pixel - " + pixel);
   // println("neighbors - " + neighbours.size());
   if (neighbours.size() == 0) {
-    return;
+    positions.remove(index);
+    // println("no neighours");
+    return false;
   } else if (neighbours.size() == 1) { // no more unvisited neighbours, remove from positions 
     next = neighbours.get(0);
     positions.remove(index);
@@ -147,14 +150,18 @@ void step() {
   positions.add(next);
   setFill(next, pixel);
   rect(next.x, next.y, 1,1);
-  
+  return true;
 }
 
 void draw() {
-  for (int i = 0; i < 10000; ++i) {
-    
-    step();
+  
+  for (int i = 0; i < 1000; ++i) {
+    boolean result = step();
+    if (!result) {
+      --i;
+    }
   }
+  saveFrame("output/genuary-06-######.png");
 }
 
 void mouseClicked() {
