@@ -7,7 +7,7 @@ Point[][] pixelToPrev;
 boolean[][] bfsVisited;
 int w = 1000;
 int h = 1000;
-
+int bg = 150;
 void setup() {
   size(2000 ,1000);
   left = w * h;
@@ -15,7 +15,7 @@ void setup() {
   // img = loadImage("photo-1444021465936-c6ca81d39b84.jpg");
   // img = loadImage("Mona-Lisa-770x876.jpg");
   noStroke();
-  background(#e6e6e6); 
+  background(bg); 
   image(img, 0,0,w,h);
   
   // initialize matrices  
@@ -44,7 +44,9 @@ void setup() {
     }
   }
   
-  // firstPixel(new Point(int(random(w)), int(random(h))), new Point(int(random(w)), int(random(h))));  
+   //firstPixel(new Point(int(random(w)), int(random(h))), new Point(int(random(w)), int(random(h))));
+   firstPixel(new Point(w,h/2), new Point(w+1,h/2));
+   run = true;
 }
 
 void firstPixel(Point pixel, Point colorPixel) {  
@@ -117,7 +119,7 @@ void setFill(Point next, Point current) {
     return;
   }
   // color pixel
-  fill(#e6e6e6);
+  fill(bg);
   rect(closestColor.x, closestColor.y, 1, 1);
   
   // mark it
