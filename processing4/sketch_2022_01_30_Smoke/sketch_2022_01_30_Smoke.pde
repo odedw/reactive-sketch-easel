@@ -11,7 +11,7 @@ int bg = 150;
 void setup() {
   size(2000 ,1000);
   left = w * h;
-  img = loadImage("jason-leung-UIZQfEZ1wUc-unsplash.jpg");
+  img = loadImage("images/result.png");
   // img = loadImage("photo-1444021465936-c6ca81d39b84.jpg");
   // img = loadImage("Mona-Lisa-770x876.jpg");
   noStroke();
@@ -44,9 +44,9 @@ void setup() {
     }
   }
   
-   //firstPixel(new Point(int(random(w)), int(random(h))), new Point(int(random(w)), int(random(h))));
-   firstPixel(new Point(w,h/2), new Point(w+1,h/2));
-   run = true;
+  // firstPixel(new Point(int(random(w)), int(random(h))), new Point(int(random(w)), int(random(h))));
+  //  firstPixel(new Point(w,h/2), new Point(w+1,h/2));
+  // run = true;
 }
 
 void firstPixel(Point pixel, Point colorPixel) {  
@@ -181,7 +181,7 @@ void draw() {
     
     if (left == 0) {
       PImage img  = get(w, 0, w, h);
-      img.save("result.png");
+      img.save("images/result.png");
       noLoop();
     }
   }
