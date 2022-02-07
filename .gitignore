@@ -106,3 +106,4 @@ processing4/libraries
 processing4/tools
 processing4/*/output/*.png
 processing4/**/*.mp4
+processing4/**/images
