@@ -1,4 +1,4 @@
-boolean shouldSaveFrame = true;
+boolean shouldSaveFrame = false;
 
 void setup() {
   size(1000,1000);
