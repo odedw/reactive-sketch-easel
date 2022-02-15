@@ -148,3 +148,38 @@ void saveResult() {
   
   saveJSONArray(arr, "data/pixelToColorMatrix.json");
 }
+
+boolean step() {
+  // println("======step");
+  int size = positions.size();
+  if (size == 0) {
+    return false;
+  }
+  // get random pixel
+  int index = int(random(size));
+  Point pixel = positions.get(index);
+  ArrayList<Point> neighbours = getNeighbours(pixel, false, visited);
+  Point next = new Point(0,0);
+  // println("pixel - " + pixel);
+  // println("neighbors - " + neighbours.size());
+  if (neighbours.size() == 0) {
+    positions.remove(index);
+    // println("no neighours");
+    return false;
+  } else if (neighbours.size() == 1) { // no more unvisited neighbours, remove from positions 
+    next = neighbours.get(0);
+    positions.remove(index);
+  } else {
+    int nextIndex = int(random(neighbours.size()));
+    next = neighbours.get(nextIndex);
+    neighbours.remove(nextIndex);
+  }
+  // println("next - " + next);
+  
+  visited[next.x][next.y] = true;
+  positions.add(next);
+  setFill(next, pixel);
+  rect(next.x + w, next.y, 1,1);
+  left--;
+  return true;
+}

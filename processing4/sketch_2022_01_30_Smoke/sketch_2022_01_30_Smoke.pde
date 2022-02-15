@@ -11,7 +11,7 @@ int bg = 150;
 void setup() {
   size(2000 ,1000);
   left = w * h;
-  img = loadImage("images/result.png");
+  img = loadImage("images/output.png");
   // img = loadImage("photo-1444021465936-c6ca81d39b84.jpg");
   // img = loadImage("Mona-Lisa-770x876.jpg");
   noStroke();
