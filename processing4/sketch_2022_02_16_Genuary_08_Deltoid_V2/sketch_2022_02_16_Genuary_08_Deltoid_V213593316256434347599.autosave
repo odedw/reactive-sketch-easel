@@ -1,0 +1,71 @@
+wwwwwwwboolean shouldSaveFrame = false;
+float squareAngle = 0;
+float squareAngleDelta = HALF_PI / 200;
+int size = 400;
+ArrayList<PVector> points = new ArrayList<PVector>();
+
+SquareStage squareStage = SquareStage.BOTTOM_RIGHT;
+void setup() {
+  size(1000,1000);
+  rectMode(CENTER);
+  noFill();
+  strokeWeight(2);
+}
+
+PVector polarToCartesian(float r, float a) {
+  return new PVector(cos(a) * r, sin(a) * r);  
+}
+
+void draw() {
+  background(#e6e6e6); 
+  PVector translatePoint = new PVector();
+  PVector rectPoint = new PVector();
+  if (squareStage == SquareStage.BOTTOM_RIGHT) {
+    translatePoint = new PVector(width / 2,height / 2 + size);
+    rectPoint = new PVector(size / 2, -size / 2);
+  } else if (squareStage == SquareStage.BOTTOM_LEFT) {
+    translatePoint = new PVector(width / 2 - size,height / 2);
+    rectPoint = new PVector(size / 2, size / 2);
+  } else if (squareStage == SquareStage.TOP_LEFT) {
+    translatePoint = new PVector(width / 2,height / 2 - size);
+    rectPoint = new PVector( -size / 2, size / 2);
+  } else if (squareStage == SquareStage.TOP_RIGHT) {
+    translatePoint = new PVector(width / 2 + size,height / 2);
+    rectPoint = new PVector( -size / 2, -size / 2);
+  }
+  
+  squareAngle -= squareAngleDelta;
+  pushMatrix();
+  
+  translate(translatePoint.x, translatePoint.y);
+  rotate(squareAngle);
+  rect(rectPoint.x, rectPoint.y, size, size);
+  points.add(new PVector(screenX(rectPoint.x, rectPoint.y), screenY(rectPoint.x, rectPoint.y)));
+  popMatrix();
+  beginShape();
+  for (PVector p : points) {
+    vertex(p.x, p.y);
+  }
+  endShape();
+  
+  if (abs(squareAngle) >= HALF_PI) {
+    squareAngle = 0;
+    squareStage = squareStage.next();
+  }
+  // p1 = 
+  
+  // circle(p1.x,p1.y, 10);
+  // circle(p2.x,p2.y, 10);
+  // circle(p3.x,p3.y, 10);
+  // circle(p4.x,p4.y, 10);
+  // beginShape();
+  // vertex(p1.x, p1.y);
+  // vertex(p2.x, p2.y);
+  // vertex(p3.x, p3.y);
+  // vertex(p4.x, p4.y);
+  // endShape(CLOSE);
+  // a -= 0.01;
+  if (shouldSaveFrame) {
+    saveFrame("output/frame-######.png");
+  }
+}
