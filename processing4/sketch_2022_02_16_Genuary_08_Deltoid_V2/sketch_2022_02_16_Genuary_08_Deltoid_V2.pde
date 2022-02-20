@@ -1,11 +1,12 @@
-boolean shouldSaveFrame = false;
+boolean shouldSaveFrame = true;
 int size = 480;
 int squareAngleFrameCount = 600;
 int circleFrameCount = 300;
 float dotFrameCount = 1200;
-
+int fadeFrameCount = 360;
+int fadeFrameStart = 240;
 color fromColor = color(0,255,0);
-color toColor = color(0,255,0);
+color toColor = color(0,0,0);
 
 
 
@@ -38,10 +39,14 @@ PVector polarToCartesian(float r, float a) {
 void draw() {
   // image(img, 0,0,width,height);
   background(0);
-  for (int i = 0; i < 5000; ++i) {
-    if (i % 1000 == 0) {
-      println("i: " + i);
-    }
+  boolean doneWithFade = frameCount > fadeFrameStart + fadeFrameCount;
+  int max = doneWithFade ? min((frameCount - fadeFrameStart - fadeFrameCount + 1) * 5, 5000) : 2;
+  // if (max == 5000)
+  // println("max: " + max);
+  for (int i = 0; i < max; ++i) {
+    // if (i % 1000 == 0) {
+    //   println("i: " + i);
+    // }
     PVector translatePoint = new PVector();
     PVector rectPoint = new PVector();
     PVector circlePoint = new PVector();
@@ -102,18 +107,22 @@ void draw() {
     squareAngle -= squareAngleStep;
     circleDelta += circleStep;
     dotAngle += dotDelta;
-    
+    if (frameCount > fadeFrameStart) {
+      stroke(lerpColor(fromColor, toColor, min((frameCount - fadeFrameStart) / float(fadeFrameCount), 1)));
+    }
     pushMatrix();
     translate(translatePoint.x, translatePoint.y);
     rotate(squareAngle);
-    // rect(rectPoint.x, rectPoint.y, size, size);
+    if (!doneWithFade) 
+      rect(rectPoint.x, rectPoint.y, size, size);
     
     translate(rectPoint.x, rectPoint.y);
     translate(circlePoint.x, circlePoint.y);
-    // circle(0,0, r);
     PVector dotPoint = polarToCartesian(r, dotAngle + dotAngleComp);
-    // circle(dotPoint.x, dotPoint.y, 5);
-    
+    if (!doneWithFade) {
+      circle(0,0, r);
+      circle(dotPoint.x, dotPoint.y, 5);
+    }    
     
     
     points.add(new PVector(screenX(dotPoint.x,dotPoint.y), screenY(dotPoint.x,dotPoint.y)));
@@ -134,16 +143,20 @@ void draw() {
     }
   }
   
-  for (int i = 1; i < points.size(); ++i) {
-    stroke(lerpColor(fromColor, toColor, i / points.size()));
-    line(points.get(i - 1).x,points.get(i - 1).y, points.get(i).x,points.get(i).y);
+  stroke(0,255,0);
+  if (frameCount > fadeFrameStart + fadeFrameCount) {
+    for (int i = 1; i < points.size(); ++i) {
+      stroke(lerpColor(fromColor, toColor, i / points.size()));
+      line(points.get(i - 1).x,points.get(i - 1).y, points.get(i).x,points.get(i).y);
+    }
+    points.clear();
+  } else {
+    beginShape();
+    for (PVector p : points) {
+      vertex(p.x, p.y);
+    }
+    endShape();
   }
-  points.clear();
-  // beginShape();
-  // for (PVector p : points) {
-  //   vertex(p.x, p.y);
-  // }
-  // endShape();
   
   if (shouldSaveFrame) {
     saveFrame("output/frame-######.png");
