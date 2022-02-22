@@ -107,4 +107,5 @@ processing4/tools
 processing4/*/output/*.png
 processing4/**/*.mp4
 processing4/**/images
-processing4/tool_smoke_image/input/*
+processing4/tool_smoke_image/**/*.jpg
+processing4/tool_smoke_image/**/*.png
