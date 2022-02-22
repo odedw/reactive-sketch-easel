@@ -7,7 +7,7 @@ Point[][] pixelToPrev;
 boolean[][] bfsVisited;
 int w = 1000;
 int h = 1000;
-int bg = 150;
+
 void setup() {
   size(2000 ,1000);
   left = w * h;
