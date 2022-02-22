@@ -7,7 +7,7 @@ boolean[][] bfsVisited;
 int w,h, left;
 PImage output;
 int percent;
-
+int[] time = new int[4];
 PImage smoke(PImage input, int numFocalPoints, boolean relocateFocalPoints) {
   positions.clear();
   w = input.width;
@@ -41,8 +41,8 @@ PImage smoke(PImage input, int numFocalPoints, boolean relocateFocalPoints) {
       colorMatrix[x][y] = pg.get(x, y);
     }
   }
-  println("finished init");
-  println("left: " + left);
+  // println("finished init");
+  // println("left: " + left);
   
   for (int i = 0; i < numFocalPoints; ++i) {
     Point p1 = new Point(int(random(w)), int(random(h)));
@@ -53,31 +53,31 @@ PImage smoke(PImage input, int numFocalPoints, boolean relocateFocalPoints) {
   while(left > 0) {
     step();
     int newPercent = int(100 - (100.0 * float(left) / (w * h)));
-    if (percent != newPercent) {
-      println(newPercent + "%");
+    if (percent != newPercent && newPercent % 10 == 0) {
+      print(newPercent + "% ");
       percent = newPercent;
     }
   }
+  println();
   output.updatePixels();
   return output; 
 }
 
 void firstPixel(Point pixel, Point colorPixel) {  
-  println("firstPixel: " + pixel);
+  // println("firstPixel: " + pixel);
   positions.add(pixel);
   visited[pixel.x][pixel.y] = true;  
   pixelToColorMatrix[pixel.x][pixel.y] = colorPixel;
   colorMatrixVisited[colorPixel.x][colorPixel.y] = true;
   output.pixels[getIndex(pixel.x, pixel.y)] = colorMatrix[colorPixel.x][colorPixel.y];
-  // output.set(pixel.x, pixel.y, colorMatrix[colorPixel.x][colorPixel.y]);
   left--;
   
 }
 
-boolean step() {
+void step() {
   int size = positions.size();
   if (size == 0) {
-    return false;
+    return;
   }
   
   // get random pixel
@@ -87,7 +87,7 @@ boolean step() {
   Point next = new Point(0,0);
   if (neighbours.size() == 0) {
     positions.remove(index);
-    return false;
+    return;
   } else if (neighbours.size() == 1) { // no more unvisited neighbours, remove from positions 
     next = neighbours.get(0);
     positions.remove(index);
@@ -104,7 +104,6 @@ boolean step() {
   // output.set(next.x, next.y, c);
   
   left--;
-  return true;
 }
 
 
