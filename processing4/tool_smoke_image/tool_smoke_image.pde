@@ -1,6 +1,6 @@
-IntConfig numFocalPoints = () ->  int(random(1,20));
+IntConfig numFocalPoints = () ->  int(random(5,20));
 BoolConfig relocateFocalPoints = () -> true;
-IntConfig numIterations = () -> int(random(2,6));
+IntConfig numIterations = () -> int(random(4,7));
 int numVariations = 3;
 File folder = new File("D:/Projects/reactive-sketch-easel/processing4/tool_smoke_image/input");
 String[] filenames;
