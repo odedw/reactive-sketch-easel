@@ -1,0 +1,33 @@
+OpenSimplexNoise noise = new OpenSimplexNoise();
+
+class FlowField{
+  int resolution,leftX, rightX, topY, bottomY, cols, rows;
+  float[][] matrix;
+  float noiseScale = 0.02; 
+  
+  FlowField(float scale) {
+    resolution = int(width * scale);
+    
+    leftX = int(width * - 0.25);
+    rightX = int(width * 1.25);
+    topY = int(height * - 0.25);
+    bottomY = int(height * 1.25);
+    cols = int((rightX - leftX) / resolution);
+    rows = int((bottomY - topY) / resolution);    
+    matrix = new float[cols][rows];
+    
+    for (int col = 0; col < cols; ++col) {
+      for (int row = 0; row < rows; ++row) {
+        matrix[col][row] = (float) noise.eval(col * this.noiseScale, row * this.noiseScale);
+      }
+    }
+  }
+  
+  void draw() {
+    for (int col = 0; col < cols; ++col) {
+      for (int row = 0; row < rows; ++row) {
+        text(matrix[col][row], col * resolution + leftX, row * resolution + topY);
+      }
+    }
+  }
+}
