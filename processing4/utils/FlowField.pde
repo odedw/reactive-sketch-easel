@@ -30,7 +30,7 @@ class FlowField{
     }
   }
   void step() {
-    generateNoiseMatrix(frameCount / 1000.0);
+    generateNoiseMatrix(frameCount / 10.0);
   }
   
   void draw() {
