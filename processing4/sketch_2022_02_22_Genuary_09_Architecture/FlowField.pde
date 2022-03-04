@@ -12,10 +12,10 @@ class FlowField{
   FlowField(float scale, float noiseScale) {
     resolution = int(width * scale);
     
-    leftX = int(width * - 0.25);
-    rightX = int(width * 1.25);
-    topY = int(height * - 0.25);
-    bottomY = int(height * 1.25);
+    leftX = int(width * - 0.5);
+    rightX = int(width * 1.5);
+    topY = int(height * - 0.5);
+    bottomY = int(height * 1.5);
     cols = int((rightX - leftX) / resolution);
     rows = int((bottomY - topY) / resolution);    
     matrix = new float[cols][rows];
@@ -30,7 +30,7 @@ class FlowField{
     }
   }
   void step() {
-    generateNoiseMatrix(frameCount / 10.0);
+    generateNoiseMatrix(frameCount / 1000.0);
   }
   
   void draw() {
