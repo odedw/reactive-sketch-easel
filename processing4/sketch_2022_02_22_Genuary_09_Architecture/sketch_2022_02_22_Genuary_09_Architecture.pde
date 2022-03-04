@@ -1,102 +1,108 @@
-// int padding;
 boolean isRunning = true;
-
+int sunLocation = 0;
 boolean shouldSaveFrame = false;
-// Tile sky, ground;
-// Tile[] skies = new Tile[3];
-// ArrayList<Tile> buildings = new ArrayList<Tile>();
 PImage[] skies;
 PImage[] ground;
+PImage[] buildings;
+PImage[] sun;
+PImage paper;
+ArrayList<Building> blds = new ArrayList<Building>();
 FlowField flowField;
 void setup() {
-  size(1000,1000);
+  size(1920,1080, P2D);
   background(255);
-  
-  // padding = width / 10;
-  
-  String folderName = sketchPath() + "/images/sky";
-  File folder = new File(folderName);
-  String[] filenames = folder.list();
-  skies = new PImage[filenames.length];
-  for (int i = 0; i < filenames.length; ++i) {
-    skies[i] = loadImage(folderName + "/" + filenames[i]);
-  }
-  
-  folderName = sketchPath() + "/images/grass";
-  folder = new File(folderName);
-  filenames = folder.list();
-  ground = new PImage[filenames.length];
-  for (int i = 0; i < filenames.length; ++i) {
-    ground[i] = loadImage(folderName + "/" + filenames[i]);
-  }
-  
+  skies = loadFolder(sketchPath() + "/images/sky");
+  ground = loadFolder(sketchPath() + "/images/grass");
+  buildings = loadFolder(sketchPath() + "/images/buildings");
+  sun = loadFolder(sketchPath() + "/images/sun");
+  paper = loadImage(sketchPath() + "/images/paper.jpg");
   generate();
 }
-void generate() {
-  flowField = new FlowField(0.01);
-  
-  // sky = new Tile(sketchPath() + "/images/sky", 0, 0, width, height * 2 / 3);
-  // for (int i = 0; i < skies.length; ++i) {
-  //   skies[i] = new Tile(sketchPath() + "/images/sky", 0, 0, width, height * 2 / 3, true);
-  // }
-  // ground = new Tile(sketchPath() + "/images/grass", 0, height * 2 / 3, width, height / 3, true);
-  
-  // buildings.clear();
-  // int numBuildings = 5;//int(random(10, 15));
-  // for (int i = 0; i < numBuildings; ++i) {
-  
-  //   int h = int(random(height / 5, height * 4 / 5));
-  //   int w = int(random(width / 7, width / 4));
-  //   int x = int(random(padding, width - padding - w));
-  //   Tile b = new Tile(sketchPath() + "/images/buildings", x,height - h, w, h, false);
-  //   buildings.add(b);
-  //   x += w + random( -padding, padding);
-  // }
-}
 
-void draw() {
-  tint(255,120);
-  for (int i = 0; i < 100; ++i) {
-    PImage img = createImage(int(random(40, 100)), int(random(40, 60)), ARGB);
-    int x = int(random( -0.25 * width, 1.25 * width));
-    int y = int(random( -0.25 * height, 1.25 * height));
-    PImage[] arr = y > height * 0.66 ? ground : skies;
-    PImage randomImage = arr[int(random(arr.length))];
-    img.copy(randomImage, int(random(width - img.width)), int(random(height - img.height)), img.width, img.height, 0, 0, img.width, img.height);
-    pushMatrix();
-    translate(x,y);
-    rotate(flowField.get(x,y, -HALF_PI / 2,HALF_PI / 2));
-    image(img, img.width / 2, -img.height / 2, img.width, img.height);
-    popMatrix();
+PImage[] loadFolder(String folderName) {
+  File folder = new File(folderName);
+  String[] filenames = folder.list();
+  PImage[] arr = new PImage[filenames.length];
+  for (int i = 0; i < filenames.length; ++i) {
+    arr[i] = loadImage(folderName + "/" + filenames[i]);
+  }
+  return arr;
+}
+void generate() {
+  // background(255);
+  image(paper, 0,0,width, height);
+  flowField = new FlowField(0.01);
+  sunLocation = int( -0.1 * width);
+  blds.clear();
+  int x = int(width * - 0.1);
+  int i = 0;
+  while(x < width) {
+    Building b = new Building(x, buildings[i], flowField, int(random(0, 300)));
+    blds.add(b);
+    boolean overlap = random(1) < 0.5;
+    x +=  overlap ? random(0.7 * b.w, 0.9 * b.w) : random(1.2 * b.w, 1.4 * b.w);
+    i = (i + 1) % buildings.length;
     
   }
-  //tint(255,120);
-  //for (Tile s : skies) {
-  //s.draw();
-  // }
-  //// sky.draw();
-  //tint(255, 255);
-  //ground.draw();
-  //for (Tile b : buildings) {
-  //b.draw();
-  // }
+}
+
+PImage getTile(int x, int y) {
+  PImage[] arr = null;
+  if (y >  height * 0.75) {
+    arr = ground;
+  } else if (y < 0.15 * height && x > sunLocation - 0.1 * width && x < sunLocation + 0.1 * width) {
+    arr = sun;
+  } else {
+    arr = skies;
+  }
+  PImage img = createImage(int(random(40, 100)), int(random(40, 60)), ARGB);
+  PImage randomImage = arr[int(random(arr.length))];
+  img.copy(randomImage, int(random(width - img.width)), int(random(height - img.height)), img.width, img.height, 0, 0, img.width, img.height);
+  return img;
+}
+
+void putTile(int x, int y) {
+  tint(255,120);
+  PImage img = getTile(x, y);
+  pushMatrix();
+  translate(x,y);
+  rotate(flowField.get(x,y, 0,TWO_PI));
+  image(img,img.width / 2, -img.height / 2, img.width, img.height);
+  popMatrix();
+}
+void draw() {
+  for (Building b : blds) {
+    if (b.state == State.TEARED_DOWN && frameCount == 300 + b.delay) b.build();
+  }
+  for (int i = 0; i < 100; ++i) {
+    int x = int(random( -0.25 * width, 1.25 * width));
+    int y = int(random( -0.25 * height, 1.25 * height));
+    putTile(x,y);   
+  }
+  tint(255,255);
+  for (Building b : blds) {
+    b.step();
+    b.draw();
+  }
   
-  
-  // noLoop();
+  sunLocation++;
+  if (sunLocation > 1.25 * width) {
+    sunLocation = int( -0.25 * width);
+  }
   if (shouldSaveFrame) {
     saveFrame("output/frame-######.png");
   }
+  // flowField.step();
 }
 
 void keyPressed() {
   generate();
-  background(255);
   isRunning = true;
   loop();
   
 }
 void mousePressed() {
-  println("frameCount: " + frameCount);
+  println("frameCount : " + frameCount);
   isRunning = !isRunning;
   if (isRunning) loop(); else noLoop();
 }

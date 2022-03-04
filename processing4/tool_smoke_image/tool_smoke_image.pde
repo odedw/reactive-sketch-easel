@@ -1,4 +1,4 @@
-IntConfig numFocalPoints = () ->  int(random(5,20));
+  IntConfig numFocalPoints = () ->  int(random(5,20));
 BoolConfig relocateFocalPoints = () -> true;
 IntConfig numIterations = () -> int(random(4,7));
 int numVariations = 3;
