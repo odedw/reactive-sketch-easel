@@ -9,8 +9,17 @@ class Pixel{
   }
   
   void setHeight(int h) {
-    this.targetH = h;
-    this.isMoving = true;
+    this.setHeight(h, false);
+  }
+  
+  void setHeight(int h, boolean immediate) {
+    if (immediate) {
+      this.targetH = this.h = h;
+      this.isMoving = false; 
+    } else {
+      this.targetH = h;
+      this.isMoving = true;
+    }
   }
   
   void step() {
@@ -23,7 +32,7 @@ class Pixel{
   
   void draw() {
     fill(255);
-    
+    stroke(50,50,50,100);
     pushMatrix();
     translate( -fullWidth / 2 + this.i * size + this.i * gap, this.h / 2 , -fullWidth / 2 + this.j * size + this.j * gap);
     box(size, this.h,size);
