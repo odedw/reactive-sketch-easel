@@ -1,5 +1,5 @@
 boolean shouldSaveFrame = false;
-
+int maxObjects = 50;
 int regenFrames = 600;
 int cols = 80;
 int rows = 80;
@@ -59,7 +59,7 @@ void generate() {
   
   
   
-  while(cityObjects.size() < 50) {
+  while(cityObjects.size() < maxObjects) {
     cityObjects.add(factory.createObject());
     // println("cityObjects.size(): " + cityObjects.size());
   }
@@ -71,7 +71,7 @@ void mousePressed() {
   
   
   println("frameCount: " + frameCount);
-  // generate();
+  generate();
 }
 
 void draw() {
@@ -83,7 +83,7 @@ void draw() {
   rotateX(magicAngle);
   rotateY( -QUARTER_PI);
   translate(0, -15,0);
-  scale(1.1 + frameCount / 5000.0);
+  scale(1.1 + frameCount / 10000.0);
   
   if (frameCount % regenFrames == 0) {
     generate();
