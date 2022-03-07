@@ -92,7 +92,8 @@ void draw() {
   // generate car
   if (frameCount % 100 == 0) {
     Road road = roads.get(int(random(roads.size())));
-    cars.add(new Car(road.col, road.row, road.horizontal));
+    println("road.col: " + road.col);
+    cars.add(new Car(road.col + (road.horizontal ? 0 : 1), road.row + (road.horizontal ? 1 : 0), road.horizontal));
   }
   
   for (Car c : cars) {
