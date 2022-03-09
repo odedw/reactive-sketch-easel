@@ -1,6 +1,6 @@
 boolean shouldSaveFrame = false;
 int maxObjects = 50;
-int regenFrames = 600;
+int regenFrames = 430;
 int cols = 80;
 int rows = 80;
 int size = 6;
@@ -77,13 +77,13 @@ void mousePressed() {
 void draw() {
   background(0);
   lights();
-  pointLight(150, 150, 150, 10,30, 50);
+  pointLight(200, 200, 200, 10,30, 50);
   ortho( -400, 400, 400, -400, 0, 2000);
   translate(width / 2, height / 2);
   rotateX(magicAngle);
   rotateY( -QUARTER_PI);
   translate(0, -15,0);
-  scale(1.1 + frameCount / 10000.0);
+  scale(1.1 + frameCount / 6500.0);
   
   if (frameCount % regenFrames == 0) {
     generate();
