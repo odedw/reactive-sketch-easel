@@ -1,7 +1,7 @@
 
 boolean shouldSaveFrame = true;
 int spawnRectFrames = 60;
-int spawnBuildingFrames = 130;
+int spawnBuildingFrames = 300;
 int buildingStartFrame = 50;
 int spawnRiverFrame = 350;
 int riverStartFrame = 150;
@@ -10,9 +10,7 @@ int riverStartFrame = 150;
 ArrayList<Rect> rects = new ArrayList<Rect>();
 ArrayList<Building> buildings = new ArrayList<Building>();
 ArrayList<River> rivers = new ArrayList<River>();
-color[] rectColors = {#696969, #6e6e28, #77ba1d, #7bc800, #7d3054, #869664, #956432, #999900, #9ac6da, #9ceedd, #9e9eaa, #b57b00};
-color[] buildingColors = {#7f4502, #aad16a, #ae2974, #b0c1c3, #a2a3eb,  #a1a164};
-color[] riverColors = {#760000, #9364c8, #999900, #9ac6da, #9e9eaa, #b1c8ff, #5e5bc5, #606e32, #706419};
+int rectColorIndex, buildingColorIndex, riverColorIndex;
 color randomColor(color[] arr) {
   return arr[int(random(arr.length))];
 }
@@ -21,20 +19,27 @@ void setup() {
   rectMode(CENTER);
   frameRate(30);
   spawnRect();
-  // spawnBuilding();
-  // spawnRiver();
 }
 
 void spawnRiver() {
-  rivers.add(new River(randomColor(riverColors), int(random(height * 0.2, height * 0.8)), int(height * 0.15), random(1)<0.5 ? 1 :-  1));
+  color c = riverColors[riverColorIndex];
+  int direction = random(1)<0.5 ? 1 :-  1;
+  rivers.add(new River(c, int(height * 0.2), int(height * 0.15), direction));
+  rivers.add(new River(c, int(height * 0.7), int(height * 0.15), direction));
+  riverColorIndex = (riverColorIndex + 1) % riverColors.length;
 }
 
 void spawnRect() {
-  rects.add(new Rect(randomColor(rectColors), width / 2, height / 2));
+  color c = rectColors[rectColorIndex];
+  rects.add(new Rect(c, width / 2, height / 2));
+  rectColorIndex = (rectColorIndex + 1) % rectColors.length;
 }
 
 void spawnBuilding() {
-  buildings.add(new Building(randomColor(buildingColors), random(1) < 0.5 ? int(0.3 * width) : int(0.5 * width) , int(width * 0.2)));
+  color c = buildingColors[buildingColorIndex];
+  buildings.add(new Building(c, int(0.2 * width) , int(width * 0.2)));
+  buildings.add(new Building(c, int(0.6 * width) , int(width * 0.2)));
+  buildingColorIndex = (buildingColorIndex + 1) % buildingColors.length;
 }
 
 void draw() {
@@ -48,6 +53,8 @@ void draw() {
     spawnRiver();
   }
   background(255); 
+  translate(random( -2, 2), random( -2, 2));
+  
   for (Rect r : rects) {
     r.step();
     r.draw();
@@ -77,6 +84,12 @@ void mousePressed() {
   println("frameCount: " + frameCount);
   println("frameRate: " + frameRate);
 }
+
+color[] rectColors = {#696969, #77ba1d, #7ec864, #869664, #9364c8, #956432, #9ac6da, #9ceedd, #9e9eaa, #a1a164, #b1c8ff, #6e6e28, #999900, #8b3027};
+color[] buildingColors = {#606e32, #760000, #7bc800,  #7f4502, #8f2a91, #9600b1, #aad16a, #ae2974,  #b0c1c3};
+color[] riverColors = {#5e5bc5, #606e32, #706419, #7bc800, #87716f, #9364c8, #a2a3eb,  #a8c832, #b1c8ff};
+color[] dotsColors = {#696969, #760000, #77ba1d, #87716f, #956432, #a8c832,  #b57b00};
+
 /*
 bridge : #5e5bc5
 bush: #606e32
