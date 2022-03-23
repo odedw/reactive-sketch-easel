@@ -8,17 +8,18 @@ class Building{
     this.h = 0;
     this.w = w;
     this.speed = 6;
-    this.hSpeed = 4;
+    this.hSpeed = 3;
   }
   
   void step() {
     this.h += this.speed;
-    if (this.h >= height / 3)
+    if (this.h >= height / 2)
       this.x += this.x < width / 2 ? - this.hSpeed : this.hSpeed;
   }
   
   void draw() {
     pushMatrix();
+    
     noStroke();
     fill(this.f);
     translate(this.x + this.w / 2, height - this.h / 2);
