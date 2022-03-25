@@ -10,12 +10,11 @@ int riverStartFrame = 150;
 ArrayList<Rect> rects = new ArrayList<Rect>();
 ArrayList<Building> buildings = new ArrayList<Building>();
 ArrayList<River> rivers = new ArrayList<River>();
-int rectColorIndex, buildingColorIndex, riverColorIndex;
 color randomColor(color[] arr) {
   return arr[int(random(arr.length))];
 }
 void setup() {
-  size(1000,1000);
+  size(1820,1820);
   rectMode(CENTER);
   frameRate(30);
   spawnRect();
@@ -53,7 +52,6 @@ void draw() {
     spawnRiver();
   }
   background(255); 
-  translate(random( -2, 2), random( -2, 2));
   
   for (Rect r : rects) {
     r.step();
@@ -75,7 +73,7 @@ void draw() {
     saveFrame("output/frame-######.png");
   }
   
-  if (frameCount == 30 * 60) {
+  if (frameCount == 30 * 60 * 2) {
     noLoop();
   }
 }
@@ -86,8 +84,11 @@ void mousePressed() {
 }
 
 color[] rectColors = {#696969, #77ba1d, #7ec864, #869664, #9364c8, #956432, #9ac6da, #9ceedd, #9e9eaa, #a1a164, #b1c8ff, #6e6e28, #999900, #8b3027};
+int rectColorIndex = int(random(rectColors.length));
 color[] buildingColors = {#606e32, #760000, #7bc800,  #7f4502, #8f2a91, #9600b1, #aad16a, #ae2974,  #b0c1c3};
+int buildingColorIndex = int(random(buildingColors.length));
 color[] riverColors = {#5e5bc5, #606e32, #706419, #7bc800, #87716f, #9364c8, #a2a3eb,  #a8c832, #b1c8ff};
+int riverColorIndex = int(random(riverColors.length));
 color[] dotsColors = {#696969, #760000, #77ba1d, #87716f, #956432, #a8c832,  #b57b00};
 
 /*
