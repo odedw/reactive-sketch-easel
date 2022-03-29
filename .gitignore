@@ -104,9 +104,10 @@ dist
 .tern-port
 processing4/libraries
 processing4/tools
-processing4/*/output/*.png
+processing4/*/output*/*.png
 processing4/**/*.mp4
 processing4/**/images
 processing4/tool_smoke_image/**/*.jpg
 processing4/tool_smoke_image/**/*.png
-processing4/sketch_2022_03_11_Genuary_10_AI/gaugan/*.png
+processing4/sketch_2022_03_11_Genuary_10_AI/gaugan*/*.png
+processing4/**/frame-*.png
