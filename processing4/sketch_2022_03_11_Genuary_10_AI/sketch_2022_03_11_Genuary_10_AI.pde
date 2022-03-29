@@ -1,5 +1,5 @@
 
-boolean shouldSaveFrame = true;
+boolean shouldSaveFrame = false;
 int spawnRectFrames = 60;
 int spawnBuildingFrames = 300;
 int buildingStartFrame = 50;
@@ -14,7 +14,7 @@ color randomColor(color[] arr) {
   return arr[int(random(arr.length))];
 }
 void setup() {
-  size(1820,1820);
+  size(1920,1920);
   rectMode(CENTER);
   frameRate(30);
   spawnRect();
@@ -70,7 +70,7 @@ void draw() {
   
   
   if (shouldSaveFrame) {
-    saveFrame("output/frame-######.png");
+    saveFrame("output3/frame-######.png");
   }
   
   if (frameCount == 30 * 60 * 2) {
