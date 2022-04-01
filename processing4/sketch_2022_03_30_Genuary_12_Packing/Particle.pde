@@ -12,9 +12,30 @@ class Particle{
     vel.add(acc);
     vel.limit(vLimit);
     pos.add(vel);
-    // pos.x = constrain(pos.x, 0, width);
-    // pos.y = constrain(pos.y, 0, height);
     acc.mult(0);
+    float d = dist(pos.x, pos.y, width / 2, height / 2);
+    // checkCollisions();
+    
+    if (d - 2 > r - m / 2) {
+      // println("out");
+      Polar p = cartesianToPolar(pos.x - width / 2, pos.y - height / 2);
+      PVector newPos = polarToCartesian(r - m / 2, p.a);
+      pos.x = newPos.x + width / 2;
+      pos.y = newPos.y + height / 2;
+    }
+  }
+  
+  void checkCollisions() {
+    for (Particle p : particles) {
+      if (p == this) continue;
+      if (dist(p.pos.x, p.pos.y, pos.x, pos.y) >= p.m + m) continue;
+      
+      //collision
+      Polar polar = cartesianToPolar(pos.x - p.pos.x, pos.y - p.pos.y);
+      PVector newPos = polarToCartesian(p.m + m, polar.a);
+      pos.x = newPos.x + p.pos.x;
+      pos.y = newPos.y + p.pos.y;
+    }
   }
   
   
