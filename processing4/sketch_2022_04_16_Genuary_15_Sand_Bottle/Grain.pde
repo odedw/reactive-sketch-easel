@@ -8,7 +8,8 @@ class Grain{
   Grain(float x, float y, color c_) {
     w = 1.5;
     h = 1.5;
-    c = c_;
+    float colorRatio = random(0.8, 1);
+    c = color(red(c_) * colorRatio, green(c_) * colorRatio, blue(c_) * colorRatio);
     frameStart = frameCount;
     // Build Body
     BodyDef bd = new BodyDef();			
