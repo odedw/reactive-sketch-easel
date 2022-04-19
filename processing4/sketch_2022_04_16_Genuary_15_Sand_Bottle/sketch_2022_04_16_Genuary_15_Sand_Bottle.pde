@@ -10,10 +10,12 @@ ArrayList<Boundary> boundaries;
 int generated;
 int waiting = 0;
 boolean isWaiting = false;
-int GRAINS_PER_COLOR = 1200;
+int GRAINS_PER_COLOR = 1500;
 int GAP_FRAMES = 600;
 color[] colors = {#294984, #6ca0a7, #ffc789, #df5f50, #5a3034, #fff1dd};
 int colorIndex = 0;
+float  generatedX;
+PImage bg;
 
 void setup() {
   size(600,600);
@@ -27,17 +29,19 @@ void setup() {
   boundaries.add(new Boundary(width / 2 + 50,height / 2,2,height));
   
   grains = new ArrayList<Grain>();
+  generatedX = random(width / 2 - 45, width / 2 + 45);
+  bg = loadImage("henry-co--odUkx8C2gg-unsplash.jpg");
   // Grain g = new Grain(width / 2 - 10,height - 50);
   // grains.add(g);
 }
 
 void draw() {
-  background(#e6e6e6); 
+  image(bg, 0,0,width, height); 
   box2d.step();  
   
   if (colorIndex < colors.length && !isWaiting) {
     for (int i = 0; i < 2; ++i) {
-      Grain g = new Grain(width / 2, height / 3, colors[colorIndex]);
+      Grain g = new Grain(generatedX, height / 3, colors[colorIndex]);
       grains.add(g);
       generated++;
     }
@@ -45,6 +49,7 @@ void draw() {
     if (generated >= GRAINS_PER_COLOR) {
       colorIndex++;
       generated = 0;
+      generatedX = random(width / 2 - 45, width / 2 + 45);
       // isWaiting = true;
     }
   } 
@@ -79,5 +84,21 @@ void draw() {
 boolean debug = false;
 void mousePressed() {
   
-  debug = !debug;
+  // debug = !debug;
+  explode();
+  
+}
+
+void explode() {
+  shouldSaveFrame = true;
+  for (Grain g : grains) {
+    g.body.setType(BodyType.DYNAMIC);
+    g.stepsImmobile = 0;
+  }
+  
+  boundaries.get(1).b.setActive(false);
+  boundaries.get(2).b.setActive(false);
+  boundaries.remove(1);
+  boundaries.remove(1);
+  
 }
