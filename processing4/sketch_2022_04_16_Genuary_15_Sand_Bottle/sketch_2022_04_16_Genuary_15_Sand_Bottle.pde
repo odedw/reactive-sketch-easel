@@ -13,54 +13,34 @@ int GRAINS_PER_COLOR = 1500;
 int GAP_FRAMES = 600;
 color[] colors = {#294984, #6ca0a7, #ffc789, #df5f50, #5a3034, #fff1dd};
 int colorIndex = 0;
-float  generatedX;
-PImage bg;
-Bottle bottle;
-
+float generatedX;
+SquareContainer container;
+Background bg; 
 void setup() {
   size(600,600);
   box2d = new Box2DProcessing(this);	
   box2d.createWorld();
   
   grains = new ArrayList<Grain>();
-  bg = loadImage("henry-co--odUkx8C2gg-unsplash.jpg");
-  bottle = new Bottle(width / 2, height * 0.75, 100, 300);
-  
-  generatedX = width / 2 + 50;
-  // Grain g = new Grain(width / 2 - 10,height - 50);
-  // grains.add(g);
+  container = new SquareContainer(width / 2, height * 0.4 , 150);
+  generatedX = container.x;
+  bg = new Background();
 }
 
 void draw() {
-  image(bg, 0,0,width, height); 
+  bg.draw();
   box2d.step();  
-  bottle.draw();
-  if (colorIndex < colors.length && !isWaiting) {
-    for (int i = 0; i < 2; ++i) {
-      Grain g = new Grain(generatedX, height / 2 - 180, colors[colorIndex]);
-      grains.add(g);
-      generated++;
-    }
-    
-    if (generated >= GRAINS_PER_COLOR) {
-      colorIndex++;
-      generated = 0;
-      // generatedX = random(bottle.p2.x, bottle.p4.x);
-    }
-  } 
+  container.draw();
+  
+  generateGrains();
+  
   
   // Display all the boxes
-  int mobile = 0;
   for (Grain g : grains) {
     g.step();
     g.draw();
-    if (g.body.getType() == BodyType.DYNAMIC) mobile++;
-    
   }
   
-  if (mobile == 0) {
-    isWaiting = false;
-  }
   if (shouldSaveFrame) {
     saveFrame("output/frame-######.png");
   }
@@ -87,3 +67,20 @@ void explode() {
   // boundaries.remove(1);
   
 }
+
+void generateGrains() {
+  if (colorIndex < colors.length) {
+    for (int i = 0; i < 2; ++i) {
+      Grain g = new Grain(generatedX, container.y - container.size, colors[colorIndex]);
+      grains.add(g);
+      generated++;
+    }
+    
+    if (generated >= GRAINS_PER_COLOR) {
+      colorIndex++;
+      generated = 0;
+      // generatedX = random(bottle.p2.x, bottle.p4.x);
+    }
+  } 
+}
+
