@@ -45,6 +45,7 @@ class Boundary {
   void draw() {
     fill(0);
     stroke(0);
+    noStroke();
     rectMode(CENTER);
     rect(x,y,w,h);
   }
