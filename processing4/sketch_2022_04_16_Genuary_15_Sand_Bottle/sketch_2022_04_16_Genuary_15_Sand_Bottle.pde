@@ -9,21 +9,24 @@ ArrayList<Grain> grains;
 int generated;
 int waiting = 0;
 boolean isWaiting = false;
-int GRAINS_PER_COLOR = 1500;
+int GRAINS_PER_COLOR = 1000;
 int GAP_FRAMES = 600;
 color[] colors = {#294984, #6ca0a7, #ffc789, #df5f50, #5a3034, #fff1dd};
 int colorIndex = 0;
-float generatedX;
+int generatedX;
+ArrayList<Integer> xValues = new ArrayList<Integer>();
 SquareContainer container;
-Background bg; 
+Background bg;
+boolean shouldStop = false; 
 void setup() {
   size(600,600);
   box2d = new Box2DProcessing(this);	
   box2d.createWorld();
   
   grains = new ArrayList<Grain>();
-  container = new SquareContainer(width / 2, height * 0.4 , 150);
-  generatedX = container.x;
+  container = new SquareContainer(width / 2, height * 0.5 , 300);
+  generatedX = int(container.x);
+  xValues.add(generatedX);
   bg = new Background();
 }
 
@@ -32,7 +35,9 @@ void draw() {
   box2d.step();  
   container.draw();
   
-  generateGrains();
+  if (!shouldStop) {
+    generateGrains();
+  }
   
   
   // Display all the boxes
@@ -45,26 +50,16 @@ void draw() {
     saveFrame("output/frame-######.png");
   }
 }
-
 boolean debug = false;
 void mousePressed() {
   
-  // debug = !debug;
-  explode();
-  
-}
-
-void explode() {
-  shouldSaveFrame = true;
-  for (Grain g : grains) {
-    g.body.setType(BodyType.DYNAMIC);
-    g.stepsImmobile = 0;
+  if (!shouldStop) {
+    shouldStop = true;
+    return;
   }
   
-  // boundaries.get(1).b.setActive(false);
-  // boundaries.get(2).b.setActive(false);
-  // boundaries.remove(1);
-  // boundaries.remove(1);
+  saveLocation();
+  
   
 }
 
@@ -77,10 +72,31 @@ void generateGrains() {
     }
     
     if (generated >= GRAINS_PER_COLOR) {
-      colorIndex++;
+      colorIndex = (colorIndex + 1) % colors.length;
       generated = 0;
-      // generatedX = random(bottle.p2.x, bottle.p4.x);
+      generatedX = int(random(container.x - container.size * 0.4, container.x + container.size * 0.4));
+      xValues.add(generatedX);
     }
   } 
 }
 
+void saveLocation() {
+  JSONObject json = new JSONObject();
+  JSONArray xarr = new JSONArray();
+  for (int i = 0; i < xValues.size(); i++) {
+    xarr.setInt(i, xValues.get(i));
+  }
+  json.setJSONArray("xValues", xarr);
+  JSONArray positions = new JSONArray();
+  for (int i = 0; i < grains.size(); i++) {
+    JSONObject pos = new JSONObject();
+    Vec2 coord = box2d.getBodyPixelCoord(grains.get(i).body);
+    pos.setInt("x", int(coord.x));
+    pos.setInt("y", int(coord.y));
+    positions.setJSONObject(i, pos);
+  }
+  json.setJSONArray("positions", positions);
+  
+  saveJSONObject(json, "data/run.json");
+  println("saved");
+}
