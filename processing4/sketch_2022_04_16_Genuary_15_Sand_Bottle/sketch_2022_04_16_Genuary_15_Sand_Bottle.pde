@@ -11,27 +11,29 @@ int waiting = 0;
 boolean isWaiting = false;
 int GRAINS_PER_COLOR = 1000;
 int GAP_FRAMES = 600;
-color[] colors = {#294984, #6ca0a7, #ffc789, #df5f50, #5a3034, #fff1dd};
+color[] colors = {#355590, #6ca0a7, #ffc789, #df5f50, #5a3034, #fff1dd};
 int colorIndex = 0;
-int generatedX;
+int spawnX;
+OpenSimplexNoise xNoise = new OpenSimplexNoise();
 ArrayList<Integer> xValues = new ArrayList<Integer>();
 SquareContainer container;
-Background bg;
+// Background bg;
 boolean shouldStop = false; 
 void setup() {
-  size(600,600);
+  size(800,800);
   box2d = new Box2DProcessing(this);	
   box2d.createWorld();
   
   grains = new ArrayList<Grain>();
-  container = new SquareContainer(width / 2, height * 0.5 , 300);
-  generatedX = int(container.x);
-  xValues.add(generatedX);
-  bg = new Background();
+  container = new SquareContainer(width / 2, height * 0.5 , 800);
+  spawnX = int(container.x);
+  xValues.add(spawnX);
+  // bg = new Background();
 }
 
 void draw() {
-  bg.draw();
+  // bg.draw();
+  background(200);
   box2d.step();  
   container.draw();
   
@@ -41,7 +43,13 @@ void draw() {
   
   
   // Display all the boxes
-  for (Grain g : grains) {
+  for (int i = grains.size() - 1; i >= 0; i--) {
+    Grain g = grains.get(i);
+    Vec2 pos = box2d.getBodyPixelCoord(g.body);		
+    if (pos.x > width || pos.x < 0) {
+      grains.remove(i);
+      continue;
+    } 
     g.step();
     g.draw();
   }
@@ -65,8 +73,10 @@ void mousePressed() {
 
 void generateGrains() {
   if (colorIndex < colors.length) {
-    for (int i = 0; i < 2; ++i) {
-      Grain g = new Grain(generatedX, container.y - container.size, colors[colorIndex]);
+    generateX();
+    
+    for (int i = 0; i < 3; ++i) {
+      Grain g = new Grain(spawnX, container.y - container.size / 2, colors[colorIndex]);
       grains.add(g);
       generated++;
     }
@@ -74,8 +84,6 @@ void generateGrains() {
     if (generated >= GRAINS_PER_COLOR) {
       colorIndex = (colorIndex + 1) % colors.length;
       generated = 0;
-      generatedX = int(random(container.x - container.size * 0.4, container.x + container.size * 0.4));
-      xValues.add(generatedX);
     }
   } 
 }
@@ -99,4 +107,14 @@ void saveLocation() {
   
   saveJSONObject(json, "data/run.json");
   println("saved");
+}
+
+
+void generateX() {
+  float noiseScale = 0.003;
+  float noiseValue = (float) xNoise.eval(frameCount * noiseScale, 0, 0);
+  spawnX = int(map(noiseValue, -1, 1, 0, width));
+  
+  
+  xValues.add(spawnX);
 }

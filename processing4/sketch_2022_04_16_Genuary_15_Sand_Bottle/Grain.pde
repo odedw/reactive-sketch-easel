@@ -6,8 +6,8 @@ class Grain{
   int frameStart;
   color c;
   Grain(float x, float y, color c_) {
-    w = 1.5;
-    h = 1.5;
+    w = 3;
+    h = 3;
     float colorRatio = random(0.8, 1);
     c = color(red(c_) * colorRatio, green(c_) * colorRatio, blue(c_) * colorRatio);
     frameStart = frameCount;
@@ -16,7 +16,7 @@ class Grain{
     bd.type = BodyType.DYNAMIC;
     bd.position.set(box2d.coordPixelsToWorld(x,y));
     body = box2d.createBody(bd);
-    
+    body.setGravityScale(1.3);
     // Define a polygon (this is what we use for a rectangle)
     PolygonShape sd = new PolygonShape();
     float box2dW = box2d.scalarPixelsToWorld(w / 2);

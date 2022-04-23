@@ -1,3 +1,4 @@
+color c = #fff1dd;
 class Background{
   PGraphics pg;
   OpenSimplexNoise noise = new OpenSimplexNoise();
@@ -12,9 +13,9 @@ class Background{
     for (int y = 0; y < height; y++) {
       for (int x = 0; x < width; x++) {
         float v = (float) noise.eval(x * noiseScale, y * noiseScale * 5, zOffset);      
-        float c = map(v, -1, 1, 210, 255);
+        float a = map(v, -1, 1, 0, 20);
         int index = (x + y * width);
-        pg.pixels[index] = color(c);
+        pg.pixels[index] = color(red(c) - a, green(c) - a, blue(c) - a);
         
       }
     }
