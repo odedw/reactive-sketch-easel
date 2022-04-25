@@ -6,7 +6,7 @@ import org.jbox2d.dynamics.*;
 int RENDER_EVERY = 1;
 int GAP_FRAMES = 600;
 int GRAIN_SIZE = 3;
-boolean shouldSaveFrame = true;
+boolean shouldSaveFrame = false;
 int[] topStaticY;
 
 Box2DProcessing box2d;		
@@ -21,31 +21,27 @@ ArrayList<Integer> xValues = new ArrayList<Integer>();
 SquareContainer container;
 // Background bg;
 boolean shouldStop = false; 
-JSONArray positions;
-ColorDecider cd;
-int index;
+
+ColorDecider cd = new ColorDecider(null, null);
+
 void setup() {
   size(750,750);
-  JSONObject json = loadJSONObject("data/run-full.json");
-  positions = json.getJSONArray("positions");
-  cd = new ColorDecider("michele-caliani-iLAAT1E-H_8-unsplash.png", positions);
-  //cd = new ColorDecider(null, null);
-  
   box2d = new Box2DProcessing(this);	
   box2d.createWorld();
+  println("box2d: " + box2d);
   
   grains = new ArrayList<Grain>();
   container = new SquareContainer(width / 2, height * 0.5 , width);
   spawnX = int(container.x);
+  // bg = new Background();
   // println("var: " + (width / GRAIN_SIZE) * (height / GRAIN_SIZE));
   
   topStaticY = new int[width];
-  for (int i = 0; i < width; ++i) {
-    topStaticY[i] = height;
-  }
   spawnY = int(container.y - container.size / 2);
 }
 void draw() {
+  
+  
   box2d.step();  
   
   if (!shouldStop) {
@@ -79,7 +75,7 @@ void draw() {
     if (g.body.getType() == BodyType.DYNAMIC) {
       dynamicCount++;
     } else {
-      topStaticY[int(pos.x)] = min(topStaticY[int(pos.x)], int(pos.y));
+      topStaticY[int(pos.x)] = max(topStaticY[int(pos.x)], int(pos.y));
     }
     
     if (pos.x > width || pos.x < 0) {
@@ -93,22 +89,10 @@ void draw() {
     }
   }
   
-  shouldStop = true;
-  for (int i = 0; i < width; ++i) {
-    if (topStaticY[i] > 0) {
-      shouldStop = false;
-      break;
-    }
+  if (!shouldStop && grains.size() >= (width / GRAIN_SIZE) * (height / GRAIN_SIZE)) {
+    println("stopping");
+    shouldStop = true;
   }
-  if (shouldStop) {
-    noLoop();
-    // saveLocation();
-  }
-  // if (!shouldStop && grains.size() >= (width / GRAIN_SIZE) * (height / GRAIN_SIZE)) {
-  //   println("stopping");
-  //   shouldStop = true;
-  // }
-  
   
   if (frameCount % 500 == 0) {
     println("grains: " + grains.size() + ", " + dynamicCount + " dynamic, " + nf(float(dynamicCount) / grains.size(), 0, 2) + " ratio");
@@ -124,39 +108,16 @@ void mousePressed() {
   //shouldStop = true;
   //return;
   // }
-  println("topStaticY[mouseX]: " + topStaticY[mouseX]);
+  
   saveLocation();
 }
 
 void generateGrains() {
-  // run from file
-  if (positions != null) {
-    if (index >= positions.size()) {
-      return;
-    }
-    for (int i = 0; i < 3; ++i) {
-      Grain g = new Grain(positions.getJSONObject(index).getInt("startX"), spawnY, cd.getColor(index));
-      grains.add(g);
-      index++;
-    }
+  generateX();
+  // don't spawn if the top is above the edge
+  if (topStaticY[spawnX] < height / 2) {
     return;
   }
-  
-  
-  for (int i = 0; i < 1000; ++i) {
-    generateX(i);
-    if (spawnX >= 0 && spawnX < width && topStaticY[spawnX] > 0) {
-      break;
-    } 
-    if (i == 999) {
-      println("skipped");
-      return;
-    }
-  }
-  // don't spawn if the top is above the edge
-  // if (spawnX < 0 || spawnX >= width || topStaticY[spawnX] < 0) {
-  // return;
-  // }
   for (int i = 0; i < 3; ++i) {
     Grain g = new Grain(spawnX, spawnY, cd.getColor(grains.size()));
     grains.add(g);
@@ -181,9 +142,9 @@ void saveLocation() {
 }
 
 
-void generateX(int i) {
+void generateX() {
   float noiseScale = 0.003;
-  float noiseValue = (float) xNoise.eval(frameCount * noiseScale, i, 0);
+  float noiseValue = (float) xNoise.eval(frameCount * noiseScale, 0, 0);
   spawnX = int(map(noiseValue, -1, 1, -0.2 * width, 1.2 * width));
 }
 
