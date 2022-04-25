@@ -1,13 +1,14 @@
 class Grain{
   Body body;
   float w,h;
-  int stepsImmobile;
+  int stepsImmobile, startX;
   Vec2 prevPos;
   int frameStart;
   color c;
   Grain(float x, float y, color c_) {
-    w = 3;
-    h = 3;
+    w = GRAIN_SIZE;
+    h = GRAIN_SIZE;
+    startX = int(x);
     float colorRatio = random(0.8, 1);
     c = color(red(c_) * colorRatio, green(c_) * colorRatio, blue(c_) * colorRatio);
     frameStart = frameCount;
