@@ -1,3 +1,4 @@
+int GRAINS_PER_COLOR = 1000;
 
 class ColorDecider {
   PImage img;
@@ -15,10 +16,8 @@ class ColorDecider {
       pg.beginDraw();
       pg.image(img, 0, 0, width, height);
       pg.endDraw();
-      positions = positions_;      
-    } else {
-      int[] arr = {int(width * 0.25), int(width * 0.5), int(width * 0.75)};
-      xPositions = arr;
+      positions = positions_;
+      int[] xPositions = {int(width * 0.25), int(width * 0.5), int(width * 0.75)};
     }
   }
   
@@ -39,17 +38,13 @@ class ColorDecider {
   }
   
   color getColorFromPalette() {
-    // spawnX = int(map(sin(frameCount / 100.0), -1, 1, 10, width - 10));
-    
-    generated++;
-    color c = colors[colorIndex];
     if (generated >= GRAINS_PER_COLOR) {
       colorIndex = (colorIndex + 1) % colors.length;
       generated = 0;
-      // xIndex = (xIndex + 1) % xPositions.length;
-      // spawnX = xPositions[xIndex];
-      //spawnX = int(random(10, width - 10));
+      xIndex = (xIndex + 1) % xPositions.length;
+      spawnX = xPositions[xIndex];
     }
-    return c;
+    generated++;
+    return colors[colorIndex];
   }
 }

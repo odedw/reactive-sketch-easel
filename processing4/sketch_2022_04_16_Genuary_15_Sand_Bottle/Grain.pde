@@ -51,16 +51,16 @@ class Grain{
   }
   
   void step() {
-    if (body.getType() == BodyType.STATIC) return;
+    if (body.getType() != BodyType.DYNAMIC) return;
     Vec2 pos = box2d.getBodyPixelCoord(body);		
     if (prevPos != null && dist(pos.x, pos.y, prevPos.x, prevPos.y) <= 1) {
       stepsImmobile++;
     } else {
       stepsImmobile = 0;
       prevPos = pos;
-      if (debug) {
-        println(dist(pos.x, pos.y, prevPos.x, prevPos.y));
-      }
+      // if (debug) {
+      // println(dist(pos.x, pos.y, prevPos.x, prevPos.y));
+      // }
     }
     
     if (stepsImmobile >= 50) {
