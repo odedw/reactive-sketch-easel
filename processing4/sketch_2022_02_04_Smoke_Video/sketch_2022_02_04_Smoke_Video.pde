@@ -1,10 +1,10 @@
 
 import processing.video.*;
 Movie vid;
-String videoFileName = "Ink - 21536.mp4";
+String videoFileName = "gradient5.mp4";
 boolean record = true;
-boolean precompute = false;
-
+boolean precompute = true;
+int numFocals = 10;
 int newFrame = 0;
 int frames = 0;
 int left;
@@ -13,12 +13,12 @@ boolean[][] visited, colorMatrixVisited;
 Point[][] pixelToColorMatrix;
 Point[][] pixelToPrev;
 boolean[][] bfsVisited;
-int w = 1280;
-int h = 720;
+int w = 1080;
+int h = 1080;
 float frameDuration;
 
 void setup() {
-  size(1280,720);
+  size(1080,1080);
   vid = new Movie(this, videoFileName);
   
   float frameDuration = 1.0 / vid.frameRate;
@@ -47,13 +47,21 @@ void setup() {
     }
   }
   
-  int numFocals = 12;//int(random(3,6));
-  for (int i = 0; i < numFocals; ++i) {
-    // Point p = new Point(w / 2,h / 2);
-    Point p = new Point(int(random(w)), int(random(h)));
-    //  Point p2 = new Point(int(random(w)), int(random(h)));
-    firstPixel(p, p);  
+  // for (int i = 0; i < numFocals; ++i) {
+  //   Point p = new Point(int(random(w)), int(random(h)));
+  //   firstPixel(p, p);  
+  // }
+  for (int i = 0; i < 10; ++i) {
+    PVector pv = polarToCartesian(width * 0.35, i * (TWO_PI / 10.0));
+    Point p = new Point(int(pv.x + width / 2), int(pv.y + height / 2));
+    firstPixel(p, p);
   }
+  
+  // Point p = new Point(0, height - 1);
+  // firstPixel(p,p);
+  // p = new Point(width - 1, height - 1);
+  // firstPixel(p,p);
+  
   
   if (precompute) {
     while(left > 0) {
@@ -80,7 +88,9 @@ void draw() {
     
     frames++;
     if (frames > getLength()) {
-      frames = 0;
+      // frames = 0;
+      println("done");
+      noLoop();
     }
     setFrame(frames);
     // println("frames: " + frames);
