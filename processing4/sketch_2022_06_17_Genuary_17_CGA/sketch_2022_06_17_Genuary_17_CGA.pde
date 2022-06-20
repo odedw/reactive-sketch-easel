@@ -5,6 +5,10 @@ boolean shouldSaveFrame = false;
 PImage img;
 PGraphics pg;
 Movie vid;
+color[] palette = {#ff55ff, #55ffff, #ffffff, #000000};
+int pixelSize = 5;
+
+// String videoFileName = "20220531_192145.mp4";
 // String videoFileName = "man-running.mp4";
 String videoFileName = "hand-in-the-sand.mp4";
 int frames = 0;
@@ -85,3 +89,24 @@ void mousePressed() {
   running = !running;
   println("frameCount: " + frameCount);
 }
+
+
+
+void drawFrame(PGraphics pg) {
+  // pixelate
+  PGraphics frameBuffer = createGraphics(pg.width / pixelSize, pg.height / pixelSize);
+  frameBuffer.beginDraw();
+  // frameBuffer.image(pg, 0,0, frameBuffer.width, frameBuffer.height);
+  pixelate(pg, frameBuffer, pixelSize);
+  dither(frameBuffer, DitherAlgorithm.FLOYD_STEINBERG, palette);
+  
+  frameBuffer.endDraw();
+  // image(frameBuffer, 0,0, width, height);
+  for (int y = 0;y < frameBuffer.height;y ++) {
+    for (int x = 0;x < frameBuffer.width;x ++) {
+      fill(frameBuffer.get(x,y));
+      rect(x * pixelSize, y * pixelSize, pixelSize, pixelSize);
+    }
+  }
+}
+
