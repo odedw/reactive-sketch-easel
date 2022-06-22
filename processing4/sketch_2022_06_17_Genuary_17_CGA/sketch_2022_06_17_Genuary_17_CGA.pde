@@ -5,12 +5,13 @@ boolean shouldSaveFrame = false;
 PImage img;
 PGraphics pg;
 Movie vid;
-color[] palette = {#ff55ff, #55ffff, #ffffff, #000000};
-int pixelSize = 5;
+color[] palette = {#ff55ff, #55ffff, #000000, #ffffff };
+int pixelSize = 4;
 
 // String videoFileName = "20220531_192145.mp4";
 // String videoFileName = "man-running.mp4";
-String videoFileName = "hand-in-the-sand.mp4";
+// String videoFileName = "hand-in-the-sand.mp4";
+String videoFileName = "highway-with-cars-static.mp4";
 int frames = 0;
 
 int getLength() {
@@ -37,7 +38,8 @@ void setFrame(int n) {
 } 
 
 void setup() {
-  size(1280,720);
+  size(1920,1080);
+  
   // img = loadImage("elizeu-dias-RN6ts8IZ4_0-unsplash.jpg");
   pg = createGraphics(width, height);
   // pg.beginDraw();
@@ -94,19 +96,25 @@ void mousePressed() {
 
 void drawFrame(PGraphics pg) {
   // pixelate
-  PGraphics frameBuffer = createGraphics(pg.width / pixelSize, pg.height / pixelSize);
+  PGraphics frameBuffer = pixelSize ==  1 ? createGraphics(width,height) : createGraphics(pg.width / pixelSize, pg.height / pixelSize);
   frameBuffer.beginDraw();
-  // frameBuffer.image(pg, 0,0, frameBuffer.width, frameBuffer.height);
-  pixelate(pg, frameBuffer, pixelSize);
-  dither(frameBuffer, DitherAlgorithm.FLOYD_STEINBERG, palette);
+  if (pixelSize > 1) {
+    frameBuffer.image(pg, 0,0, frameBuffer.width, frameBuffer.height);
+    pixelate(pg, frameBuffer, pixelSize);
+  } else {
+    frameBuffer.image(pg, 0,0,frameBuffer.width, frameBuffer.height);
+  }
+  dither(frameBuffer, DitherAlgorithm.STUCKI, palette);
   
   frameBuffer.endDraw();
-  // image(frameBuffer, 0,0, width, height);
-  for (int y = 0;y < frameBuffer.height;y ++) {
-    for (int x = 0;x < frameBuffer.width;x ++) {
-      fill(frameBuffer.get(x,y));
-      rect(x * pixelSize, y * pixelSize, pixelSize, pixelSize);
+  if (pixelSize >= 1) {
+    for (int y = 0;y < frameBuffer.height;y ++) {
+      for (int x = 0;x < frameBuffer.width;x ++) {
+        fill(frameBuffer.get(x,y));
+        rect(x * pixelSize, y * pixelSize, pixelSize, pixelSize);
+      }
     }
+  } else {
+    image(frameBuffer, 0,0, width, height);
   }
 }
-
