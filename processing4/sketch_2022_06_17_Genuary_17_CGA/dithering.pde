@@ -42,28 +42,57 @@ void dither(PGraphics pg, DitherAlgorithm alg, color[] palette) {
       float errG = oldG - newG;
       float errB = oldB - newB;
       
+      // don't pass the error if the closest color is black
+      if (closest == #000000) continue;
+      
+      
+      
       if (alg == DitherAlgorithm.FLOYD_STEINBERG) {
-        passError(x + 1, y, errR, errG, errB, 7.0, pg);
-        passError(x - 1, y + 1, errR, errG, errB, 3.0, pg);
-        passError(x , y + 1, errR, errG, errB, 5.0, pg);
-        passError(x + 1, y + 1, errR, errG, errB, 1.0, pg);
+        passError(x + 1, y, errR, errG, errB, 7.0 / 16.0, pg);
+        passError(x - 1, y + 1, errR, errG, errB, 3.0 / 16.0, pg);
+        passError(x , y + 1, errR, errG, errB, 5.0 / 16.0, pg);
+        passError(x + 1, y + 1, errR, errG, errB, 1.0 / 16.0, pg);
       } else if (alg == DitherAlgorithm.STUCKI) {
         //         X   8   4 
         // 2   4   8   4   2
         // 1   2   4   2   1
         //   (1/42)
+        passError(x + 1, y, errR, errG, errB, 8.0 / 42.0, pg);
+        passError(x + 2, y, errR, errG, errB, 4.0 / 42.0, pg);
+        passError(x - 2, y + 1, errR, errG, errB, 2.0 / 42.0, pg);
+        passError(x - 1, y + 1, errR, errG, errB, 4.0 / 42.0, pg);
+        passError(x, y + 1, errR, errG, errB, 8.0 / 42.0, pg);
+        passError(x + 1, y + 1, errR, errG, errB, 4.0 / 42.0, pg);
+        passError(x + 2, y + 1, errR, errG, errB, 2.0 / 42.0, pg);
+        passError(x - 2, y + 2, errR, errG, errB, 1.0 / 42.0, pg);
+        passError(x - 1, y + 2, errR, errG, errB, 2.0 / 42.0, pg);
+        passError(x, y + 2, errR, errG, errB, 4.0 / 42.0, pg);
+        passError(x + 1, y + 2, errR, errG, errB, 2.0 / 42.0, pg);
+        passError(x + 2, y + 2, errR, errG, errB, 1.0 / 42.0, pg);
       }
     }
   }
+  
+  // for (int y = 1;y < pg.height - 1;y++) {    
+  //   for (int x = 1;x < pg.width - 1;x++) {
+  //     if (pg.get(x,y - 1) == #000000 && 
+  //         pg.get(x,y + 1) == #000000 && 
+  //         pg.get(x - 1,y) == #000000 && 
+  //         pg.get(x + 1,y) == #000000) {
+  //       pg.set(x,y, #000000);
+  //     }
+  //   }
+  // }
+  
 }
 
 
-void passError(int x, int y, float errR, float errG, float errB, float factor, PGraphics pg) {
-  if (x >= pg.width || y >= pg.height) return;
+void passError(int x, int y, float errR, float errG, float errB, float ratio, PGraphics pg) {
+  if (x >=  pg.width || y >= pg.height) return;
   
   color c = pg.get(x,y);
-  float newR = red(c) + errR * factor / 16.0;
-  float newG = green(c) + errG * factor / 16.0;
-  float newB = blue(c) + errB * factor / 16.0;
+  float newR = red(c) + errR * ratio;
+  float newG = green(c) + errG * ratio;
+  float newB = blue(c) + errB * ratio;
   pg.set(x, y, color(newR, newG, newB));
 }
