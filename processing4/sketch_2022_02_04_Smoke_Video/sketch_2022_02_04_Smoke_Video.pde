@@ -1,7 +1,7 @@
 
 import processing.video.*;
 Movie vid;
-String videoFileName = "gradient5.mp4";
+String videoFileName = "hand-in-the-sand_no_dithering_cyan_instead_white.mp4";
 boolean record = true;
 boolean precompute = true;
 int numFocals = 10;
@@ -13,12 +13,12 @@ boolean[][] visited, colorMatrixVisited;
 Point[][] pixelToColorMatrix;
 Point[][] pixelToPrev;
 boolean[][] bfsVisited;
-int w = 1080;
+int w = 1920;
 int h = 1080;
 float frameDuration;
 
 void setup() {
-  size(1080,1080);
+  size(1920,1080);
   vid = new Movie(this, videoFileName);
   
   float frameDuration = 1.0 / vid.frameRate;

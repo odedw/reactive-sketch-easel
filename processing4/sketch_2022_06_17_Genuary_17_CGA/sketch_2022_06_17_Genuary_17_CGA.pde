@@ -1,17 +1,22 @@
 
 import processing.video.*;
 
-boolean shouldSaveFrame = false;
+boolean shouldSaveFrame = true;
 PImage img;
 PGraphics pg;
 Movie vid;
-color[] palette = {#ff55ff, #55ffff, #000000, #ffffff };
-int pixelSize = 4;
+// color[] palette = {#ff55ff, #55ffff, #000000, #ffffff };
+color[] palette = {#880E1E, #B51459, #C34124, #E7AE1C, #DFB09F, #6D6B40, #47792D, #0A3E34, #072675, #6D729C};
+int pixelSize = 2;
 
 // String videoFileName = "20220531_192145.mp4";
 // String videoFileName = "man-running.mp4";
 // String videoFileName = "hand-in-the-sand.mp4";
-String videoFileName = "highway-with-cars-static.mp4";
+// String videoFileName = "highway-with-cars-static.mp4";
+// String videoFileName = "highway-with-cars-static-square.mp4";
+String videoFileName = "pov-bike.mp4";
+// String videoFileName = "20220624_141524.mp4";
+// String videoFileName = "train.mp4";
 int frames = 0;
 
 int getLength() {
@@ -39,8 +44,6 @@ void setFrame(int n) {
 
 void setup() {
   size(1920,1080);
-  
-  // img = loadImage("elizeu-dias-RN6ts8IZ4_0-unsplash.jpg");
   pg = createGraphics(width, height);
   // pg.beginDraw();
   // pg.image(img, 0,0,width,height);
@@ -48,8 +51,6 @@ void setup() {
   noStroke(); 
   
   vid = new Movie(this, videoFileName);
-  
-  float frameDuration = 1.0 / vid.frameRate;
   
   // Pausing the video at the first frame. 
   vid.play();
@@ -67,7 +68,10 @@ void draw() {
     
     // image(pg, 0, 0, width, height);  
     drawFrame(pg);
+    // if (frames == 0) frames = 218;
+    // else 
     frames++;
+    
     if (frames > getLength()) {
       // frames = 0;
       println("done");
@@ -76,8 +80,10 @@ void draw() {
     setFrame(frames);
     // drawFrame(pg);
     if (shouldSaveFrame) {
-      saveFrame("output/frame-######.png");
+      saveFrame("output/frame-000" + str(frames)  + ".png");
     }
+  } else {
+    // println("not available");
   }
 }
 
@@ -89,7 +95,7 @@ void mousePressed() {
     loop();
   }
   running = !running;
-  println("frameCount: " + frameCount);
+  println("frameCount : " + frameCount);
 }
 
 
