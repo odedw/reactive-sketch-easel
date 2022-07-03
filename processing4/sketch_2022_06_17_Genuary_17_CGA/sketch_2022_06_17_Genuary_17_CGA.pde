@@ -3,6 +3,7 @@ import processing.video.*;
 int PIXEL_SIZE = 4;
 color[] palette = {#ff55ff, #55ffff, #000000, #ffffff };
 boolean SHOULD_SAVE_FRAME = false;
+int BRIGHTNESS_MODIFIER = 20;
 
 PImage img;
 PGraphics pg;
@@ -11,10 +12,10 @@ Movie mov;
 
 // String videoFileName = "20220531_192145.mp4";
 // String videoFileName = "man-running.mp4";
-String videoFileName = "hand-in-the-sand.mp4";
+// String videoFileName = "hand-in-the-sand.mp4";
 // String videoFileName = "highway-with-cars-static.mp4";
 // String videoFileName = "highway-with-cars-static-square.mp4";
-// String videoFileName = "pov-bike.mp4";
+String videoFileName = "pov-bike.mp4";
 // String videoFileName = "20220624_141524.mp4";
 // String videoFileName = "train.mp4";
 // String videoFileName = "A Group Of Ballerina Wearing A Phantom Mask Staging A Live Performance.mp4";
@@ -87,7 +88,8 @@ void drawFrame(Movie mov) {
   int count = 0;
   for (int j = 0; j < numPixelsHigh; j++) {
     for (int i = 0; i < numPixelsWide; i++) {
-      pixels[count] = mov.get(i * blockSize, j * blockSize);
+      color c = mov.get(i * blockSize, j * blockSize);
+      pixels[count] = BRIGHTNESS_MODIFIER > 0 ? color(red(c) + BRIGHTNESS_MODIFIER, green(c) + BRIGHTNESS_MODIFIER, blue(c) + BRIGHTNESS_MODIFIER) : c;
       count++;
     }
   }
