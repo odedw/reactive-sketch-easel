@@ -1,4 +1,4 @@
-boolean shouldSaveFrame = false;
+boolean SHOULD_SAVE_FRAME = false;
 
 void setup() {
   size(1000,1000);
@@ -7,7 +7,7 @@ void setup() {
 void draw() {
   background(#e6e6e6); 
   
-  if (shouldSaveFrame) {
+  if (SHOULD_SAVE_FRAME) {
     saveFrame("output/frame-######.png");
   }
 }

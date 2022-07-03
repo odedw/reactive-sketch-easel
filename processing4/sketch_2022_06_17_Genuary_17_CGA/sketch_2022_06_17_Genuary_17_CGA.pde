@@ -1,75 +1,69 @@
 
 import processing.video.*;
+int PIXEL_SIZE = 4;
+color[] palette = {#ff55ff, #55ffff, #000000, #ffffff };
+boolean SHOULD_SAVE_FRAME = false;
 
-boolean shouldSaveFrame = true;
 PImage img;
 PGraphics pg;
-Movie vid;
-// color[] palette = {#ff55ff, #55ffff, #000000, #ffffff };
-color[] palette = {#880E1E, #B51459, #C34124, #E7AE1C, #DFB09F, #6D6B40, #47792D, #0A3E34, #072675, #6D729C};
-int pixelSize = 2;
+Movie mov;
+// color[] palette = {#880E1E, #B51459, #C34124, #E7AE1C, #DFB09F, #6D6B40, #47792D, #0A3E34, #072675, #6D729C};
 
 // String videoFileName = "20220531_192145.mp4";
 // String videoFileName = "man-running.mp4";
-// String videoFileName = "hand-in-the-sand.mp4";
+String videoFileName = "hand-in-the-sand.mp4";
 // String videoFileName = "highway-with-cars-static.mp4";
 // String videoFileName = "highway-with-cars-static-square.mp4";
-String videoFileName = "pov-bike.mp4";
+// String videoFileName = "pov-bike.mp4";
 // String videoFileName = "20220624_141524.mp4";
 // String videoFileName = "train.mp4";
+// String videoFileName = "A Group Of Ballerina Wearing A Phantom Mask Staging A Live Performance.mp4";
 int frames = 0;
+color pixels[];
+int numPixelsWide,numPixelsHigh;
+int blockSize = PIXEL_SIZE;
+
+void setup() {
+  size(1920,1080);
+  noStroke(); 
+  
+  mov = new Movie(this, videoFileName);
+  numPixelsWide = width / blockSize;
+  numPixelsHigh = height / blockSize;
+  pixels = new color[numPixelsWide * numPixelsHigh];
+  // Pausing the video at the first frame. 
+  mov.play();
+  mov.jump(0);
+  mov.pause();
+}
 
 int getLength() {
-  return int(vid.duration() * vid.frameRate);
+  return int(mov.duration() * mov.frameRate);
 }
 
 void setFrame(int n) {
-  vid.play();
+  mov.play();
   
   // The duration of a single frame:
-  float frameDuration = 1.0 / vid.frameRate;
+  float frameDuration = 1.0 / mov.frameRate;
   
   // We move to the middle of the frame by adding 0.5:
   float where = (n + 0.5) * frameDuration; 
   
   // Taking into account border effects:
-  float diff = vid.duration() - where;
+  float diff = mov.duration() - where;
   if (diff < 0) {
     where += diff - 0.25 * frameDuration;
   }
   
-  vid.jump(where);
-  vid.pause();  
+  mov.jump(where);
+  mov.pause();  
 } 
 
-void setup() {
-  size(1920,1080);
-  pg = createGraphics(width, height);
-  // pg.beginDraw();
-  // pg.image(img, 0,0,width,height);
-  // pg.endDraw();
-  noStroke(); 
-  
-  vid = new Movie(this, videoFileName);
-  
-  // Pausing the video at the first frame. 
-  vid.play();
-  vid.jump(0);
-  vid.pause();
-  
-}
-
 void draw() {
-  if (vid.available()) {
-    vid.read();
-    pg.beginDraw();
-    pg.image(vid, 0,0,width,height);
-    pg.endDraw();
+  if (mov.available()) {
+    drawFrame(mov);
     
-    // image(pg, 0, 0, width, height);  
-    drawFrame(pg);
-    // if (frames == 0) frames = 218;
-    // else 
     frames++;
     
     if (frames > getLength()) {
@@ -78,49 +72,31 @@ void draw() {
       noLoop();
     }
     setFrame(frames);
-    // drawFrame(pg);
-    if (shouldSaveFrame) {
-      saveFrame("output/frame-000" + str(frames)  + ".png");
+    
+    if (SHOULD_SAVE_FRAME) {
+      saveFrame("output/frame-######.png");
     }
   } else {
-    // println("not available");
+    //println("not available");
   }
 }
 
-boolean running = true;
-void mousePressed() {
-  if (running) {
-    noLoop();
-  } else {
-    loop();
+void drawFrame(Movie mov) {
+  mov.read();
+  mov.loadPixels();
+  int count = 0;
+  for (int j = 0; j < numPixelsHigh; j++) {
+    for (int i = 0; i < numPixelsWide; i++) {
+      pixels[count] = mov.get(i * blockSize, j * blockSize);
+      count++;
+    }
   }
-  running = !running;
-  println("frameCount : " + frameCount);
-}
-
-
-
-void drawFrame(PGraphics pg) {
-  // pixelate
-  PGraphics frameBuffer = pixelSize ==  1 ? createGraphics(width,height) : createGraphics(pg.width / pixelSize, pg.height / pixelSize);
-  frameBuffer.beginDraw();
-  if (pixelSize > 1) {
-    frameBuffer.image(pg, 0,0, frameBuffer.width, frameBuffer.height);
-    pixelate(pg, frameBuffer, pixelSize);
-  } else {
-    frameBuffer.image(pg, 0,0,frameBuffer.width, frameBuffer.height);
-  }
-  dither(frameBuffer, DitherAlgorithm.STUCKI, palette);
   
-  frameBuffer.endDraw();
-  if (pixelSize >= 1) {
-    for (int y = 0;y < frameBuffer.height;y ++) {
-      for (int x = 0;x < frameBuffer.width;x ++) {
-        fill(frameBuffer.get(x,y));
-        rect(x * pixelSize, y * pixelSize, pixelSize, pixelSize);
-      }
+  dither(pixels, numPixelsWide, numPixelsHigh, DitherAlgorithm.STUCKI, palette);
+  for (int j = 0; j < numPixelsHigh; j++) {
+    for (int i = 0; i < numPixelsWide; i++) {
+      fill(pixels[j * numPixelsWide + i]);
+      rect(i * blockSize, j * blockSize, blockSize, blockSize);
     }
-  } else {
-    image(frameBuffer, 0,0, width, height);
   }
 }
