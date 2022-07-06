@@ -2,8 +2,9 @@
 import processing.video.*;
 int PIXEL_SIZE = 4;
 color[] palette = {#ff55ff, #55ffff, #000000, #ffffff };
-boolean SHOULD_SAVE_FRAME = false;
-int BRIGHTNESS_MODIFIER = 20;
+boolean SHOULD_SAVE_FRAME = true;
+int BRIGHTNESS_MODIFIER = 0;
+String VIDEO_FILE_NAME = "pexels-koolshooters-7673888.mp4";
 
 PImage img;
 PGraphics pg;
@@ -15,10 +16,11 @@ Movie mov;
 // String videoFileName = "hand-in-the-sand.mp4";
 // String videoFileName = "highway-with-cars-static.mp4";
 // String videoFileName = "highway-with-cars-static-square.mp4";
-String videoFileName = "pov-bike.mp4";
+// String videoFileName = "pov-bike.mp4";
 // String videoFileName = "20220624_141524.mp4";
 // String videoFileName = "train.mp4";
 // String videoFileName = "A Group Of Ballerina Wearing A Phantom Mask Staging A Live Performance.mp4";
+
 int frames = 0;
 color pixels[];
 int numPixelsWide,numPixelsHigh;
@@ -28,7 +30,7 @@ void setup() {
   size(1920,1080);
   noStroke(); 
   
-  mov = new Movie(this, videoFileName);
+  mov = new Movie(this, VIDEO_FILE_NAME);
   numPixelsWide = width / blockSize;
   numPixelsHigh = height / blockSize;
   pixels = new color[numPixelsWide * numPixelsHigh];
