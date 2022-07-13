@@ -1,10 +1,10 @@
 
 boolean SHOULD_SAVE_FRAME = false;
-int NUM_SEEDS = 2;
+int NUM_SEEDS = 10000;
 Voronoi voronoi;
 // String IMAGE_FILE = "photo-1519428376293-4733053a9c4a.jpg";
-// String IMAGE_FILE = "photo-1444021465936-c6ca81d39b84.jpg";
-String IMAGE_FILE = "adam-birkett-75EFpyXu3Wg-unsplash.jpg";
+String IMAGE_FILE = "photo-1444021465936-c6ca81d39b84.jpg";
+// String IMAGE_FILE = "adam-birkett-75EFpyXu3Wg-unsplash.jpg";
 // String IMAGE_FILE = "photo-1510332981392-36692ea3a195.jpg";
 // String IMAGE_FILE = "a4250136797_10.jpg";
 PGraphics imageGraphics, buffer;
@@ -37,21 +37,22 @@ void generate() {
 int frames = 0;
 
 void draw() {
-  buffer.beginDraw();
-  buffer.noStroke();
+  // buffer.beginDraw();
+  // buffer.noStroke();
   
-  frames++;
-  boolean regen = !voronoi.step();
+  // frames++;
+  // boolean regen = !voronoi.step();
   
   
-  buffer.endDraw();
+  // buffer.endDraw();
   // regen = frames == 20;
   // if (regen) { 
   //   generate();
   //   println(frames);
   //   frames = 0;
   // }
-  
+  generate();
+  voronoi.run();
   image(buffer, 0,0,width,height);
   
   
