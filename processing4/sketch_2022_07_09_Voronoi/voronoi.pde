@@ -1,25 +1,44 @@
 class Voronoi {
   PGraphics pg;
   Coordinate[] seeds;
-  ArrayList[] stacks;
+  BfsState[] states;
   boolean[][] visited;
   
   Voronoi(PGraphics pg_, Coordinate[] seeds_) {
     pg = pg_;
     seeds = seeds_;
-    stacks = new ArrayList[seeds.length];
+    states = new BfsState[seeds.length];
     for (int i = 0;i < seeds.length;i++) {
-      stacks[i] = new ArrayList<Coordinate>();
-      stacks[i].add(new Coordinate(seeds[i].x, seeds[i].y, seeds[i].c));
+      states[i] = new BfsState(seeds[i]);
     }
     visited = new boolean[pg.width][pg.height];
   }
   
-  ArrayList<Coordinate> getUnvisitedNeighbors(Coordinate c, boolean[][] visited, int rows, int cols) {
+  class BfsState {
+    ArrayList<Coordinate> cells, next;
+    Coordinate seed;
+    int r = 1;
+    BfsState(Coordinate s) {
+      seed = s;
+      cells = new ArrayList<Coordinate>();
+      cells.add(seed);
+      next = new ArrayList<Coordinate>();
+    }
+    
+    void switchNext() {
+      ArrayList<Coordinate> temp = cells;
+      cells = next;
+      next = temp;
+      next.clear();
+    }
+  }
+  
+  ArrayList<Coordinate> getUnvisitedNeighbors(Coordinate c, BfsState state, boolean[][] visited, int rows, int cols) {
     ArrayList<Coordinate> valid = new ArrayList<Coordinate>();
     for (int i = c.x - 1;i <=  c.x + 1;i++) {
       for (int j = c.y - 1;j <=  c.y + 1;j++) {
         if (i < 0 || i > cols - 1 || j < 0 || j > rows - 1) continue;
+        if (dist(state.seed.x, state.seed.y, i, j) > state.r) continue;
         if (!visited[i][j]) valid.add(new Coordinate(i, j, c.c));
       }
     }
@@ -28,27 +47,20 @@ class Voronoi {
   
   boolean step() {
     boolean allStacksEmpty = true;
-    ArrayList[] nextStacks = new ArrayList[seeds.length];
-    for (int i = 0;i < seeds.length;i++) {
-      nextStacks[i] = new ArrayList<Coordinate>();     
-    }
-    
-    // for (ArrayList stack : stacks) {
+    int index = 0;    
     do {
       allStacksEmpty = true;
-      for (int i = 0; i < stacks.length; ++i) {
-        ArrayList<Coordinate> stack = stacks[i];
+      for (int i = 0; i < states.length; ++i) {
+        BfsState state = states[i];
         
         //if empty continue
-        if (stack.size() == 0) continue;
+        if (state.cells.size() == 0) continue;
         
         allStacksEmpty = false;
         
-        //ArrayList<Coordinate> next = new ArrayList<Coordinate>();
-        Coordinate c = stack.get(0);
-        stack.remove(0);
+        Coordinate c = state.cells.get(0);
+        state.cells.remove(0);
         
-        //for (Coordinate c : (ArrayList < Coordinate >)stack) {
         //already visited from another stack this frame
         if (visited[c.x][c.y]) continue;
         
@@ -58,25 +70,24 @@ class Voronoi {
         pg.square(c.x, c.y, 1);
         
         //add all unvisited neighbors
-        nextStacks[i].addAll(getUnvisitedNeighbors(c, visited, height, width));
-      // }
-        
-        //stack.clear();
-        //stack.addAll(next);
+        state.next.addAll(getUnvisitedNeighbors(c, state, visited, height, width));
       }
+      index++;
     } while(!allStacksEmpty);
     
-    stacks = nextStacks;
-    return !allStacksEmpty;
+    for (BfsState state : states) {
+      state.switchNext();
+      state.r++;
+    }
+    
+    return index > 1;
   }
   
   void run() {
     pg.beginDraw();
     pg.noStroke();
     
-    
-    while(step()) {
-    }
+    while(step());
     
     pg.endDraw();
   }
