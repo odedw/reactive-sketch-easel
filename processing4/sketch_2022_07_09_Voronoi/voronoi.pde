@@ -1,15 +1,17 @@
 class Voronoi {
   PGraphics pg;
-  Coordinate[] seeds;
+  ArrayList<Coordinate> seeds;
   BfsState[] states;
   boolean[][] visited;
   
-  Voronoi(PGraphics pg_, Coordinate[] seeds_) {
+  Voronoi(PGraphics pg_, ArrayList<Coordinate> seeds_) {
     pg = pg_;
     seeds = seeds_;
-    states = new BfsState[seeds.length];
-    for (int i = 0;i < seeds.length;i++) {
-      states[i] = new BfsState(seeds[i]);
+    states = new BfsState[seeds.size()];
+    for (int i = 0;i < seeds.size();i++) {
+      Coordinate seed = seeds.get(i);
+      if (seed.x >= 0 && seed.x < pg.width && seed.y >= 0 && seed.y < pg.height)
+        states[i] = new BfsState(seed);
     }
     visited = new boolean[pg.width][pg.height];
   }
