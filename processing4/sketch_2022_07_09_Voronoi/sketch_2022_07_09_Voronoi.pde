@@ -1,5 +1,5 @@
 
-boolean SHOULD_SAVE_FRAME = false;
+boolean SHOULD_SAVE_FRAME = true;
 int NUM_SEEDS = 10000;
 Voronoi voronoi;
 // String IMAGE_FILE = "photo-1519428376293-4733053a9c4a.jpg";
@@ -27,13 +27,14 @@ void setup() {
 
 void generate() {
   seeds.clear();
-  int NUM_COLS = 50;
+  int NUM_COLS = 40;
   for (int i = 0; i < width; i += width / NUM_COLS) {
     for (int j = 0; j < height; j += width / NUM_COLS) {
       color c = imageGraphics.get(i,j);
-      int x = i + int(sin(frameCount) * 5.0);
+      float speed = random(1,10) * (random(1) > 0.5 ? 1 : - 1);
+      int x = i + int(sin(frameCount / speed) * 5.0);
       x = clamp(x, 0, width - 1);
-      int y = j + int(cos(frameCount) * 5.0);;
+      int y = j + int(cos(frameCount / speed) * 5.0);;
       y = clamp(y, 0, height - 1);
       seeds.add(new Coordinate(x, y, c));
     }
