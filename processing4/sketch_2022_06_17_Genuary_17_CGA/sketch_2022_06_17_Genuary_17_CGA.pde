@@ -1,8 +1,8 @@
 
 import processing.video.*;
-int PIXEL_SIZE = 4;
-// color[] palette = {#ff55ff, #55ffff, #000000, #ffffff };
-color[] palette = {#000000, #ffffff };
+int PIXEL_SIZE = 3;
+color[] palette = {#ff55ff, #55ffff, #000000, #ffffff };
+// color[] palette = {#000000, #ffffff };
 boolean SHOULD_SAVE_FRAME = true;
 int BRIGHTNESS_MODIFIER = 0;
 // String VIDEO_FILE_NAME = "pexels-koolshooters-7673888.mp4";
@@ -15,9 +15,9 @@ Movie mov;
 // String VIDEO_FILE_NAME = "20220531_192145.mp4";
 // String VIDEO_FILE_NAME = "man-running.mp4";
 // String VIDEO_FILE_NAME = "hand-in-the-sand.mp4";
-String VIDEO_FILE_NAME = "highway-with-cars-static.mp4";
+// String VIDEO_FILE_NAME = "highway-with-cars-static.mp4";
 // String VIDEO_FILE_NAME = "highway-with-cars-static-square.mp4";
-// String VIDEO_FILE_NAME = "pov-bike.mp4";
+String VIDEO_FILE_NAME = "pov-bike.mp4";
 // String VIDEO_FILE_NAME = "20220624_141524.mp4";
 // String VIDEO_FILE_NAME = "train.mp4";
 // String VIDEO_FILE_NAME = "A Group Of Ballerina Wearing A Phantom Mask Staging A Live Performance.mp4";
