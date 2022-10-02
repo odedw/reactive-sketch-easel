@@ -1,32 +1,44 @@
 boolean SHOULD_SAVE_FRAME = false;
-int NUM_SLICES = 10;
 int SLICE_SHIFT = 20;
+int GAP = 50;
+String FILENAME = "production ID_4363280.mp4";
 
-PImage img;
-PGraphics pg1,pg2, frame;
+Video vid;
+// PImage img;
+PGraphics pg1,pg2;//, frame;
 PGraphics mask;
 
 ArrayList<Slice> slices = new ArrayList<Slice>();
 void setup() {
-  size(1000,1000);
-  img = loadImage("data/" + "elizeu-dias-RN6ts8IZ4_0-unsplash.jpg");
+  size(1280,720);
   stroke(255);
   fill(0,255,0);
   strokeWeight(0);
-  for (int i = 0; i < NUM_SLICES; ++i) {
-    slices.add(generateSlice());
-  }
-  frame = createGraphics(width, height);
+  generateSlices();
+  vid = loadVideo(FILENAME);
   pg1 = createGraphics(width, height);
   pg2 = createGraphics(width, height);
-  
-  
-  
 }
 
-Slice generateSlice() {
-  float a = random(0, PI);
-  return new Slice(random(width / 2 - 200, width / 2 + 200), random(height / 2 - 200, height / 2 + 200), a);//random(TWO_PI));
+void generateSlices() {
+  int cols = 5;
+  int rows = 3;
+  for (int i = 0; i < cols; ++i) {
+    for (int j = 0; j < rows; ++j) {
+      float a = random(0, PI);
+      float x = (i + 1) * width / (cols + 1);
+      float y = (j + 1) * height / (rows + 1);
+      Slice s = new Slice(x, y, a);
+      slices.add(s);
+    }
+  }
+  println("After generation: " + slices.size());
+  
+  // for (int i = 0; i < NUM_SLICES; ++i) {
+  //   float a = random(0, PI);
+  //   Slice s = new Slice(random(width / 2 - 200, width / 2 + 200), random(height / 2 - 200, height / 2 + 200), a);
+  //   slices.add(s);
+  // }
 }
 
 PGraphics slice(Slice s, PGraphics pg) {
@@ -52,17 +64,17 @@ PGraphics slice(Slice s, PGraphics pg) {
 
 int index = 0;
 void draw() {
-  frame.beginDraw();
-  frame.background(#000000); 
-  frame.image(img, 200, 200, width - 400, height - 400);  
-  frame.endDraw();
+  // frame.beginDraw();
+  // frame.background(#000000); 
+  // frame.image(img, 200, 200, width - 400, height - 400);  
+  // frame.endDraw();
   
-  PGraphics next = frame, prev;
-  for (Slice s : slices) {
-    prev = next;
-    next = slice(s, prev);
-  } 
-  image(next, 0, 0, width, height);
+  // PGraphics next = frame, prev;
+  // for (Slice s : slices) {
+  //   prev = next;
+  //   next = slice(s, prev);
+  // } 
+  // image(next, 0, 0, width, height);
   
   
   // debug
@@ -81,26 +93,38 @@ void draw() {
   // line(s.p2.x, s.p2.y, s.x, s.y);
   
   
-  
-  // noLoop();
-  if (SHOULD_SAVE_FRAME) {
-    saveFrame("output/frame-######.png");
+  if (vid.frameAvailable()) {
+    Movie frame = vid.read();
+    PGraphics next = createGraphics(width, height);
+    next.beginDraw();
+    next.background(#000000); 
+    next.image(frame, GAP, GAP * 16 / 9.0, width - GAP * 2, height - 2 * GAP * 16 / 9.0);  
+    next.endDraw();
+    next.beginDraw();
+    
+    next.endDraw();
+    PGraphics prev;
+    for (Slice s : slices) {
+      prev = next;
+      next = slice(s, prev);
+    } 
+    image(next, 0, 0, width, height);
+    
+    
+    
+    if (!vid.next()) {
+      println("done");
+      noLoop();
+    }
+    if (SHOULD_SAVE_FRAME) {
+      saveFrame("output/frame - ######.png");
+    }
   }
 }
 
 boolean running = true;
 void mousePressed() {
-  // index = (index + 1) % slices.size();
-  slices.clear();
-  for (int i = 0; i < NUM_SLICES; ++i) {
-    slices.add(generateSlice());
-  }
-  
-  // if (running) {
-  //   noLoop();
-  // } else {
-  //   loop();
-  // }
-  // running = !running;
-  // println("frameCount: " + frameCount);
+  // slices.clear();
+  // generateSlices();
+  println(frameCount);
 }
