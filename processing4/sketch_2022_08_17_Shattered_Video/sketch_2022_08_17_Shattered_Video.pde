@@ -1,16 +1,19 @@
-boolean SHOULD_SAVE_FRAME = false;
+boolean SHOULD_SAVE_FRAME = true;
 int SLICE_SHIFT = 20;
-int GAP = 50;
-String FILENAME = "production ID_4363280.mp4";
+int GAP = 150;
+String FILENAME = "pexels-koolshooters-7673888.mp4";
+int FRAMES_PER_SLICE = 10;
+int FRAMES_BETWEEN_SLICES = 10;
 
 Video vid;
-// PImage img;
-PGraphics pg1,pg2;//, frame;
+PGraphics pg1,pg2;
 PGraphics mask;
+int sliceIndex = -1;
+int sliceFrameIndex = 0;
 
 ArrayList<Slice> slices = new ArrayList<Slice>();
 void setup() {
-  size(1280,720);
+  size(1080,1080);
   stroke(255);
   fill(0,255,0);
   strokeWeight(0);
@@ -22,7 +25,7 @@ void setup() {
 
 void generateSlices() {
   int cols = 5;
-  int rows = 3;
+  int rows = 5;
   for (int i = 0; i < cols; ++i) {
     for (int j = 0; j < rows; ++j) {
       float a = random(0, PI);
@@ -32,7 +35,7 @@ void generateSlices() {
       slices.add(s);
     }
   }
-  println("After generation: " + slices.size());
+  println("Number of slices: " + slices.size());
   
   // for (int i = 0; i < NUM_SLICES; ++i) {
   //   float a = random(0, PI);
@@ -41,7 +44,8 @@ void generateSlices() {
   // }
 }
 
-PGraphics slice(Slice s, PGraphics pg) {
+PGraphics slice(Slice s, PGraphics pg, float progress) {
+  // println(progress);
   PGraphics result = createGraphics(pg.width, pg.height);
   pg1.beginDraw(); pg2.beginDraw();
   pg1.noStroke(); pg2.noStroke();
@@ -54,9 +58,10 @@ PGraphics slice(Slice s, PGraphics pg) {
   pg2.mask(s.mask2);
   result.beginDraw();
   result.background(0);
-  PVector origin = polarToCartesian( -SLICE_SHIFT, s.a);
+  float shift = lerp(0, SLICE_SHIFT, progress);
+  PVector origin = polarToCartesian( -shift, s.a);
   result.image(pg1, origin.x, origin.y, width, height);
-  origin = polarToCartesian(SLICE_SHIFT, s.a);
+  origin = polarToCartesian(shift, s.a);
   result.image(pg2, origin.x, origin.y, width, height);
   result.endDraw();
   return result;
@@ -64,61 +69,36 @@ PGraphics slice(Slice s, PGraphics pg) {
 
 int index = 0;
 void draw() {
-  // frame.beginDraw();
-  // frame.background(#000000); 
-  // frame.image(img, 200, 200, width - 400, height - 400);  
-  // frame.endDraw();
+  if (!vid.frameAvailable()) return;
   
-  // PGraphics next = frame, prev;
-  // for (Slice s : slices) {
-  //   prev = next;
-  //   next = slice(s, prev);
-  // } 
-  // image(next, 0, 0, width, height);
+  sliceFrameIndex = (sliceFrameIndex + 1) % FRAMES_PER_SLICE;
+  if (sliceFrameIndex == 0) {
+    sliceIndex++;
+  }
   
-  
-  // debug
-  // if (index + 1 == slices.size()) return;
-  // Slice s = slices.get(index + 1);
-  // stroke(0,255,0);
-  // strokeWeight(5);
-  // circle(s.x, s.y, 15);
-  // stroke(255,0,0);
-  // circle(s.p1.x, s.p1.y, 15);
-  // stroke(0,0,255);
-  // circle(s.p2.x, s.p2.y, 15);
-  // stroke(0,255,0);
-  
-  // line(s.p1.x, s.p1.y, s.x, s.y);
-  // line(s.p2.x, s.p2.y, s.x, s.y);
+  Movie frame = vid.read();
+  PGraphics next = createGraphics(width, height);
+  next.beginDraw();
+  next.background(#000000); 
+  next.image(frame, -420,0,1920,1080);///GAP, GAP * 9 / 16.0, width - GAP * 2, height - 2 * GAP * 9 / 16.0);  
+  next.endDraw();
+  PGraphics prev;
+  float progress = float(sliceFrameIndex) / FRAMES_PER_SLICE;
+  for (int i = 0; i <= min(sliceIndex, slices.size() - 1); ++i) {
+    prev = next;
+    Slice s = slices.get(i);
+    next = slice(s, prev, i == sliceIndex ? progress : 1);
+  }
+  image(next, 0, 0, width, height);
   
   
-  if (vid.frameAvailable()) {
-    Movie frame = vid.read();
-    PGraphics next = createGraphics(width, height);
-    next.beginDraw();
-    next.background(#000000); 
-    next.image(frame, GAP, GAP * 16 / 9.0, width - GAP * 2, height - 2 * GAP * 16 / 9.0);  
-    next.endDraw();
-    next.beginDraw();
-    
-    next.endDraw();
-    PGraphics prev;
-    for (Slice s : slices) {
-      prev = next;
-      next = slice(s, prev);
-    } 
-    image(next, 0, 0, width, height);
-    
-    
-    
-    if (!vid.next()) {
-      println("done");
-      noLoop();
-    }
-    if (SHOULD_SAVE_FRAME) {
-      saveFrame("output/frame - ######.png");
-    }
+  
+  if (!vid.next()) {
+    println("done");
+    noLoop();
+  }
+  if (SHOULD_SAVE_FRAME) {
+    saveFrame("output/frame - ######.png");
   }
 }
 
