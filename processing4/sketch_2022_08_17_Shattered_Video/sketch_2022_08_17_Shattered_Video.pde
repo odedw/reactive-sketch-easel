@@ -1,16 +1,24 @@
 boolean SHOULD_SAVE_FRAME = true;
 int SLICE_SHIFT = 20;
 int GAP = 150;
-String FILENAME = "pexels-koolshooters-7673888.mp4";
+String FILENAME = "Pexels Videos 2019791.mp4";
 int FRAMES_PER_SLICE = 10;
-int FRAMES_BETWEEN_SLICES = 10;
+int FRAMES_BETWEEN_SLICES = 5;
+int NUM_SLICES = 10;
 
 Video vid;
 PGraphics pg1,pg2;
 PGraphics mask;
 int sliceIndex = -1;
 int sliceFrameIndex = 0;
+public enum State {
+  SLICING,
+  WAITING,
+  UNSLICING
+}
 
+State state;
+int waitingFrame = 0;
 ArrayList<Slice> slices = new ArrayList<Slice>();
 void setup() {
   size(1080,1080);
@@ -24,24 +32,33 @@ void setup() {
 }
 
 void generateSlices() {
-  int cols = 5;
-  int rows = 5;
-  for (int i = 0; i < cols; ++i) {
-    for (int j = 0; j < rows; ++j) {
-      float a = random(0, PI);
-      float x = (i + 1) * width / (cols + 1);
-      float y = (j + 1) * height / (rows + 1);
-      Slice s = new Slice(x, y, a);
-      slices.add(s);
-    }
-  }
-  println("Number of slices: " + slices.size());
-  
-  // for (int i = 0; i < NUM_SLICES; ++i) {
-  //   float a = random(0, PI);
-  //   Slice s = new Slice(random(width / 2 - 200, width / 2 + 200), random(height / 2 - 200, height / 2 + 200), a);
-  //   slices.add(s);
+  // int cols = 5;
+  // int rows = 5;
+  // for (int i = 0; i < cols; ++i) {
+  //   for (int j = 0; j < rows; ++j) {
+  //     if (random(1) < 0.4) continue;
+  //     float a = random(0, PI);
+  //     float x = (i + 1) * width / (cols + 1);
+  //     float y = (j + 1) * height / (rows + 1);
+  //     Slice s = new Slice(x, y, a);
+  //     slices.add(s);
+  //   }
   // }
+  
+  for (int i = 0; i < NUM_SLICES; ++i) {
+    addSlice();
+  }
+  
+  println("Number of slices: " + slices.size());
+  sliceIndex = slices.size() - 1;
+  state = State.UNSLICING;
+  
+}
+
+void addSlice() {
+  float a = random(0, PI);
+  Slice s = new Slice(random(width / 2 - 200, width / 2 + 200), random(height / 2 - 200, height / 2 + 200), a);
+  slices.add(s);
 }
 
 PGraphics slice(Slice s, PGraphics pg, float progress) {
@@ -67,15 +84,39 @@ PGraphics slice(Slice s, PGraphics pg, float progress) {
   return result;
 }
 
-int index = 0;
 void draw() {
   if (!vid.frameAvailable()) return;
-  
-  sliceFrameIndex = (sliceFrameIndex + 1) % FRAMES_PER_SLICE;
-  if (sliceFrameIndex == 0) {
-    sliceIndex++;
+  if (state == State.SLICING) {
+    sliceFrameIndex++; 
+    if (sliceFrameIndex == FRAMES_PER_SLICE) {
+      state = State.WAITING;
+    }
+  } else if (state == State.WAITING) {
+    waitingFrame = (waitingFrame + 1) % FRAMES_BETWEEN_SLICES;
+    if (waitingFrame == 0) {
+      if (random(1) < 0.5) {
+        state = State.UNSLICING;
+      } else {
+        addSlice();
+        sliceIndex++;
+        state = State.SLICING;
+      }
+      sliceFrameIndex = 0;
+      
+    }
+  } else if (state == State.UNSLICING) {
+    sliceFrameIndex++; 
+    if (sliceFrameIndex == FRAMES_PER_SLICE) {
+      // remove last slice
+      
+      if (slices.size() > 0)
+        slices.remove(slices.size() - 1);
+      if (sliceIndex > - 1)
+        sliceIndex--;
+      state = State.WAITING;
+    }
   }
-  
+  println(frameCount + ": " + state + " | " + sliceIndex + " | " + sliceFrameIndex);
   Movie frame = vid.read();
   PGraphics next = createGraphics(width, height);
   next.beginDraw();
@@ -83,7 +124,8 @@ void draw() {
   next.image(frame, -420,0,1920,1080);///GAP, GAP * 9 / 16.0, width - GAP * 2, height - 2 * GAP * 9 / 16.0);  
   next.endDraw();
   PGraphics prev;
-  float progress = float(sliceFrameIndex) / FRAMES_PER_SLICE;
+  float progress = float(state == state.UNSLICING ? FRAMES_PER_SLICE - sliceFrameIndex : sliceFrameIndex) / FRAMES_PER_SLICE;
+  println(progress);
   for (int i = 0; i <= min(sliceIndex, slices.size() - 1); ++i) {
     prev = next;
     Slice s = slices.get(i);
