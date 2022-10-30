@@ -5,7 +5,7 @@ import { Color, Graphics, Image } from 'p5';
 let matrix: Matrix<number>;
 
 const imageName = 'michele-caliani-iLAAT1E-H_8-unsplash.jpg';
-const NUM_VARIANTS = 1;
+// const NUM_VARIANTS = 1;
 
 export default class Template extends ProcessingSketch {
   i = 0;
