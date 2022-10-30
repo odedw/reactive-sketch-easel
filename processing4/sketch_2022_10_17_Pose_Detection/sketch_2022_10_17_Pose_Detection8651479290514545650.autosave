@@ -1,0 +1,74 @@
+import ml.*;
+
+boolean SHOULD_SAVE_FRAME = true;
+String FILENAME = "pexels-rodnae-productions-8928348.mp4";
+Capture cam;
+Video vid;
+PoseDetector poseDetector;
+FaceDetector detector;
+PImage img;
+MLPose pose;
+void setup() {
+  size(1920,1080);
+  printArray(Capture.list());
+  // vid = loadVideo(FILENAME);
+  // poseDetector = new PoseDetector(this);
+  detector = new FaceDetector(this);
+  cam = new Capture(this, width, height, "Logitech BRIO"
+   );
+  cam.start();
+}
+
+void draw() {
+  if (cam.available()) {
+    cam.read(); // read new frame
+  }
+  // display captured image
+  //image(cam, 0, 0);
+  if (cam.width == 0) {
+    return;
+  }
+  
+  // detect a pose
+  //MLPose pose = poseDetector.predict(cam);
+  //// plot each keypoint from the detected pose
+  //for (int i = 0; i < pose.getKeyPoints().size(); i++) {
+  //MLKeyPoint keyPoint = pose.getKeyPoints().get(i);
+  //stroke(255, 0, 0);
+  //strokeWeight(10);
+  //point(keyPoint.getX(), keyPoint.getY());
+// }
+  //detect faces
+  MLFace[] faces = detector.predict(cam);
+  // draw bounding boxes of detected faces
+  for (int i = 0; i < faces.length; i++) {
+    // get each face
+    MLFace face = faces[i];
+    // draw bounding box
+    noFill();
+    stroke(240, 121, 81);
+    rect(face.getX(), face.getY(), face.getWidth(), face.getHeight());
+    // draw draw each facial landmark
+    noStroke();
+    fill(250, 255, 112);
+    for (int j = 0; j < face.getKeyPoints().size(); j++) {
+      MLKeyPoint keyPoint = face.getKeyPoints().get(j);
+      circle(keyPoint.getX(), keyPoint.getY(), 5);
+    }
+  }
+  
+  if (SHOULD_SAVE_FRAME) {
+    saveFrame("output/frame-######.png");
+  }
+}
+
+boolean running = true;
+void mousePressed() {
+  if (running) {
+    noLoop();
+  } else {
+    loop();
+  }
+  running = !running;
+  println("frameCount: " + frameCount);
+}
