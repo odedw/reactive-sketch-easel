@@ -1,11 +1,12 @@
 class Track {
   segments = [];
   firstSegmentIndex = 0;
-  constructor(x, w, speed) {
+  constructor(x, w, speed, color = 'black') {
     this.x = x;
     this.w = w;
     this.speed = speed;
     this.gap = w / 2;
+    this.color = color;
 
     const goingDown = this.speed > 0;
     let y = goingDown ? -50 : height + 50;
@@ -32,6 +33,9 @@ class Track {
   }
 
   draw() {
+    fill(this.color);
+    noStroke();
+
     for (let s of this.segments) {
       s.draw();
     }
@@ -48,49 +52,8 @@ class Segment {
   }
 
   draw() {
-    fill(0);
-    noStroke();
     circle(this.x + this.r, this.y + this.r, 2 * this.r);
     rect(this.x, this.y + this.r, this.w, this.h - 2 * this.r);
     circle(this.x + this.r, this.y + this.h - this.r, 2 * this.r);
   }
 }
-// class Track {
-//   int  x, w, speed, GAP;
-//   ArrayList<Segment> segments = new ArrayList<Segment>();
-//   int upperIndex = 0;
-//   Track(int x_, int w_, int speed_) {
-//     x = x_;
-//     w = w_;
-//     speed = speed_;
-//     GAP = w / 2;
-
-//     int y = -100;
-//     while(y < height + 100) {
-//       int h = int(random(w, height / 10));
-//       segments.add(new Segment(x, y, w, h));
-//       y += h + GAP;
-//     }
-//   }
-
-//   void update() {
-//     for (int i = 0; i < segments.size(); ++i) {
-//       Segment s = segments.get(i);
-//       if (s.y > height) {
-//         s.y = segments.get(upperIndex).y - GAP - s.h;
-//         upperIndex--;
-//         if (upperIndex == -1) upperIndex = segments.size() - 1;
-
-//       }
-//       s.y += speed;
-
-//     }
-//   }
-
-//   void draw() {
-//     for (Segment s : segments) {
-//       s.draw();
-//     }
-//   }
-
-// }

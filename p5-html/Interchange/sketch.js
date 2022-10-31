@@ -1,6 +1,6 @@
 /// <reference path="../../node_modules/@types/p5/global.d.ts" />
-const WIDTH = 6;
-const GAP = WIDTH / 2;
+const WIDTH = 4;
+const GAP = WIDTH * 2;
 
 const tracks = [];
 function setup() {
@@ -8,7 +8,8 @@ function setup() {
 
   let x = random(-WIDTH, 0);
   while (x < width) {
-    const t = new Track(x, WIDTH, random(-0.5, 0.5));
+    let c = lerpColor(color('red'), color('blue'), x / width);
+    const t = new Track(x, WIDTH, random(-0.5, 0.5), c);
     tracks.push(t);
     x += t.w + GAP;
   }
@@ -16,7 +17,7 @@ function setup() {
 }
 
 function draw() {
-  background(220);
+  background(0);
 
   for (let t of tracks) {
     t.update();
