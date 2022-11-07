@@ -5,10 +5,10 @@ const SHOULD_RECORD = false;
 const RECORD_TIME = 1;
 const FPS = 30;
 
-const SIZE = 8;
-const GAP = 8;
+const SIZE = 20;
+const GAP = 40;
 const MIN_SEGMENT_SIZE = SIZE * 2;
-const MAX_SEGMENT_SIZE = SIZE * 4;
+const MAX_SEGMENT_SIZE = SIZE * 8;
 
 let encoder;
 
@@ -25,14 +25,14 @@ function setup() {
 
   let x = 0; //random(-SIZE, 0);
   while (x < width + GAP) {
-    let c = random(RANDOM_PALETTE); // lerpColor(color('darkred'), color('blue'), x / width);
+    let c = random(PALETTE); // lerpColor(color('darkred'), color('blue'), x / width);
     const t = new Track(x, SIZE, random(-1, 1), true, c);
     vertical.push(t);
     x += t.size + GAP;
   }
   let y = 0;
   while (y < height + GAP) {
-    let c = random(RANDOM_PALETTE); // lerpColor(color('darkred'), color('blue'), x / width);
+    let c = random(PALETTE); // lerpColor(color('darkred'), color('blue'), x / width);
     const t = new Track(y, SIZE, random(-1, 1), false, c);
     horizontal.push(t);
     y += t.size + GAP;
@@ -44,18 +44,40 @@ function draw() {
   background(0);
   stroke(0);
   strokeWeight(1);
+  let i = 0;
   for (let t of vertical) {
-    t.update();
-    t.draw();
+    if (i++ % 2 == 0) {
+      t.update();
+      t.draw();
+    }
   }
+  i = 0;
   for (let t of horizontal) {
-    t.update();
-    t.draw();
+    if (i++ % 2 == 0) {
+      t.update();
+      t.draw();
+    }
+  }
+
+  i = 0;
+  for (let t of vertical) {
+    if (i++ % 2 == 1) {
+      t.update();
+      t.draw();
+    }
+  }
+  i = 0;
+  for (let t of horizontal) {
+    if (i++ % 2 == 1) {
+      t.update();
+      t.draw();
+    }
   }
 
   recorderStep();
 }
 
 function mouseClicked(event) {
+  randomPalette();
   console.log('frameCount', frameCount);
 }
