@@ -19,7 +19,8 @@ class Track {
           vertical ? v : position,
           vertical ? size : s,
           vertical ? s : size,
-          vertical
+          vertical,
+          () => randomColorForSeed(this)
         )
       );
       mainAxisValue = goingPositive ? mainAxisValue + s + this.gap : mainAxisValue - s - this.gap;
@@ -55,7 +56,6 @@ class Track {
   }
 
   draw() {
-    fill(randomColorForSeed(this));
     // fill(this.color);
     // stroke(0);
     // strokeWeight(1);
@@ -67,23 +67,36 @@ class Track {
 }
 
 class Segment {
-  constructor(x, y, w, h, vertical) {
+  constructor(x, y, w, h, vertical, getFill) {
     this.x = x;
     this.y = y;
     this.w = w;
     this.h = h;
     this.r = vertical ? w / 2 : h / 2;
     this.vertical = vertical;
+    this.getFill = getFill;
   }
 
   draw() {
     if (this.vertical) {
+      fill(0);
+      circle(this.x + this.r, this.y + this.r, 2 * this.r + 2);
+      rect(this.x + this.w / 2, this.y + this.h / 2, this.w + 2, this.h - 2 * this.r);
+      circle(this.x + this.r, this.y + this.h - this.r, 2 * this.r + 2);
+
+      fill(this.getFill());
       circle(this.x + this.r, this.y + this.r, 2 * this.r);
-      rect(this.x, this.y + this.r, this.w, this.h - 2 * this.r);
+      rect(this.x + this.w / 2, this.y + this.h / 2, this.w, this.h - 2 * this.r);
       circle(this.x + this.r, this.y + this.h - this.r, 2 * this.r);
     } else {
+      fill(0);
+      circle(this.x + this.r, this.y + this.r, this.r * 2 + 2);
+      rect(this.x + this.w / 2, this.y + this.r, this.w - this.r * 2, this.h + 2);
+      circle(this.x + this.w - this.r, this.y + this.r, this.r * 2 + 2);
+
+      fill(this.getFill());
       circle(this.x + this.r, this.y + this.r, this.r * 2);
-      rect(this.x + this.r, this.y, this.w - this.r * 2, this.h);
+      rect(this.x + this.w / 2, this.y + this.r, this.w - this.r * 2, this.h);
       circle(this.x + this.w - this.r, this.y + this.r, this.r * 2);
     }
   }

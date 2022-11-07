@@ -22,15 +22,15 @@ function preload() {
 function setup() {
   createCanvas(WIDTH, HEIGHT);
   frameRate(FPS);
-
-  let x = 0; //random(-SIZE, 0);
+  rectMode(CENTER);
+  let x = -SIZE / 2; //random(-SIZE, 0);
   while (x < width + GAP) {
     let c = random(PALETTE); // lerpColor(color('darkred'), color('blue'), x / width);
     const t = new Track(x, SIZE, random(-1, 1), true, c);
     vertical.push(t);
     x += t.size + GAP;
   }
-  let y = 0;
+  let y = -SIZE / 2;
   while (y < height + GAP) {
     let c = random(PALETTE); // lerpColor(color('darkred'), color('blue'), x / width);
     const t = new Track(y, SIZE, random(-1, 1), false, c);
@@ -41,7 +41,7 @@ function setup() {
 }
 
 function draw() {
-  background(0);
+  background(100);
   stroke(0);
   strokeWeight(1);
   let i = 0;

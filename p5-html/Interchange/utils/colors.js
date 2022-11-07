@@ -1,5 +1,5 @@
 let paletteName;
-paletteName = 'Meta';
+paletteName = 'Flat';
 
 const palettes = [
   {
