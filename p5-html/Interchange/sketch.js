@@ -78,6 +78,7 @@ function draw() {
 }
 
 function mouseClicked(event) {
+  randomColorForSeed(this);
   randomPalette();
   console.log('frameCount', frameCount);
 }

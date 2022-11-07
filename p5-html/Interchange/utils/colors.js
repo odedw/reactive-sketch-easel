@@ -234,6 +234,16 @@ if (paletteName) {
   randomPalette();
 }
 
+function randomColorForSeed(obj) {
+  if (!obj._randomColorSeed) {
+    obj._randomColorSeed = floor(random(1000000));
+  }
+
+  randomSeed(obj._randomColorSeed);
+  const index = floor(random(PALETTE.length));
+  return PALETTE[index];
+}
+
 // [
 //   ['#ff55ff', '#55ffff', '#000000', '#ffffff'],
 //   ['#af92b5', '#8b7991', '#6f597a', '#624b6e', '#503d5c'],
