@@ -5,7 +5,7 @@ class Track {
     this.size = size;
     this.speed = speed;
     this.gap = size / 2;
-    this.color = color;
+    // this.color = color;
     this.vertical = vertical;
     const mainAxisSize = vertical ? height : width;
     const goingPositive = this.speed > 0;
@@ -55,7 +55,8 @@ class Track {
   }
 
   draw() {
-    fill(this.color);
+    fill(randomColorForSeed(this));
+    // fill(this.color);
     // stroke(0);
     // strokeWeight(1);
     noStroke();
