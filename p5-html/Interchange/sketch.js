@@ -2,11 +2,11 @@
 const WIDTH = 540;
 const HEIGHT = 540;
 const SHOULD_RECORD = false;
-const RECORD_TIME = 1;
+const RECORD_TIME = 30;
 const FPS = 30;
 
-const SIZE = 20;
-const GAP = 40;
+const SIZE = 10;
+const GAP = SIZE * 3;
 const MIN_SEGMENT_SIZE = SIZE * 2;
 const MAX_SEGMENT_SIZE = SIZE * 8;
 
@@ -41,7 +41,10 @@ function setup() {
 }
 
 function draw() {
-  background(100);
+  background(0);
+  if (frameCount !== 0 && frameCount % FPS == 0) {
+    // randomPalette();
+  }
   stroke(0);
   strokeWeight(1);
   let i = 0;
