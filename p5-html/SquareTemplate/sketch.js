@@ -11,6 +11,7 @@ function preload() {
 
 function setup() {
   createCanvas(WIDTH, HEIGHT);
+  frameRate(FPS);
 }
 
 function draw() {
