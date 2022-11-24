@@ -1,7 +1,7 @@
 let paletteName;
 paletteName = 'Troll';
 
-const cga = [#ff55ff, #55ffff, #ffffff]
+// const cga = [#ff55ff, #55ffff, #ffffff];
 const palettes = [
   {
     name: 'Science',
