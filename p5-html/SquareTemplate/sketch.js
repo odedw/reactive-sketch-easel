@@ -4,6 +4,7 @@ const HEIGHT = 540;
 const SHOULD_RECORD = false;
 const RECORD_TIME = 1;
 const FPS = 30;
+let parameters = {};
 
 function preload() {
   preloadRecorder();
