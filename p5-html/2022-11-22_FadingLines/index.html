@@ -3,6 +3,7 @@
   <head>
     <script src="https://unpkg.com/h264-mp4-encoder/embuild/dist/h264-mp4-encoder.web.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.1/p5.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/webmidi@latest/dist/iife/webmidi.iife.js"></script>
     <link rel="stylesheet" type="text/css" href="sketch.css">
     <meta charset="utf-8"/>
   </head>
@@ -10,8 +11,9 @@
     <main></main>
     <script src="https://lygia.xyz/resolve.js"></script>
     <!-- Hi There! this ^ line ^ above add the resolveLygia( Src ) which parse each line on the passed source code and resolves all the `#include "lygia/..."` dependencies with https://github.com/patriciogonzalezvivo/lygia. Check on `sketch.js` and then `shader.frag` to see how that works -->
-    <script src="utils/recorder.js"></script>
-    <script src="utils/colors.js"></script>
+    <script src="../utils/midi.js"></script>
+    <script src="../utils/recorder.js"></script>
+    <script src="../utils/colors.js"></script>
     <script src="sketch.js"></script>
   </body>
 </html>

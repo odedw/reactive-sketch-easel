@@ -1,18 +1,19 @@
 /// <reference path="../../node_modules/@types/p5/global.d.ts" />
 
 ///////////////////////////////////////////
-let NUM_PARTICLES, MAX_DISTANCE, STROKE_WEIGHT, MAX_SPEED;
-// print(`NUM_PARTICLES: ${NUM_PARTICLES}`);
-// print(`MAX_DISTANCE: ${NUM_PARTICLES}`);
-// print(`STROKE_WEIGHT: ${NUM_PARTICLES}`);
-// print(`MAX_SPEED: ${NUM_PARTICLES}`);
+let MAX_SPEED;
 ///////////////////////////////////////////
 const WIDTH = 540;
 const HEIGHT = 540;
 const SHOULD_RECORD = false;
 const RECORD_TIME = 1;
 const FPS = 60;
-let opacity = 10;
+const DEBUG = true;
+let attenuators = { numParticles: 30, strokeWeight: 6, maxDistance: 100 };
+bindParameterToMidi(attenuators, 'opacity', 0, 10, 77);
+bindParameterToMidi(attenuators, 'strokeWeight', 3, 20, 78);
+bindParameterToMidi(attenuators, 'numParticles', 30, 200, 79, { floor: true });
+bindParameterToMidi(attenuators, 'maxDistance', 50, 200, 80, { floor: true });
 
 class Particle {
   constructor() {
@@ -27,9 +28,27 @@ class Particle {
     if (this.pos.y < 0 || this.pos.y > height) this.vel.y *= -1;
   }
 
-  draw() {
-    // fill(0, 255, 0);
-    // circle(this.pos.x, this.pos.y, 8);
+  // draw() {
+  //   // fill(0, 255, 0);
+  //   // circle(this.pos.x, this.pos.y, 8);
+  // }
+}
+
+function addParticles(num) {
+  if (num < 0) {
+    removeParticle(abs(num));
+  }
+  for (let i = 0; i < num; i++) {
+    particles.push(new Particle());
+  }
+}
+
+function removeParticle(num) {
+  console.log('removeParticle', num);
+  for (let i = 0; i < num; i++) {
+    const index = floor(random(particles.length));
+    particles.splice(index, 1);
+    if (particles.length == 0) break;
   }
 }
 
@@ -40,30 +59,23 @@ function preload() {
 
 function setup() {
   createCanvas(540, 540);
-  NUM_PARTICLES = floor(random(30, 70));
-  MAX_DISTANCE = floor(random(50, 200));
-  STROKE_WEIGHT = floor(random(3, 8));
   MAX_SPEED = floor(random(1.2, 1.8));
-  print(`NUM_PARTICLES: ${NUM_PARTICLES}`);
-  print(`MAX_DISTANCE: ${NUM_PARTICLES}`);
-  print(`STROKE_WEIGHT: ${NUM_PARTICLES}`);
-  print(`MAX_SPEED: ${NUM_PARTICLES}`);
   ///////////////////////////////////////////
   frameRate(FPS);
-  for (let i = 0; i < NUM_PARTICLES; i++) {
-    particles.push(new Particle());
-  }
-
-  strokeWeight(STROKE_WEIGHT);
 }
 
 function draw() {
+  if (particles.length != attenuators.numParticles) {
+    addParticles(attenuators.numParticles - particles.length);
+  }
+  strokeWeight(attenuators.strokeWeight);
+
   // const alpha = map(sin(frameCount / 20), -1, 1, 20, 100);
   // console.log(alpha);
-  background(0, 0, 0, opacity);
+  background(0, 0, 0, attenuators.opacity);
   for (let p of particles) {
     p.update();
-    p.draw();
+    // p.draw();
   }
 
   for (let i = 0; i < particles.length - 1; i++) {
@@ -72,8 +84,8 @@ function draw() {
       let p1 = particles[i];
       let p2 = particles[j];
       const d = dist(p1.pos.x, p1.pos.y, p2.pos.x, p2.pos.y);
-      if (d < MAX_DISTANCE) {
-        const c = lerpColor(color('#00d8ff'), color('#008cff'), d / MAX_DISTANCE);
+      if (d < attenuators.maxDistance) {
+        const c = lerpColor(color('#00d8ff'), color('#008cff'), d / attenuators.maxDistance);
         stroke(c);
         line(p1.pos.x, p1.pos.y, p2.pos.x, p2.pos.y);
       }
