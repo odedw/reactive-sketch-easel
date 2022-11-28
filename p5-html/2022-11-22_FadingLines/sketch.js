@@ -10,7 +10,13 @@ const RECORD_TIME = 1;
 const FPS = 60;
 const DEBUG = true;
 const COLORS = ['#00d8ff', '#008cff'];
-let attenuators = { numParticles: 30, strokeWeight: 6, maxDistance: 100, fadeInDistance: 0 };
+let attenuators = {
+  numParticles: 88,
+  strokeWeight: 3,
+  maxDistance: 50,
+  fadeInDistance: 0,
+  opacity: 10,
+};
 bindParameterToMidi(attenuators, 'opacity', 0, 10, 77);
 bindParameterToMidi(attenuators, 'strokeWeight', 3, 20, 78);
 bindParameterToMidi(attenuators, 'numParticles', 30, 200, 79, { floor: true });
@@ -107,6 +113,7 @@ function draw() {
 
 function mouseClicked(event) {
   console.log('frameCount', frameCount);
+  console.log(JSON.stringify(attenuators, null, 2));
 }
 
 function mouseWheel(event) {
