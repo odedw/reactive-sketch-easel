@@ -9,11 +9,14 @@ const SHOULD_RECORD = false;
 const RECORD_TIME = 1;
 const FPS = 60;
 const DEBUG = true;
-let attenuators = { numParticles: 30, strokeWeight: 6, maxDistance: 100 };
+const COLORS = ['#00d8ff', '#008cff'];
+let attenuators = { numParticles: 30, strokeWeight: 6, maxDistance: 100, fadeInDistance: 0 };
 bindParameterToMidi(attenuators, 'opacity', 0, 10, 77);
 bindParameterToMidi(attenuators, 'strokeWeight', 3, 20, 78);
 bindParameterToMidi(attenuators, 'numParticles', 30, 200, 79, { floor: true });
 bindParameterToMidi(attenuators, 'maxDistance', 50, 200, 80, { floor: true });
+spikeParameterOnNoteOn(attenuators, 'numParticles', 100, 20, 'F2');
+spikeParameterOnNoteOn(attenuators, 'maxDistance', 100, 20, 'F2');
 
 class Particle {
   constructor() {
@@ -85,7 +88,14 @@ function draw() {
       let p2 = particles[j];
       const d = dist(p1.pos.x, p1.pos.y, p2.pos.x, p2.pos.y);
       if (d < attenuators.maxDistance) {
-        const c = lerpColor(color('#00d8ff'), color('#008cff'), d / attenuators.maxDistance);
+        const c = lerpColor(color(COLORS[0]), color(COLORS[1]), d / attenuators.maxDistance);
+        stroke(c);
+        line(p1.pos.x, p1.pos.y, p2.pos.x, p2.pos.y);
+      } else if (d < attenuators.maxDistance + attenuators.fadeInDistance) {
+        const c = color(
+          red(COLORS[0]),
+          green(COLORS[0], blue(COLORS[0]), (255 * (d - attenuators.maxDistance)) / attenuators.fadeInDistance)
+        );
         stroke(c);
         line(p1.pos.x, p1.pos.y, p2.pos.x, p2.pos.y);
       }

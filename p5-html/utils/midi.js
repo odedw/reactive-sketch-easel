@@ -7,6 +7,16 @@ function bindParameterToMidi(attenuators, propName, min, max, controller, option
   };
 }
 
+function spikeParameterOnNoteOn(attenuators, propName, increaseBy, ms, note) {
+  subscriptions[note] = () => {
+    const prev = attenuators[propName];
+    attenuators[propName] += increaseBy;
+    setTimeout(() => {
+      attenuators[propName] = prev;
+    }, ms);
+  };
+}
+
 WebMidi.enable()
   .then(onEnabled)
   .catch((err) => alert(err));
@@ -27,6 +37,14 @@ function onEnabled() {
         console.log(e.controller.number, e.value);
       } else {
         subscriptions[e.controller.number](e.value);
+      }
+    });
+    myInput.addListener('noteon', (e) => {
+      const noteName = `${e.note.name}${e.note.octave}`;
+      if (!subscriptions[noteName]) {
+        console.log(`noteon: ${noteName}`);
+      } else {
+        subscriptions[noteName]();
       }
     });
   }
