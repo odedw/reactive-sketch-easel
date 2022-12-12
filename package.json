@@ -6,7 +6,7 @@
   "scripts": {
     "start-web": "cd ./web && yarn start",
     "start-server": "cd ./server && nodemon",
-    "start-html": "npx htlm-server p5-html",
+    "start-html": "npx http-server p5-html",
     "start": "npx run-p start-web start-server"
   },
   "repository": {
