@@ -1,5 +1,4 @@
-/// <reference path="../node_modules/@types/p5/global.d.ts" />
-
+/// <reference path="../../node_modules/@types/p5/global.d.ts" />
 type SINE = 'sine';
 type TRIANGLE = 'triangle';
 type LFO_TYPE = SINE | TRIANGLE;
