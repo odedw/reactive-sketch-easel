@@ -1,5 +1,5 @@
 /// <reference path="../node_modules/@types/p5/global.d.ts" />
-import { Modulate } from '../../utils/modulate';
+import { Modulate } from '../../utils/p5.modulate';
 
 const WIDTH = 540;
 const HEIGHT = 540;
