@@ -1,14 +1,11 @@
 /// <reference path="../node_modules/@types/p5/global.d.ts" />
 
-
-
-import { Modulate } from './modulate';
+import { Modulate } from '../../utils/p5.modulate';
 
 const lfo = Modulate.createLfo(
-  Modulate.SINE, // type
-  120, // frequency in frames
-  100, // from
-  400 // to
+  Modulate.SAW, // type
+  120,
+  { from: 400, to: 100 }
 );
 
 function setup() {
@@ -21,9 +18,6 @@ function setup() {
 function draw() {
   circle(frameCount, lfo.get(), 4);
 }
-
-
-
 
 //#region add globals
 window.setup = setup;
