@@ -21,7 +21,7 @@ export class Particle {
   draw() {
     push();
     translate(width / 2, height / 2);
-    const p = M.polarToCartesian(this.d + this.lfo.get() * this.sway, this.a + this.rotation.get());
+    const p = M.polarToCartesian(this.d + this.lfo.get() * this.sway, this.a); // + this.rotation.get());
     fill(this.fill);
     circle(p.x, p.y, this.lfo.get() * 60);
     pop();
