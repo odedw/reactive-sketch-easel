@@ -4,6 +4,8 @@ import { Modulate } from '../../utils/p5.modulate';
 const WIDTH = 540;
 const HEIGHT = 540;
 
+function preload() {}
+
 function setup() {
   createCanvas(WIDTH, HEIGHT);
   frameRate(60);
@@ -20,6 +22,7 @@ function mouseClicked(event?: object) {
 }
 
 //#region add globals
+window.preload = preload;
 window.setup = setup;
 window.draw = draw;
 window.mouseClicked = mouseClicked;
