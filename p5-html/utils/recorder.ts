@@ -23,7 +23,7 @@ export function recorderStep() {
   // keep adding new frame
   encoder.addFrameRgba(window.drawingContext.getImageData(0, 0, encoder.width, encoder.height).data);
   recordedFrames++;
-  if (recordedFrames % 100 === 0) {
+  if (recordedFrames % 10 === 0) {
     console.log(`Recorded ${recordedFrames} of ${numFrames} frames`);
   }
   // finalize encoding and export as mp4

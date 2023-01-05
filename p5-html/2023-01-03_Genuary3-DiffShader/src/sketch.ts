@@ -1,15 +1,17 @@
 /// <reference path="../node_modules/@types/p5/global.d.ts" />
-import { Shader, Graphics, MediaElement, Color } from 'p5';
+import { Shader, Graphics, MediaElement, Color, Vector } from 'p5';
+import { preloadRecorder, recorderStep } from '../../utils/recorder.ts';
 
-const SHOULD_RECORD = false;
+const MIN_DISTANCE = 12;
+const SHOULD_RECORD = true;
+const RECORD_TIME = 10;
+
 const VIDEO_FRAME_LENGTH = 900;
 const VIDEO_NAME = '20210131_154534.mp4';
 const VIDEO_FPS = 29.990196;
 const WIDTH = 960;
 const HEIGHT = 540;
 const frameTime = 1 / VIDEO_FPS;
-
-let diffShader: Shader;
 
 // the camera variable
 // let cam: Element;
@@ -19,59 +21,58 @@ let vid: MediaElement;
 let prevFrame: Graphics;
 let currentFrame: Graphics;
 let frameIndex: number = 0;
-let palette = [];
+let palette = ['#ff55ff', '#55ffff', '#ffffff'];
 let playing = false;
 function preload() {
-  // load the shader
-  diffShader = loadShader('effect.vert', 'effect.frag');
+  // if (SHOULD_RECORD) preloadRecorder(RECORD_TIME, VIDEO_FPS);
 }
 
-function convertColorToShaderColor(colorString: string) {
-  const c = color(colorString);
-  return [red(c) / 255.0, green(c) / 255.0, blue(c) / 255.0];
-}
 function setup() {
-  // shaders require WEBGL mode to work
-  createCanvas(WIDTH, HEIGHT, WEBGL);
-  palette = ['#ff55ff', '#55ffff', '#ffffff'].map(convertColorToShaderColor);
+  window.drawingContext = drawingContext;
+  createCanvas(WIDTH, HEIGHT);
+  pixelDensity(1);
   noStroke();
 
-  // the prevFrame layer doesn't need to be WEBGL
   prevFrame = createGraphics(width, height);
   currentFrame = createGraphics(width, height);
-
-  // initialize the webcam at the window size
-  // cam = createCapture(VIDEO);
-  // cam.size(windowWidth, height);
-
-  // hide the html element that createCapture adds to the screen
-  // cam.hide();
 
   vid = createVideo(VIDEO_NAME);
   vid.size(width, height);
   vid.hide();
   vid.time(0);
-
-  diffShader.setUniform('uWidth', width);
-  diffShader.setUniform('uHeight', height);
 }
 
 function draw() {
-  palette.forEach((c, i) => diffShader.setUniform(`ucolor${i + 1}`, c));
-
-  shader(diffShader);
-  currentFrame.copy(vid, 0, 0, width, height, 0, 0, width, height);
-
-  rect(0, 0, width, height);
-
-  if (frameCount % 10 == 0) nextFrame();
+  // console.log(frameCount);
+  if (frameCount % 1 === 0) {
+    currentFrame.copy(vid, 0, 0, width, height, 0, 0, width, height);
+    image(currentFrame, 0, 0, width, height);
+    loadPixels();
+    currentFrame.loadPixels();
+    prevFrame.loadPixels();
+    for (let index = 0; index < pixels.length; index += 4) {
+      const c = color(random(palette));
+      const vec1 = new Vector(prevFrame.pixels[index], prevFrame.pixels[index + 1], prevFrame.pixels[index + 2]);
+      const vec2 = new Vector(
+        currentFrame.pixels[index],
+        currentFrame.pixels[index + 1],
+        currentFrame.pixels[index + 2]
+      );
+      const d = dist(vec1.x, vec1.y, vec1.z, vec2.x, vec2.y, vec2.z);
+      if (d > MIN_DISTANCE) {
+        pixels[index] = red(c);
+        pixels[index + 1] = green(c);
+        pixels[index + 2] = blue(c);
+      }
+    }
+    updatePixels();
+    nextFrame();
+  }
 }
 
 function mouseClicked(event?: object) {
   console.log('frameCount', frameCount);
   if (!playing) {
-    vid.play();
-    vid.pause();
     playing = true;
     loop();
   } else {
@@ -85,24 +86,13 @@ function downloadFrame() {
   link.href = document.getElementById('defaultCanvas0').toDataURL('image/jpg');
   link.click();
 }
+
 function nextFrame() {
   if (SHOULD_RECORD) downloadFrame();
   prevFrame.copy(vid, 0, 0, width, height, 0, 0, width, height);
-  diffShader.setUniform('tex0', currentFrame);
-  diffShader.setUniform('tex1', frameCount === 0 ? currentFrame : prevFrame);
-  diffShader.setUniform('uframe_count', frameCount);
-  diffShader.setUniform('uTime', frameCount);
-  diffShader.setUniform('u_random1', random(100));
-  diffShader.setUniform('u_random2', random(100));
-  diffShader.setUniform('u_random3', random(100));
   frameIndex++;
-  // const time = frameIndex * frameTime + 0.5 * frameTime;
-  // vid.time(time);
+
   document.getElementsByTagName('video')[0].seekToNextFrame();
-  if (frameIndex > VIDEO_FRAME_LENGTH) {
-    console.log('done');
-    noLoop();
-  }
 }
 
 //#region add globals
