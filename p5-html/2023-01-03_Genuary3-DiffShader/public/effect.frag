@@ -1,3 +1,4 @@
+
 precision mediump float;
 
 // grab texcoords from the vertex shader
@@ -8,6 +9,9 @@ uniform sampler2D tex0;
 uniform sampler2D tex1;
 uniform int uframe_count;
 uniform float uTime;
+uniform float u_random1;
+uniform float u_random2;
+uniform float u_random3;
 uniform float uWidth;
 uniform float uHeight;
 vec4 palette[3];
@@ -15,10 +19,15 @@ uniform vec4 ucolor1;
 uniform vec4 ucolor2;
 uniform vec4 ucolor3;
 
-float random (vec2 st) {
-    return fract(sin(dot(st.xy,
-                         vec2(12.9898,78.233)))*
-        43758.5453123);
+// Version 3
+float random( vec2 p )
+{
+  // We need irrationals for pseudo randomness.
+  // Most (all?) known transcendental numbers will (generally) work.
+  const vec2 r = vec2(
+    23.1406926327792690,  // e^pi (Gelfond's constant)
+     2.6651441426902251); // 2^sqrt(2) (Gelfond–Schneider constant)
+  return fract( cos( mod( 123456789., 1e-7 + 256. * dot(p,r) ) ) );  
 }
 void main() {
   palette[0] = ucolor1;
@@ -39,7 +48,7 @@ void main() {
   // subtract past from tex
   vec3 diff = tex.rgb - past.rgb;
 
-  if (length(diff) > 0.12) {
+  if (length(diff) > 0.05) {
     // vec2 res = vec2(uWidth, uHeight);
     //  vec2 st = gl_FragCoord.xy/res.xy;
 
@@ -53,7 +62,17 @@ void main() {
     // tex.r = 1.0;
     // tex.g = 1.0;
     // tex.b = 1.0; 
-    tex.rgb = palette[1].rgb;
+    float a = 3.0; 
+    float b = u_random1 + uv.x * random(uv) + uv.y * random(uv);
+    
+    int index = int(mod(b, a));
+    if (index == 0) {
+      tex.rgb = ucolor1.rgb;
+    } else if (index == 1) {
+      tex.rgb = ucolor2.rgb;
+    } else  {
+      tex.rgb = ucolor3.rgb;
+    }
   }
   // lets multiply it by 2 to boost the signal a little bit
   // tex.rgb *= 2.0;

@@ -1,8 +1,14 @@
 /// <reference path="../node_modules/@types/p5/global.d.ts" />
 import { Shader, Graphics, MediaElement, Color } from 'p5';
 
-const VIDEO_NAME = 'PXL_20221204_170009451.TS.mp4';
-const VIDEO_FPS = 30.01923;
+const SHOULD_RECORD = false;
+const VIDEO_FRAME_LENGTH = 900;
+const VIDEO_NAME = '20210131_154534.mp4';
+const VIDEO_FPS = 29.990196;
+const WIDTH = 960;
+const HEIGHT = 540;
+const frameTime = 1 / VIDEO_FPS;
+
 let diffShader: Shader;
 
 // the camera variable
@@ -13,7 +19,6 @@ let vid: MediaElement;
 let prevFrame: Graphics;
 let currentFrame: Graphics;
 let frameIndex: number = 0;
-let vidTime = 0;
 let palette = [];
 let playing = false;
 function preload() {
@@ -27,23 +32,23 @@ function convertColorToShaderColor(colorString: string) {
 }
 function setup() {
   // shaders require WEBGL mode to work
-  createCanvas(windowWidth, windowHeight, WEBGL);
+  createCanvas(WIDTH, HEIGHT, WEBGL);
   palette = ['#ff55ff', '#55ffff', '#ffffff'].map(convertColorToShaderColor);
   noStroke();
 
   // the prevFrame layer doesn't need to be WEBGL
-  prevFrame = createGraphics(windowWidth, windowHeight);
-  currentFrame = createGraphics(windowWidth, windowHeight);
+  prevFrame = createGraphics(width, height);
+  currentFrame = createGraphics(width, height);
 
   // initialize the webcam at the window size
   // cam = createCapture(VIDEO);
-  // cam.size(windowWidth, windowHeight);
+  // cam.size(windowWidth, height);
 
   // hide the html element that createCapture adds to the screen
   // cam.hide();
 
-  vid = createVideo('PXL_20221204_170009451.TS.mp4');
-  vid.size(windowWidth, windowHeight);
+  vid = createVideo(VIDEO_NAME);
+  vid.size(width, height);
   vid.hide();
   vid.time(0);
 
@@ -56,13 +61,10 @@ function draw() {
 
   shader(diffShader);
   currentFrame.copy(vid, 0, 0, width, height, 0, 0, width, height);
-  diffShader.setUniform('tex0', currentFrame);
-  diffShader.setUniform('tex1', frameCount === 0 ? currentFrame : prevFrame);
-  diffShader.setUniform('uframe_count', frameCount);
-  diffShader.setUniform('uTime', frameCount);
+
   rect(0, 0, width, height);
 
-  if (frameCount % 3 == 0) nextFrame();
+  if (frameCount % 10 == 0) nextFrame();
 }
 
 function mouseClicked(event?: object) {
@@ -71,16 +73,36 @@ function mouseClicked(event?: object) {
     vid.play();
     vid.pause();
     playing = true;
+    loop();
+  } else {
+    noLoop();
   }
 }
 
+function downloadFrame() {
+  var link = document.createElement('a');
+  link.download = `frame-${frameIndex}.png`;
+  link.href = document.getElementById('defaultCanvas0').toDataURL('image/jpg');
+  link.click();
+}
 function nextFrame() {
+  if (SHOULD_RECORD) downloadFrame();
   prevFrame.copy(vid, 0, 0, width, height, 0, 0, width, height);
-  const frameTime = 1 / VIDEO_FPS;
+  diffShader.setUniform('tex0', currentFrame);
+  diffShader.setUniform('tex1', frameCount === 0 ? currentFrame : prevFrame);
+  diffShader.setUniform('uframe_count', frameCount);
+  diffShader.setUniform('uTime', frameCount);
+  diffShader.setUniform('u_random1', random(100));
+  diffShader.setUniform('u_random2', random(100));
+  diffShader.setUniform('u_random3', random(100));
   frameIndex++;
-  const time = frameIndex * frameTime + 0.5 * frameTime;
-  vid.time(time);
-  console.log(time);
+  // const time = frameIndex * frameTime + 0.5 * frameTime;
+  // vid.time(time);
+  document.getElementsByTagName('video')[0].seekToNextFrame();
+  if (frameIndex > VIDEO_FRAME_LENGTH) {
+    console.log('done');
+    noLoop();
+  }
 }
 
 //#region add globals
