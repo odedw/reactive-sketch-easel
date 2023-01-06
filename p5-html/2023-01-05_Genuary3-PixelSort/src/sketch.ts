@@ -1,8 +1,7 @@
 /// <reference path="../node_modules/@types/p5/global.d.ts" />
 import { Graphics, Image, Vector } from 'p5';
-import { Lfo, Modulate } from '../../utils/p5.modulate';
 
-const IMAGE_NAME = 'alexander-andrews-yOIT88xWkbg-unsplash.jpg';
+const IMAGE_NAME = 'photo-1567309676325-2b237f42861f.jpg';
 /*
 photo-1567309676325-2b237f42861f.jpg
 alexander-andrews-yOIT88xWkbg-unsplash.jpg
@@ -15,6 +14,9 @@ const WIDTH = 540;
 const HEIGHT = 540;
 const MIN_SEGMENT_SIZE = 10;
 const MAX_SEGMENT_SIZE = 50;
+const SHOULD_RECORD = true;
+const RECORD_FRAMES = 900;
+const FPS = 60;
 let img: Image;
 let pg: Graphics;
 function preload() {
@@ -23,9 +25,8 @@ function preload() {
 
 function setup() {
   createCanvas(WIDTH, HEIGHT);
-  // colorMode(HSB, 255);
+  frameRate(FPS);
   pixelDensity(1);
-  frameRate(60);
   noStroke();
   fill(255);
   pg = createGraphics(width, height);
@@ -76,8 +77,15 @@ function sortSegment(x: number, y: number, size: number, row: boolean) {
   }
 }
 
+// function downloadFrame() {
+//   var link = document.createElement('a');
+//   link.download = `frame-${frameCount}.png`;
+//   link.href = document.getElementById('defaultCanvas0').toDataURL('image/jpg');
+//   link.click();
+// }
+
 function draw() {
-  if (frameCount >= 60 && frameCount < 1000) {
+  if (frameCount >= 60 && frameCount < 810) {
     pg.loadPixels();
     for (let i = 0; i < 50; i++) {
       const x = floor(random(width));
@@ -89,6 +97,11 @@ function draw() {
     pg.updatePixels();
   }
   image(pg, 0, 0, width, height);
+  // if (SHOULD_RECORD) downloadFrame();
+  if (frameCount > RECORD_FRAMES) {
+    noLoop();
+    console.log('done');
+  }
 }
 
 function mouseClicked(event?: object) {
