@@ -1,41 +1,52 @@
-let recordedFrames = 0;
-let numFrames; // num of frames to record
-let encoder;
+import { Console } from 'console';
+import * as HME from 'h264-mp4-encoder';
 
-export function preloadRecorder(recordTime: number, fps: number) {
-  const scripts = document.getElementsByTagName('script');
-  const filepath = scripts[scripts.length - 1].src;
-  const name = `${new Date().toISOString().split('T')[0]}_${filepath.split('/')[filepath.split('/').length - 2]}`;
-  numFrames = fps * recordTime;
-  HME.createH264MP4Encoder().then((enc) => {
-    encoder = enc;
-    encoder.outputFilename = name;
-    encoder.width = width * pixelDensity();
-    encoder.height = height * pixelDensity();
-    encoder.frameRate = fps;
-    encoder.kbps = 50000; // video quality
-    encoder.groupOfPictures = 10; // lower if you have fast actions.
-    encoder.initialize();
-  });
-}
+export class Recorder {
+  encoder: any;
+  lengthFrames: number;
+  enabled: boolean;
+  frames = 0;
 
-export function recorderStep() {
-  // keep adding new frame
-  encoder.addFrameRgba(window.drawingContext.getImageData(0, 0, encoder.width, encoder.height).data);
-  recordedFrames++;
-  if (recordedFrames % 10 === 0) {
-    console.log(`Recorded ${recordedFrames} of ${numFrames} frames`);
+  constructor(enabled: boolean, width: number, height: number, fps: number, lengthFrames: number, name: string) {
+    this.enabled = enabled;
+    this.lengthFrames = lengthFrames;
+    if (!enabled) return;
+    HME.createH264MP4Encoder().then((e: any) => {
+      this.encoder = e;
+      // Must be a multiple of 2.
+      this.encoder.outputFilename = name;
+      this.encoder.width = width;
+      this.encoder.height = height;
+      this.encoder.frameRate = fps;
+      this.encoder.kbps = 50000; // video quality
+      this.encoder.groupOfPictures = 10; // lower if you have fast actions.
+      this.encoder.initialize();
+    });
   }
-  // finalize encoding and export as mp4
-  if (recordedFrames === numFrames) {
-    console.log('recording stopped');
-    encoder.finalize();
-    const uint8Array = encoder.FS.readFile(encoder.outputFilename);
-    const anchor = document.createElement('a');
-    anchor.href = URL.createObjectURL(new Blob([uint8Array], { type: 'video/mp4' }));
-    anchor.download = encoder.outputFilename;
-    anchor.click();
-    encoder.delete();
-    noLoop();
+
+  step() {
+    if (!this.enabled) return;
+
+    let ctx = document.getElementById('defaultCanvas0').getContext('2d');
+    this.encoder.addFrameRgba(ctx.getImageData(0, 0, this.encoder.width, this.encoder.height).data);
+    this.frames++;
+    if (this.frames > this.lengthFrames) {
+      noLoop();
+      console.log('done');
+      this.encoder.finalize();
+      const uint8Array = this.encoder.FS.readFile(this.encoder.outputFilename);
+      const anchor = document.createElement('a');
+      anchor.href = URL.createObjectURL(new Blob([uint8Array], { type: 'video/mp4' }));
+      anchor.download = `${this.encoder.outputFilename}.mp4`;
+      anchor.click();
+      this.encoder.delete();
+    }
+  }
+
+  downloadFrame() {
+    var link = document.createElement('a');
+    link.download = `${this.encoder.outputFilename}-${this.frames}.png`;
+    link.href = document.getElementById('defaultCanvas0').toDataURL('image/png');
+    link.click();
   }
 }
