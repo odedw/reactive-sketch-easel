@@ -1,4 +1,3 @@
-import { Console } from 'console';
 import * as HME from 'h264-mp4-encoder';
 
 export class Recorder {
