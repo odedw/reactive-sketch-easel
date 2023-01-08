@@ -112,3 +112,4 @@ processing4/tool_smoke_image/**/*.jpg
 processing4/tool_smoke_image/**/*.png
 processing4/sketch_2022_03_11_Genuary_10_AI/gaugan*/*.png
 processing4/**/frame-*.png
+p5-html/**/*.mp4
