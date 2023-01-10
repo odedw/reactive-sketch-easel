@@ -4,8 +4,8 @@ import { Recorder } from '../../utils/Recorder';
 
 // sketch constants
 // const CONSTANT = 10;
-
 ///////////////////
+
 // record
 const SHOULD_RECORD = false;
 const RECORD_FRAMES = 60;
