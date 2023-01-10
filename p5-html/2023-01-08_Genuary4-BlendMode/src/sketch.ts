@@ -1,5 +1,5 @@
 /// <reference path="../node_modules/@types/p5/global.d.ts" />
-import { BLEND_MODE, Color, Graphics, Shader } from 'p5';
+import { Graphics, Shader } from 'p5';
 import { Modulate } from '../../utils/p5.modulate';
 import { Recorder } from '../../utils/Recorder';
 import { Particle } from './Particle';
@@ -13,7 +13,7 @@ let COLORS: number[][] = [];
 // record
 const SHOULD_RECORD = false;
 const FPS = 60;
-const RECORD_FRAMES = 60 * 10;
+const RECORD_FRAMES = 20 * 60;
 const OUTPUT_FILENAME = '04-intersection';
 //////////////////////
 
@@ -31,19 +31,16 @@ let particleSizes: number[];
 let particleXs: number[];
 let particleYs: number[];
 ////////////////////
-
-function createColorTexture(colors: Color[]): Graphics {
-  const palette = createGraphics(colors.length, 1);
-  palette.strokeWeight(1);
-  palette.noFill();
-  colors.forEach((c, i) => {
-    palette.stroke(c);
-    palette.point(i, 0);
-  });
-  return palette;
-}
 function preload() {
-  recorder = new Recorder(SHOULD_RECORD, WIDTH, HEIGHT, FPS, RECORD_FRAMES, OUTPUT_FILENAME);
+  recorder = new Recorder(
+    SHOULD_RECORD,
+    WIDTH * pixelDensity(),
+    HEIGHT * pixelDensity(),
+    FPS,
+    RECORD_FRAMES,
+    OUTPUT_FILENAME,
+    true
+  );
   circleShader = loadShader('shader.vert', 'shader.frag');
   COLORS = ['#03045e', '#023e8a', '#0077b6', '#0096c7', '#00b4d8', '#48cae4']
     .map((s) => color(s))
@@ -52,8 +49,8 @@ function preload() {
 
 function setup() {
   createCanvas(WIDTH, HEIGHT, WEBGL);
-  // blendMode(blendModes[blendIndex]);
-  frameRate(60);
+  smooth();
+  frameRate(3);
   pg = createGraphics(width, height);
   for (let x = 0; x <= width; x += width / (NUM_CIRCLES_AXIS - 1)) {
     for (let y = 0; y <= height; y += height / (NUM_CIRCLES_AXIS - 1)) {

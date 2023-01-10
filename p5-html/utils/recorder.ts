@@ -5,10 +5,20 @@ export class Recorder {
   lengthFrames: number;
   enabled: boolean;
   frames = 0;
+  webgl: boolean;
 
-  constructor(enabled: boolean, width: number, height: number, fps: number, lengthFrames: number, name: string) {
+  constructor(
+    enabled: boolean,
+    width: number,
+    height: number,
+    fps: number,
+    lengthFrames: number,
+    name: string,
+    webgl = false
+  ) {
     this.enabled = enabled;
     this.lengthFrames = lengthFrames;
+    this.webgl = webgl;
     if (!enabled) return;
     HME.createH264MP4Encoder().then((e: any) => {
       this.encoder = e;
@@ -25,26 +35,32 @@ export class Recorder {
 
   step() {
     if (!this.enabled) return;
-
-    let ctx = document.getElementById('defaultCanvas0').getContext('2d');
-    this.encoder.addFrameRgba(ctx.getImageData(0, 0, this.encoder.width, this.encoder.height).data);
+    if (this.webgl) {
+      this.downloadFrame();
+    } else {
+      // 2d
+      let ctx = document.getElementById('defaultCanvas0').getContext('2d');
+      this.encoder.addFrameRgba(ctx.getImageData(0, 0, this.encoder.width, this.encoder.height).data);
+    }
     this.frames++;
-    if (this.frames > this.lengthFrames) {
+    if (this.frames >= this.lengthFrames) {
       noLoop();
       console.log('done');
-      this.encoder.finalize();
-      const uint8Array = this.encoder.FS.readFile(this.encoder.outputFilename);
-      const anchor = document.createElement('a');
-      anchor.href = URL.createObjectURL(new Blob([uint8Array], { type: 'video/mp4' }));
-      anchor.download = `${this.encoder.outputFilename}.mp4`;
-      anchor.click();
-      this.encoder.delete();
+      if (!this.webgl) {
+        this.encoder.finalize();
+        const uint8Array = this.encoder.FS.readFile(this.encoder.outputFilename);
+        const anchor = document.createElement('a');
+        anchor.href = URL.createObjectURL(new Blob([uint8Array], { type: 'video/mp4' }));
+        anchor.download = `${this.encoder.outputFilename}.mp4`;
+        anchor.click();
+        this.encoder.delete();
+      }
     }
   }
 
   downloadFrame() {
     var link = document.createElement('a');
-    link.download = `${this.encoder.outputFilename}-${this.frames}.png`;
+    link.download = `frame-${this.frames}.png`;
     link.href = document.getElementById('defaultCanvas0').toDataURL('image/png');
     link.click();
   }
