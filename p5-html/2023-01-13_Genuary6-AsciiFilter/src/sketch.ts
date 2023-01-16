@@ -6,20 +6,20 @@ import { Recorder } from '../../utils/Recorder';
 // sketch constants
 const CHAR_SET = 'Ñ@#W$9876543210?!abc;:+=-,._ ';
 const CHAR_SIZE = 10;
-const FILE_NAME = 'photo-1553558888-6440b4097908.jpg';
-const INCREASE_BRIGHTNESS = 2;
+const FILE_NAME = 'Jellyfish - 10480.mp4';
+const INCREASE_BRIGHTNESS = 1;
 ///////////////////
 
 // record
 const SHOULD_RECORD = false;
-const RECORD_FRAMES = 60;
-const OUTPUT_FILENAME = 'square';
+const FPS = 24;
+const RECORD_FRAMES = FPS * 60;
+const OUTPUT_FILENAME = '06';
 //////////////////////
 
 // config
-const WIDTH = 900;
+const WIDTH = 1280;
 const HEIGHT = 720;
-const FPS = 60;
 let lfo1 = Modulate.createSineLfo(6, { from: 20, to: 100 });
 /////////////////////
 
@@ -27,21 +27,23 @@ let lfo1 = Modulate.createSineLfo(6, { from: 20, to: 100 });
 let recorder: Recorder;
 let pg: Graphics;
 let img: Image;
+let vid;
 let capture: p5.Element;
 ////////////////////
 
 function preload() {
   recorder = new Recorder(SHOULD_RECORD, WIDTH, HEIGHT, FPS, RECORD_FRAMES, OUTPUT_FILENAME);
+
   // img = loadImage(FILE_NAME);
 }
 
 function setup() {
   createCanvas(WIDTH, HEIGHT);
-  capture = createCapture(VIDEO);
-  capture.size(WIDTH, HEIGHT);
+  // capture = createCapture(VIDEO);
+  // capture.size(WIDTH, HEIGHT);
   // console.log(capture.size());
   // capture.size(WIDTH / CHAR_SIZE, HEIGHT / CHAR_SIZE);
-  capture.hide();
+  // capture.hide();
   frameRate(FPS);
   noStroke();
   fill(255);
@@ -51,20 +53,25 @@ function setup() {
   textSize(CHAR_SIZE * 1.5);
   textAlign(CENTER, CENTER);
   rectMode(CENTER);
+
+  vid = createVideo(FILE_NAME);
+  vid.size(width, height);
+  vid.hide();
+  vid.time(0);
+  // vid.play();
 }
 
 function draw() {
   background(0);
-  pg.copy(capture, 0, 0, width, height, 0, 0, pg.width, pg.height);
+  pg.copy(vid, 0, 0, width, height, 0, 0, pg.width, pg.height);
   pg.loadPixels();
-  console.log(frameCount, lfo1.get());
   for (let x = 0; x < pg.width; x++) {
     for (let y = 0; y < pg.height; y++) {
       const pixelIndex = (x + y * pg.width) * 4;
-      const c = color(
-        pg.pixels[pixelIndex] + lfo1.get(),
-        pg.pixels[pixelIndex + 1] + lfo1.get(),
-        pg.pixels[pixelIndex + 2] + lfo1.get()
+      let c = color(
+        pg.pixels[pixelIndex] * INCREASE_BRIGHTNESS,
+        pg.pixels[pixelIndex + 1] * INCREASE_BRIGHTNESS,
+        pg.pixels[pixelIndex + 2] * INCREASE_BRIGHTNESS
       );
       // console.log(red(c), green(c), blue(c));
       const b = brightness(c);
@@ -77,6 +84,8 @@ function draw() {
   }
 
   // image(capture, 0, 0, width, height);
+  document.getElementsByTagName('video')[0].seekToNextFrame();
+
   recorder.step();
 }
 
