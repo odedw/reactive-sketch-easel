@@ -2,8 +2,10 @@
 type SINE = 'sine';
 type TRIANGLE = 'triangle';
 type SAW = 'saw';
-type LFO_TYPE = SINE | TRIANGLE | SAW;
+type SH = 'SH';
+type LFO_TYPE = SINE | TRIANGLE | SH | SAW;
 const SINE: SINE = 'sine';
+const SH: SH = 'SH';
 const TRIANGLE: TRIANGLE = 'triangle';
 const SAW: SAW = 'saw';
 export class Lfo {
@@ -11,6 +13,8 @@ export class Lfo {
   frequency: number;
   from: number;
   to: number;
+  previousValue: number | null = null;
+  previousFrameCount: number = 0;
   phase: number;
   constructor(type: LFO_TYPE, frequency: number, from: number = -1, to: number = 1, phase: number = 0) {
     this.type = type;
@@ -21,18 +25,29 @@ export class Lfo {
   }
 
   get(): number {
+    let value = 0;
+    if (this.previousFrameCount === frameCount && this.previousValue != null) return this.previousValue;
+
     if (this.type === SINE) {
       const segment = TWO_PI / this.frequency;
-      const value = sin(((frameCount + this.phase) % this.frequency) * segment);
-      const mapped = map(value, -1, 1, this.from, this.to);
-      return mapped;
+      value = sin(((frameCount + this.phase) % this.frequency) * segment);
     } else if (this.type === SAW) {
       const segment = 1 / this.frequency;
-      const value = segment * ((frameCount + this.phase) % this.frequency);
-      const mapped = map(value, -1, 1, this.from, this.to);
-      return mapped;
+      value = segment * ((frameCount + this.phase) % this.frequency);
+    } else if (this.type === SH) {
+      value = random(-1, 1);
+      // if (frameCount % this.frequency == 0) {
+      // } else {
+      //   const mapped = map(this.previousValue!, -1, 1, this.from, this.to);
+      //   return mapped;
+      // }
     }
-    return 0;
+
+    this.previousFrameCount = frameCount;
+    this.previousValue = value;
+    const mapped = map(value, -1, 1, this.from, this.to);
+    // console.log(`===========================new value`, frameCount, value, mapped);
+    return mapped;
   }
 }
 
@@ -54,4 +69,8 @@ function createSawLfo(frequency: number, options?: LfoOptions) {
   return createLfo(SAW, frequency, options);
 }
 
-export const Modulate = { createLfo, createSineLfo, createSawLfo, SINE, SAW };
+function createSHLfo(frequency: number, options?: LfoOptions) {
+  return createLfo(SH, frequency, options);
+}
+
+export const Modulate = { createLfo, createSineLfo, createSawLfo, createSHLfo, SINE, SAW };

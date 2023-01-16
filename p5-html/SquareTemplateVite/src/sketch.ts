@@ -7,6 +7,7 @@ import { Recorder } from '../../utils/Recorder';
 ///////////////////
 
 // record
+const FPS = 60;
 const SHOULD_RECORD = false;
 const RECORD_FRAMES = 60;
 const OUTPUT_FILENAME = 'square';
@@ -15,7 +16,6 @@ const OUTPUT_FILENAME = 'square';
 // config
 const WIDTH = 540;
 const HEIGHT = 540;
-const FPS = 60;
 /////////////////////
 
 // locals
@@ -28,6 +28,7 @@ function preload() {
 
 function setup() {
   createCanvas(WIDTH, HEIGHT);
+  pixelDensity(1);
   frameRate(60);
   noStroke();
   fill(255);
