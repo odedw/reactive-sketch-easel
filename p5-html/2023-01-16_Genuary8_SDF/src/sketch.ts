@@ -66,6 +66,7 @@ function draw() {
   particles.forEach((p) => p.draw(pg));
   shader(theShader);
   theShader.setUniform('u_texture', pg);
+  theShader.setUniform('u_circles', [[0.5, 0.5]]);
   rect(-width / 2, -height / 2, width, height);
   // image(pg, -width / 2, -height / 2, width, height);
   recorder.step();
