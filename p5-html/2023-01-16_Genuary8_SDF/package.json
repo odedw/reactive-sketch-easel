@@ -10,10 +10,12 @@
   },
   "devDependencies": {
     "@types/p5": "^1.4.3",
+    "@types/tinycolor2": "^1.4.3",
     "typescript": "^4.9.3",
     "vite": "^4.0.0"
   },
   "dependencies": {
-    "h264-mp4-encoder": "^1.0.12"
+    "h264-mp4-encoder": "^1.0.12",
+    "tinycolor2": "^1.5.2"
   }
 }
