@@ -16,15 +16,33 @@ export class Lfo {
   previousValue: number | null = null;
   previousFrameCount: number = 0;
   phase: number;
+  stoppedAt: number = -1;
+  stoppedFor: number = -1;
   constructor(type: LFO_TYPE, frequency: number, from: number = -1, to: number = 1, phase: number = 0) {
     this.type = type;
     this.frequency = frequency;
     this.from = from;
     this.to = to;
     this.phase = phase;
+
+    p5.prototype.stepLfo = function () {
+      this.step();
+    };
+    p5.prototype.registerMethod('pre', p5.prototype.stepLfo);
   }
 
+  step() {
+    console.log(frameCount);
+  }
+
+  stopFor(frames: number) {
+    this.stoppedAt = frameCount;
+    this.stoppedFor = frames;
+  }
   get(): number {
+    // if (this.stoppedFor > 0 && frameCount - this.stoppedAt < this.stoppedFor && this.previousValue != null)
+    //   return this.previousValue;
+
     let value = 0;
     if (this.previousFrameCount === frameCount && this.previousValue != null) return this.previousValue;
 

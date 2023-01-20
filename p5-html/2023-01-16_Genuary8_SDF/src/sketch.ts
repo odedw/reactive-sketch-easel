@@ -41,7 +41,7 @@ function setup() {
   let tc = tinycolor({ r: red(c1), g: green(c1), b: blue(c1) })
     .complement()
     .toHexString();
-  console.log(tc);
+  // console.log(tc);
   c2 = color(tc);
   frameRate(SHOULD_RECORD ? 5 : FPS);
   noStroke();
@@ -66,13 +66,13 @@ function setup() {
           phase: phaseY,
         }),
         Modulate.createSineLfo(10 * FPS, {
-          from: 0,
-          to: 15,
+          from: -50,
+          to: 30,
           phase: phaseS,
         })
       )
     );
-    console.log(phaseX, phaseY, phaseS);
+    // console.log(phaseX, phaseY, phaseS);
   }
 
   pg = createGraphics(width, height);
@@ -80,7 +80,7 @@ function setup() {
 
 function draw() {
   // pg.background(0);
-  // particles.forEach((p) => p.draw(pg));
+  particles.forEach((p) => p.step());
   shader(theShader);
 
   theShader.setUniform(

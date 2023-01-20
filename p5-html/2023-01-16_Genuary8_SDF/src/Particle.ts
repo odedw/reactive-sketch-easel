@@ -12,7 +12,13 @@ export class Particle {
     this.lfoS = lfoS;
   }
 
-  draw(pg: Graphics) {
-    pg.circle(this.lfoX.get(), this.lfoY.get(), lfoS.get());
+  step(/*pg: Graphics*/) {
+    // pg.circle(this.lfoX.get(), this.lfoY.get(), this.lfoS.get());
+    // if (this.lfoS.get() < 1) {
+    // this.lfoS.stopFor(60);
+    // console.log('stopped');
+    // } else {
+    // console.log(this.lfoS.get());
+    // }
   }
 }
