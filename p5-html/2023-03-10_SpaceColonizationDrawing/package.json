@@ -1,0 +1,20 @@
+{
+  "name": "square-template-vite",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "@types/p5": "^1.4.3",
+    "typescript": "^4.9.3",
+    "vite": "^4.0.0"
+  },
+  "dependencies": {
+    "h264-mp4-encoder": "^1.0.12",
+    "open-simplex-noise": "^2.5.0"
+  }
+}
