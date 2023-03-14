@@ -55,7 +55,7 @@ function preload() {
 
 function setup() {
   createCanvas(WIDTH, HEIGHT /*, WEGL*/);
-  pixelDensity(1);
+  pixelDensity(2);
   frameRate(60);
   noStroke();
   fill(0);
@@ -100,7 +100,7 @@ function setup() {
 function draw() {
   // background('#fff1dd');
   // image(pg, 0, 0);
-  if (!recorder.encoder) return;
+  // if (!recorder.encoder) return;
   if (stage === Stage.Running) {
     // translate(viewport.x, viewport.y);
     // // image(img, 0, 0, width, height);
