@@ -4,6 +4,7 @@ import { Modulate } from '../../utils/p5.modulate';
 import { Recorder } from '../../utils/Recorder';
 import { Game } from './Game';
 import { findInitialState, boardToString } from './search';
+import { listInputs, Input, init } from 'rmidi';
 
 // sketch constants
 // const CONSTANT = 10;
@@ -25,10 +26,21 @@ const HEIGHT = 540;
 let recorder: Recorder;
 let game: Game;
 let games: Game[] = [];
+let midiInput: Input;
 ////////////////////
 
 function preload() {
   recorder = new Recorder(SHOULD_RECORD, WIDTH, HEIGHT, FPS, RECORD_FRAMES, OUTPUT_FILENAME);
+  listInputs();
+  init().then(() => {
+    midiInput = new Input('IAC Driver Bus 1');
+    midiInput.noteOn().subscribe((e) => {
+      // console.log('note', e);
+      if (games.length >= e.channel) {
+        games[e.channel - 1].step();
+      }
+    });
+  });
 }
 
 function setup() {
@@ -38,20 +50,22 @@ function setup() {
   noStroke();
   fill(255);
   rectMode(CENTER);
-  for (let i = 0; i < 1; i++) {
-    games.push(
-      new Game(
-        random(width * 0.4, width * 0.6),
-        random(height * 0.4, height * 0.6),
-        random(0.8 * width, 1.2 * width),
-        random(0.8 * height, 1.2 * height),
-        10,
-        10,
-        boardToString(findInitialState(i + 3, 10, 10))
+  [6, 3].forEach(
+    (cycle) =>
+      games.push(
+        new Game(
+          random(width * 0.4, width * 0.6),
+          random(height * 0.4, height * 0.6),
+          random(0.8 * width, 1.2 * width),
+          random(0.8 * height, 1.2 * height),
+          10,
+          10,
+          boardToString(findInitialState(cycle - 1, 10, 10))
+        )
       )
-    );
     // console.log(i);
-  }
+  );
+
   // games.push(new Game(width / 2, height / 2, width, height, 10, 10, boardToString(findInitialState(5, 10, 10))));
   // games.push(new Game(width / 2, height / 2, width, height, 10, 10, boardToString(findInitialState(4, 10, 10))));
 }
@@ -59,7 +73,7 @@ function setup() {
 function draw() {
   background('#e6e6e6');
   // games.forEach((g) => frameCount % g.cycle === 0 && g.step());
-  games.forEach((g) => frameCount % 60 === 0 && g.step());
+  // games.forEach((g) => frameCount % 60 === 0 && g.step());
   games.forEach((g) => g.draw());
   recorder.step();
 }
