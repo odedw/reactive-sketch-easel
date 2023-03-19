@@ -4,10 +4,11 @@ import { Modulate } from '../../utils/p5.modulate';
 import { Recorder } from '../../utils/Recorder';
 import { Game } from './Game';
 import { findInitialState, boardToString } from './search';
-import { listInputs, Input, init } from 'rmidi';
+import { listInputs, Input, init, Output } from 'rmidi';
+import { config, play } from './play';
 
 // sketch constants
-// const CONSTANT = 10;
+// const CYCLES = ;
 ///////////////////
 
 // record
@@ -24,21 +25,31 @@ const HEIGHT = 540;
 
 // locals
 let recorder: Recorder;
-let game: Game;
+// let game: Game;
 let games: Game[] = [];
 let midiInput: Input;
+let midiOutput: Output;
 ////////////////////
 
 function preload() {
   recorder = new Recorder(SHOULD_RECORD, WIDTH, HEIGHT, FPS, RECORD_FRAMES, OUTPUT_FILENAME);
   listInputs();
   init().then(() => {
-    midiInput = new Input('IAC Driver Bus 1');
-    midiInput.noteOn().subscribe((e) => {
-      // console.log('note', e);
-      if (games.length >= e.channel) {
-        games[e.channel - 1].step();
-      }
+    Promise.all([Input.create('IAC Driver Bus 1'), Output.create('IAC Driver Bus 2')]).then((midis) => {
+      midiInput = midis[0];
+      midiOutput = midis[1];
+      midiInput.noteOn().subscribe((e) => {
+        // console.log('note', e);
+        if (games.length < e.channel) return;
+        const game = games[e.channel - 1];
+        const sum = game.step();
+        play(sum, game, e.channel, midiOutput);
+      });
+      midiInput.cc().subscribe((e) => {
+        if (games.length < e.channel) return;
+        const game = games[e.channel - 1];
+        game.opacity = e.value / 127;
+      });
     });
   });
 }
@@ -50,8 +61,8 @@ function setup() {
   noStroke();
   fill(255);
   rectMode(CENTER);
-  [6, 3].forEach(
-    (cycle) =>
+  config.forEach(
+    ({ cycle, board }) =>
       games.push(
         new Game(
           random(width * 0.4, width * 0.6),
@@ -60,7 +71,7 @@ function setup() {
           random(0.8 * height, 1.2 * height),
           10,
           10,
-          boardToString(findInitialState(cycle - 1, 10, 10))
+          board ?? boardToString(findInitialState(cycle - 1, 10, 10))
         )
       )
     // console.log(i);
@@ -78,9 +89,13 @@ function draw() {
   recorder.step();
 }
 
+let running = true;
 function mouseClicked(event?: object) {
   console.log('frameCount', frameCount);
-  games.forEach((g) => g.step());
+  // games.forEach((g) => g.step());
+  running = !running;
+  if (!running) noLoop();
+  else loop();
 }
 
 //#region add globals

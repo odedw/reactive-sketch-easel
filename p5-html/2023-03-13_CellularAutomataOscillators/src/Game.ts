@@ -12,6 +12,7 @@ export class Game {
   cycle: number;
   loop: boolean;
   initialBoard: Array<Array<number>>;
+  initialSum: number;
   constructor(x: number, y: number, w: number, h: number, cols: number, rows: number, state?: string, loop = true) {
     this.x = x;
     this.y = y;
@@ -22,6 +23,7 @@ export class Game {
     this.loop = loop;
     this.board = Array.from(Array(rows).keys()).map((_) => Array(cols).fill(0));
     this.initialBoard = Array.from(Array(rows).keys()).map((_) => Array(cols).fill(0));
+    this.initialSum = 0;
     this.cycle = int(random(20, 80));
     for (let y = 0; y < this.rows; y++) {
       for (let x = 0; x < this.cols; x++) {
@@ -31,11 +33,12 @@ export class Game {
           this.board[y][x] = round(random());
         }
         this.initialBoard[y][x] = this.board[y][x];
+        this.initialSum += this.board[y][x];
       }
     }
     this.colSize = this.w / this.cols;
     this.rowSize = this.h / this.rows;
-    this.opacity = random();
+    this.opacity = random(0.5, 1);
   }
 
   draw() {
@@ -62,6 +65,7 @@ export class Game {
 
   step() {
     // this.opacity = 1;
+    let sum = 0;
     const newBoard = this.board.map((row, cellY) => {
       return row.map((cell, cellX) => {
         let numberOfLiveNeighbours = 0;
@@ -71,14 +75,16 @@ export class Game {
             numberOfLiveNeighbours += this.board?.[y]?.[x] || 0;
           }
         }
+        let result = 0;
+        if (cell && [2, 3].includes(numberOfLiveNeighbours)) result = 1;
 
-        if (cell && [2, 3].includes(numberOfLiveNeighbours)) return 1;
-
-        if (!cell && numberOfLiveNeighbours === 3) return 1;
-
-        return 0;
+        if (!cell && numberOfLiveNeighbours === 3) result = 1;
+        sum += result;
+        return result;
       });
     });
+
+    // state changed
     let changed = false;
     for (let y = 0; y < this.rows; y++) {
       for (let x = 0; x < this.cols; x++) {
@@ -90,9 +96,12 @@ export class Game {
     }
     if (!changed && this.loop) {
       this.reset();
+      sum = this.initialSum;
     } else {
       this.board = newBoard;
     }
+
+    return sum;
   }
 
   reset() {

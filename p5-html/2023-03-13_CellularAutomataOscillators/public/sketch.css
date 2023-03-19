@@ -4,7 +4,7 @@ body {
   padding: 0;
   height: 100%;
   width: 100%;
-  background: rgb(220,220,220);
+  background: black;
 }
 canvas {
   display: block;

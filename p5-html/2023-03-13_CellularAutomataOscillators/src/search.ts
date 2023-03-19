@@ -94,11 +94,12 @@ export function boardToString(board: number[][]) {
   let str = '';
   for (let y = 0; y < board.length; y++) {
     const row = board[y].map((c) => `${c}`).join('');
-    console.log(row);
+    // console.log(row);
     str += row;
   }
+  console.log(str);
   return str;
 }
-console.log('===========================');
+// console.log('===========================');
 // console.log(boardToString(findOscillator(5, 6, 6)));
-console.log('===========================');
+// console.log('===========================');
