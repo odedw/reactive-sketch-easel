@@ -18,9 +18,9 @@ const BRANCHES = 100;
 
 // record
 const FPS = 30;
-const SHOULD_RECORD = false;
+const SHOULD_RECORD = true;
 const RECORD_FRAMES = 800;
-const OUTPUT_FILENAME = '09-wip-02';
+const OUTPUT_FILENAME = '09';
 //////////////////////
 
 // config
@@ -49,7 +49,7 @@ const branchPositions: Vector[] = [];
 ////////////////////
 
 function preload() {
-  recorder = new Recorder(SHOULD_RECORD, WIDTH, HEIGHT, FPS, RECORD_FRAMES, OUTPUT_FILENAME);
+  recorder = new Recorder(SHOULD_RECORD, WIDTH, HEIGHT, FPS, RECORD_FRAMES, OUTPUT_FILENAME, false, 2);
   // img = loadImage('tiled-brick-texture-1-3135553547.png');
 }
 

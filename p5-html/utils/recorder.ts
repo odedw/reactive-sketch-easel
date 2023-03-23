@@ -14,7 +14,8 @@ export class Recorder {
     fps: number,
     lengthFrames: number,
     name: string,
-    webgl = false
+    webgl = false,
+    pixelDensity = 1
   ) {
     this.enabled = enabled;
     this.lengthFrames = lengthFrames;
@@ -24,8 +25,8 @@ export class Recorder {
       this.encoder = e;
       // Must be a multiple of 2.
       this.encoder.outputFilename = name;
-      this.encoder.width = width;
-      this.encoder.height = height;
+      this.encoder.width = width * pixelDensity;
+      this.encoder.height = height * pixelDensity;
       this.encoder.frameRate = fps;
       this.encoder.kbps = 50000; // video quality
       this.encoder.groupOfPictures = 10; // lower if you have fast actions.

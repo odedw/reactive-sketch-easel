@@ -4,11 +4,11 @@ import { Modulate } from '../../utils/p5.modulate';
 import { Recorder } from '../../utils/Recorder';
 import { Game } from './Game';
 import { findInitialState, boardToString } from './search';
-import { listInputs, Input, init, Output } from 'rmidi';
 import { config, play } from './play';
-
+import { Input, Output, WebMidi } from 'webmidi';
 // sketch constants
-// const CYCLES = ;
+const MIDI_IN = 'ableton-out'; //'IAC Driver Bus 1';
+const MIDI_OUT = 'ableton-in'; //'IAC Driver Bus 2';
 ///////////////////
 
 // record
@@ -27,30 +27,38 @@ const HEIGHT = 540;
 let recorder: Recorder;
 // let game: Game;
 let games: Game[] = [];
-let midiInput: Input;
-let midiOutput: Output;
+let midiInput: Input | undefined;
+let midiOutput: Output | undefined;
 ////////////////////
 
 function preload() {
   recorder = new Recorder(SHOULD_RECORD, WIDTH, HEIGHT, FPS, RECORD_FRAMES, OUTPUT_FILENAME);
-  listInputs();
-  init().then(() => {
-    Promise.all([Input.create('IAC Driver Bus 1'), Output.create('IAC Driver Bus 2')]).then((midis) => {
-      midiInput = midis[0];
-      midiOutput = midis[1];
-      midiInput.noteOn().subscribe((e) => {
-        // console.log('note', e);
-        if (games.length < e.channel) return;
-        const game = games[e.channel - 1];
-        const sum = game.step();
-        play(sum, game, e.channel, midiOutput);
-      });
-      midiInput.cc().subscribe((e) => {
-        if (games.length < e.channel) return;
-        const game = games[e.channel - 1];
-        game.opacity = e.value / 127;
-      });
+  // listInputs();
+  WebMidi.enable().then(() => {
+    midiInput = WebMidi.inputs.find((i) => i.name === MIDI_IN);
+    midiOutput = WebMidi.outputs.find((i) => i.name === MIDI_OUT);
+    if (!midiInput || !midiOutput) {
+      console.log('no midi');
+      return;
+    }
+    midiOutput.sendReset();
+    // Promise.all([Input.create(MIDI_IN), Output.create(MIDI_OUT)]).then((midis) => {
+    // console.log('midis', midis);
+    // midiInput = midis[0];
+    // midiOutput = midis[1];
+    midiInput?.addListener('noteon', (e) => {
+      console.log('note', e);
+      if (games.length < e.message.channel) return;
+      const game = games[e.message.channel - 1];
+      const sum = game.step();
+      play(sum, game, e.message.channel, midiOutput!);
     });
+    // midiInput?.addListener('controlchange', (e) => {
+    //   if (games.length < e.message.channel) return;
+    //   const game = games[e.message.channel - 1];
+    //   game.opacity = int(e.value!) / 127;
+    // });
+    // });
   });
 }
 
