@@ -9,6 +9,11 @@ import { Input, Output, WebMidi } from 'webmidi';
 // sketch constants
 const MIDI_IN = 'ableton-out'; //'IAC Driver Bus 1';
 const MIDI_OUT = 'ableton-in'; //'IAC Driver Bus 2';
+const PALETTES = [
+  // ['#ffe03d', '#fe4830', '#d33033', '#6d358a', '#1c509e', '#00953c', '#f2f2f2', '#000000', '#ffffff'],
+  // ['#FADDE1', '#F8C3CD', '#F6A9B9', '#F390A5', '#F17791', '#EF5E7D', '#ED4569', '#EB2C55', '#E91541'],
+  ['#EDF2FB', '#E2E8F0', '#CBD5E0', '#A0AEC0', '#718096', '#4A5568', '#2D3748', '#1A202C', '#171923'],
+];
 ///////////////////
 
 // record
@@ -29,6 +34,9 @@ let recorder: Recorder;
 let games: Game[] = [];
 let midiInput: Input | undefined;
 let midiOutput: Output | undefined;
+let theShader: Shader;
+let colors: number[][] = [];
+let currentPalette = 0;
 ////////////////////
 
 function preload() {
@@ -42,29 +50,30 @@ function preload() {
       return;
     }
     midiOutput.sendReset();
+    midiOutput.sendPolyphonicMode('mono', { channels: [1, 2, 3] });
     // Promise.all([Input.create(MIDI_IN), Output.create(MIDI_OUT)]).then((midis) => {
-    // console.log('midis', midis);
+    // console.log('adding listener');
     // midiInput = midis[0];
     // midiOutput = midis[1];
     midiInput?.addListener('noteon', (e) => {
-      console.log('note', e);
+      // console.log('note', e);
       if (games.length < e.message.channel) return;
       const game = games[e.message.channel - 1];
       const sum = game.step();
       play(sum, game, e.message.channel, midiOutput!);
     });
-    // midiInput?.addListener('controlchange', (e) => {
-    //   if (games.length < e.message.channel) return;
-    //   const game = games[e.message.channel - 1];
-    //   game.opacity = int(e.value!) / 127;
-    // });
-    // });
+    midiInput?.addListener('controlchange', (e) => {
+      if (games.length < e.message.channel) return;
+      const game = games[e.message.channel - 1];
+      game.opacity = int(e.value!) / 127;
+    });
   });
+  theShader = loadShader('shader.vert', 'shader.frag');
 }
 
 function setup() {
-  createCanvas(WIDTH, HEIGHT /*, WEGL*/);
-  pixelDensity(2);
+  createCanvas(WIDTH, HEIGHT, WEBGL);
+  pixelDensity(1);
   frameRate(60);
   noStroke();
   fill(255);
@@ -84,16 +93,29 @@ function setup() {
       )
     // console.log(i);
   );
-
   // games.push(new Game(width / 2, height / 2, width, height, 10, 10, boardToString(findInitialState(5, 10, 10))));
   // games.push(new Game(width / 2, height / 2, width, height, 10, 10, boardToString(findInitialState(4, 10, 10))));
 }
 
 function draw() {
-  background('#e6e6e6');
-  // games.forEach((g) => frameCount % g.cycle === 0 && g.step());
-  // games.forEach((g) => frameCount % 60 === 0 && g.step());
+  // background('#e6e6e6');
+  // // games.forEach((g) => frameCount % g.cycle === 0 && g.step());
+  // if (frameCount % 60 === 0) games[0].step();
+  // if (frameCount % 50 === 0) games[1].step();
+  // if (frameCount % 40 === 0) games[2].step();
+  if (frameCount % 120 == 0) currentPalette = (currentPalette + 1) % PALETTES.length;
   games.forEach((g) => g.draw());
+  theShader.setUniform('u_texture1', games[0].pg);
+  theShader.setUniform('u_texture2', games[1].pg);
+  theShader.setUniform('u_texture3', games[2].pg);
+  theShader.setUniform('u_time', millis() / 1000.0);
+  colors = PALETTES[currentPalette]
+    .map((s) => color(s))
+    .map((c) => [red(c) / 255.0, green(c) / 255.0, blue(c) / 255.0, 1.0]);
+  colors.forEach((c, i) => theShader.setUniform(`u_color${i}`, c));
+
+  shader(theShader);
+  rect(-width / 2, -height / 2, width, height);
   recorder.step();
 }
 

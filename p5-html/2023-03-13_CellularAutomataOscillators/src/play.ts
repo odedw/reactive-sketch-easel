@@ -10,19 +10,20 @@ export const config = [
     topMultiplier: 1.15,
   },
 
-  // {
-  //   cycle: 4,
-  //   min: 70,
-  //   max: 90,
-  //   topMultiplier: 1.15,
-  // },
-  // {
-  //   board: '1001000101110101111000111111010001110100001111110010011101011111101100111011110111110111110011011011',
-  //   cycle: 5,
-  //   min: 60,
-  //   max: 90,
-  //   topMultiplier: 1,
-  // },
+  {
+    board: '0110011010000001110011001101111111101101011110001010101111111110101101111111011000001001111011101111',
+    cycle: 4,
+    min: 80,
+    max: 100,
+    topMultiplier: 1,
+  },
+  {
+    board: '1101100000001110000001110111001111011101111001110101111001100111010111011111001101011110101001100101',
+    cycle: 6,
+    min: 60,
+    max: 70,
+    topMultiplier: 1,
+  },
 ];
 export function play(val: number, game: Game, channel: number, midiOutput: Output) {
   const c = config[channel - 1];

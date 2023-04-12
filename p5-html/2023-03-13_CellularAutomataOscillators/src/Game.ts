@@ -1,3 +1,5 @@
+import { Graphics } from 'p5';
+
 export class Game {
   x: number;
   y: number;
@@ -13,6 +15,7 @@ export class Game {
   loop: boolean;
   initialBoard: Array<Array<number>>;
   initialSum: number;
+  pg: Graphics;
   constructor(x: number, y: number, w: number, h: number, cols: number, rows: number, state?: string, loop = true) {
     this.x = x;
     this.y = y;
@@ -25,6 +28,7 @@ export class Game {
     this.initialBoard = Array.from(Array(rows).keys()).map((_) => Array(cols).fill(0));
     this.initialSum = 0;
     this.cycle = int(random(20, 80));
+    this.pg = createGraphics(w, h);
     for (let y = 0; y < this.rows; y++) {
       for (let x = 0; x < this.cols; x++) {
         if (state) {
@@ -42,15 +46,16 @@ export class Game {
   }
 
   draw() {
-    noStroke();
-    fill(0, this.opacity * 255);
-    push();
-    translate(this.x, this.y);
-    rectMode(CENTER);
+    this.pg.background(255);
+    this.pg.noStroke();
+    this.pg.fill(0);
+    this.pg.push();
+    this.pg.translate(this.x, this.y);
+    this.pg.rectMode(CENTER);
     for (let y = 0; y < this.rows; y++) {
       for (let x = 0; x < this.cols; x++) {
         if (this.board[y][x] === 1) {
-          rect(
+          this.pg.rect(
             x * this.colSize - this.w / 2 + this.colSize / 2,
             y * this.rowSize - this.h / 2 + this.rowSize / 2,
             this.colSize,
@@ -59,8 +64,7 @@ export class Game {
         }
       }
     }
-    // this.opacity -= 0.02;
-    pop();
+    this.pg.pop();
   }
 
   step() {
