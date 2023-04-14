@@ -2,6 +2,7 @@
 import { Shader } from 'p5';
 import { Modulate } from '../../utils/p5.modulate';
 import { Recorder } from '../../utils/Recorder';
+import { Sequencer } from '../../utils/Sequencer';
 import { Game } from './Game';
 import { findInitialState, boardToString } from './search';
 import { config, play } from './play';
@@ -37,6 +38,8 @@ let midiOutput: Output | undefined;
 let theShader: Shader;
 let colors: number[][] = [];
 let currentPalette = 0;
+let sequencer = new Sequencer({ onNote, steps: 16 });
+let sequencerShowing = true;
 ////////////////////
 
 function preload() {
@@ -96,14 +99,17 @@ function setup() {
   // games.push(new Game(width / 2, height / 2, width, height, 10, 10, boardToString(findInitialState(5, 10, 10))));
   // games.push(new Game(width / 2, height / 2, width, height, 10, 10, boardToString(findInitialState(4, 10, 10))));
 }
+function onNote(channels: number[]) {
+  console.log('squencer note', channels);
+}
 
 function draw() {
   // background('#e6e6e6');
   // // games.forEach((g) => frameCount % g.cycle === 0 && g.step());
-  if (frameCount % 60 === 0) games[0].step();
-  if (frameCount % 50 === 0) games[1].step();
-  if (frameCount % 40 === 0) games[2].step();
-  if (frameCount % 120 == 0) currentPalette = (currentPalette + 1) % PALETTES.length;
+  // if (frameCount % 60 === 0) games[0].step();
+  // if (frameCount % 50 === 0) games[1].step();
+  // if (frameCount % 40 === 0) games[2].step();
+  // if (frameCount % 120 == 0) currentPalette = (currentPalette + 1) % PALETTES.length;
   games.forEach((g) => g.draw());
   theShader.setUniform('u_texture1', games[0].pg);
   theShader.setUniform('u_texture2', games[1].pg);
@@ -116,6 +122,11 @@ function draw() {
 
   shader(theShader);
   rect(-width / 2, -height / 2, width, height);
+  resetShader();
+
+  if (sequencerShowing) {
+    sequencer.draw();
+  }
   recorder.step();
 }
 
@@ -123,9 +134,15 @@ let running = true;
 function mouseClicked(event?: object) {
   console.log('frameCount', frameCount);
   // games.forEach((g) => g.step());
-  running = !running;
-  if (!running) noLoop();
-  else loop();
+  // running = !running;
+  // if (!running) noLoop();
+  // else loop();
+}
+
+function keyPressed(event?: any) {
+  if (event.key === '`') {
+    sequencerShowing = !sequencerShowing;
+  }
 }
 
 //#region add globals
@@ -133,5 +150,6 @@ window.preload = preload;
 window.setup = setup;
 window.draw = draw;
 window.mouseClicked = mouseClicked;
+window.keyPressed = keyPressed;
 
 //#endregion
