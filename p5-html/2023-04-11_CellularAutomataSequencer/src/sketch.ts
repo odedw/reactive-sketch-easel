@@ -2,7 +2,6 @@
 import { Shader } from 'p5';
 import { Modulate } from '../../utils/p5.modulate';
 import { Recorder } from '../../utils/Recorder';
-import { Sequencer } from '../../utils/Sequencer';
 import { Game } from './Game';
 import { findInitialState, boardToString } from './search';
 import { config, play } from './play';
@@ -25,8 +24,8 @@ const OUTPUT_FILENAME = 'square';
 //////////////////////
 
 // config
-const WIDTH = 540;
-const HEIGHT = 540;
+const WIDTH = 1080*1.6;
+const HEIGHT = 720*1.5;
 /////////////////////
 
 // locals
@@ -38,39 +37,38 @@ let midiOutput: Output | undefined;
 let theShader: Shader;
 let colors: number[][] = [];
 let currentPalette = 0;
-let sequencer = new Sequencer({ onNote, steps: 16 });
 let sequencerShowing = true;
 ////////////////////
 
 function preload() {
   recorder = new Recorder(SHOULD_RECORD, WIDTH, HEIGHT, FPS, RECORD_FRAMES, OUTPUT_FILENAME);
   // listInputs();
-  // WebMidi.enable().then(() => {
-  //   midiInput = WebMidi.inputs.find((i) => i.name === MIDI_IN);
-  //   midiOutput = WebMidi.outputs.find((i) => i.name === MIDI_OUT);
-  //   if (!midiInput || !midiOutput) {
-  //     console.log('no midi');
-  //     return;
-  //   }
-  //   midiOutput.sendReset();
-  //   midiOutput.sendPolyphonicMode('mono', { channels: [1, 2, 3] });
-  //   // Promise.all([Input.create(MIDI_IN), Output.create(MIDI_OUT)]).then((midis) => {
-  //   // console.log('adding listener');
-  //   // midiInput = midis[0];
-  //   // midiOutput = midis[1];
-  //   midiInput?.addListener('noteon', (e) => {
-  //     // console.log('note', e);
-  //     if (games.length < e.message.channel) return;
-  //     const game = games[e.message.channel - 1];
-  //     const sum = game.step();
-  //     play(sum, game, e.message.channel, midiOutput!);
-  //   });
-  //   midiInput?.addListener('controlchange', (e) => {
-  //     if (games.length < e.message.channel) return;
-  //     const game = games[e.message.channel - 1];
-  //     game.opacity = int(e.value!) / 127;
-  //   });
-  // });
+  WebMidi.enable().then(() => {
+    midiInput = WebMidi.inputs.find((i) => i.name === MIDI_IN);
+    midiOutput = WebMidi.outputs.find((i) => i.name === MIDI_OUT);
+    if (!midiInput || !midiOutput) {
+      console.log('no midi');
+      return;
+    }
+    midiOutput.sendReset();
+    midiOutput.sendPolyphonicMode('mono', { channels: [1, 2, 3] });
+    // Promise.all([Input.create(MIDI_IN), Output.create(MIDI_OUT)]).then((midis) => {
+    // console.log('adding listener');
+    // midiInput = midis[0];
+    // midiOutput = midis[1];
+    midiInput?.addListener('noteon', (e) => {
+      // console.log('note', e);
+      if (games.length < e.message.channel) return;
+      const game = games[e.message.channel - 1];
+      const sum = game.step();
+      // play(sum, game, e.message.channel, midiOutput!);
+    });
+    // midiInput?.addListener('controlchange', (e) => {
+    //   if (games.length < e.message.channel) return;
+    //   const game = games[e.message.channel - 1];
+    //   game.opacity = int(e.value!) / 127;
+    // });
+  });
   theShader = loadShader('shader.vert', 'shader.frag');
 }
 
@@ -124,9 +122,6 @@ function draw() {
   rect(-width / 2, -height / 2, width, height);
   resetShader();
 
-  if (sequencerShowing) {
-    sequencer.draw();
-  }
   recorder.step();
 }
 
