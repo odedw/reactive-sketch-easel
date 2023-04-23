@@ -6,7 +6,8 @@ import { Game } from './Game';
 import { findInitialState, boardToString } from './search';
 import { config, play } from './play';
 import { Input, Output, WebMidi } from 'webmidi';
-// sketch constants
+import { generateBeat } from './beat';
+// sketch constants3
 const MIDI_IN = 'ableton-out'; //'IAC Driver Bus 1';
 const MIDI_OUT = 'ableton-in'; //'IAC Driver Bus 2';
 const PALETTES = [
@@ -24,8 +25,8 @@ const OUTPUT_FILENAME = 'square';
 //////////////////////
 
 // config
-const WIDTH = 1080*1.6;
-const HEIGHT = 720*1.5;
+const WIDTH = 1080;
+const HEIGHT = 650;
 /////////////////////
 
 // locals
@@ -37,9 +38,16 @@ let midiOutput: Output | undefined;
 let theShader: Shader;
 let colors: number[][] = [];
 let currentPalette = 0;
-let sequencerShowing = true;
+let current = -1;
+let bars = 0;
+let beat;
+resetBeat();
 ////////////////////
 
+function resetBeat() {
+  current = -1;
+  beat = generateBeat();
+}
 function preload() {
   recorder = new Recorder(SHOULD_RECORD, WIDTH, HEIGHT, FPS, RECORD_FRAMES, OUTPUT_FILENAME);
   // listInputs();
@@ -57,11 +65,43 @@ function preload() {
     // midiInput = midis[0];
     // midiOutput = midis[1];
     midiInput?.addListener('noteon', (e) => {
-      // console.log('note', e);
-      if (games.length < e.message.channel) return;
-      const game = games[e.message.channel - 1];
-      const sum = game.step();
-      // play(sum, game, e.message.channel, midiOutput!);
+      // console.log  ('note', e);
+      if (e.message.channel === 4) {
+        current = (current + 1) % beat[0].length;
+        if (current === 0) {
+          bars++;
+        }
+        const channels = [];
+        for (let i = 0; i < beat.length; i++) {
+          if (beat[i][current]) {
+            channels.push(i + 1);
+          }
+        }
+        midiOutput?.playNote('C4', { channels });
+        channels.forEach((c) => games[c - 1]?.step());
+        if (bars > 2) {
+          resetBeat();
+          bars = 0;
+        }
+        console.log(bars, current);
+        // console.log('===========================');
+        // console.log('channels', channels);
+        // console.log('current', current);
+        // console.log('===========================');
+
+        // if (Math.random() < beat[current][1]) {
+        //   const channel = beat[current][0];
+        //   console.log('===========================');
+        //   console.log('channel', channel);
+        //   console.log('===========================');
+
+        //   games[channel - 1].step();
+        //   midiOutput?.playNote('C4', { channels: channel });
+        // }
+      } else if (e.message.channel < games.length) {
+        const game = games[e.message.channel - 1];
+        game.step();
+      }
     });
     // midiInput?.addListener('controlchange', (e) => {
     //   if (games.length < e.message.channel) return;
@@ -135,8 +175,8 @@ function mouseClicked(event?: object) {
 }
 
 function keyPressed(event?: any) {
-  if (event.key === '`') {
-    sequencerShowing = !sequencerShowing;
+  if (event.key === ' ') {
+    resetBeat();
   }
 }
 
