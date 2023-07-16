@@ -6,12 +6,13 @@ import { Game } from './Game';
 import { findInitialState, boardToString } from './search';
 import { config, play } from './play';
 import { Input, Output, WebMidi } from 'webmidi';
-import { generateBeat } from './beat';
+import { Beat, generateBeat } from './beat';
 // sketch constants3
 const MIDI_IN = 'ableton-out'; //'IAC Driver Bus 1';
 const MIDI_OUT = 'ableton-in'; //'IAC Driver Bus 2';
 const PALETTES = [
-  // ['#ffe03d', '#fe4830', '#d33033', '#6d358a', '#1c509e', '#00953c', '#f2f2f2', '#000000', '#ffffff'],
+  // ['#000000',  '#ff55ff', '#55ffff', , '#ffffff'],
+  //['#ffe03d', '#fe4830', '#d33033', '#6d358a', '#1c509e', '#00953c', '#f2f2f2', '#000000', '#ffffff'],
   // ['#FADDE1', '#F8C3CD', '#F6A9B9', '#F390A5', '#F17791', '#EF5E7D', '#ED4569', '#EB2C55', '#E91541'],
   ['#EDF2FB', '#E2E8F0', '#CBD5E0', '#A0AEC0', '#718096', '#4A5568', '#2D3748', '#1A202C', '#171923'],
 ];
@@ -39,27 +40,21 @@ let theShader: Shader;
 let colors: number[][] = [];
 let currentPalette = 0;
 let current = -1;
-let bars = 0;
-let beat;
-resetBeat();
+let beat = new Beat();
 ////////////////////
 
-function resetBeat() {
-  current = -1;
-  beat = generateBeat();
-}
 function preload() {
   recorder = new Recorder(SHOULD_RECORD, WIDTH, HEIGHT, FPS, RECORD_FRAMES, OUTPUT_FILENAME);
   // listInputs();
   WebMidi.enable().then(() => {
     midiInput = WebMidi.inputs.find((i) => i.name === MIDI_IN);
-    midiOutput = WebMidi.outputs.find((i) => i.name === MIDI_OUT);
-    if (!midiInput || !midiOutput) {
-      console.log('no midi');
-      return;
-    }
-    midiOutput.sendReset();
-    midiOutput.sendPolyphonicMode('mono', { channels: [1, 2, 3] });
+    // midiOutput = WebMidi.outputs.find((i) => i.name === MIDI_OUT);
+    // if (!midiInput || !midiOutput) {
+    //   console.log('no midi');
+    //   return;
+    // }
+    // midiOutput.sendReset();
+    // midiOutput.sendPolyphonicMode('mono', { channels: [1, 2, 3] });
     // Promise.all([Input.create(MIDI_IN), Output.create(MIDI_OUT)]).then((midis) => {
     // console.log('adding listener');
     // midiInput = midis[0];
@@ -67,38 +62,15 @@ function preload() {
     midiInput?.addListener('noteon', (e) => {
       // console.log  ('note', e);
       if (e.message.channel === 4) {
-        current = (current + 1) % beat[0].length;
-        if (current === 0) {
-          bars++;
+        if (beat.bars === 1 && beat.current === beat.steps - 1) {
+          beat.generate();
         }
-        const channels = [];
-        for (let i = 0; i < beat.length; i++) {
-          if (beat[i][current]) {
-            channels.push(i + 1);
-          }
-        }
-        midiOutput?.playNote('C4', { channels });
-        channels.forEach((c) => games[c - 1]?.step());
-        if (bars > 2) {
-          resetBeat();
-          bars = 0;
-        }
-        console.log(bars, current);
-        // console.log('===========================');
-        // console.log('channels', channels);
-        // console.log('current', current);
-        // console.log('===========================');
-
-        // if (Math.random() < beat[current][1]) {
-        //   const channel = beat[current][0];
-        //   console.log('===========================');
-        //   console.log('channel', channel);
-        //   console.log('===========================');
-
-        //   games[channel - 1].step();
-        //   midiOutput?.playNote('C4', { channels: channel });
-        // }
-      } else if (e.message.channel < games.length) {
+        const channels = beat.step();
+        const channelToNote = ['C1', 'C#1', 'D1', 'D#1'];
+        const notes = channelToNote.filter((_, i) => channels.includes(i));
+        midiOutput?.playNote(notes);
+        channels.forEach((c) => games[c]?.step());
+      } else if (e.message.channel <= games.length) {
         const game = games[e.message.channel - 1];
         game.step();
       }
@@ -176,7 +148,7 @@ function mouseClicked(event?: object) {
 
 function keyPressed(event?: any) {
   if (event.key === ' ') {
-    resetBeat();
+    beat.generate();
   }
 }
 
