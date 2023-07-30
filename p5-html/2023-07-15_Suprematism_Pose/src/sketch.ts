@@ -6,6 +6,7 @@ import { Recorder } from '../../utils/Recorder';
 import { Pose } from '@tensorflow-models/pose-detection';
 import { generateSuprematismImage } from './suprematismGenerator';
 import { enableCam, createGestureRecognizer, getGestures } from './gesture';
+import { staticGesture } from './types';
 
 // sketch constants
 // const CONSTANT = 10;
@@ -29,8 +30,7 @@ const HEIGHT = 360;
 let recorder: Recorder;
 // let theShader: Shader;
 let img: Image;
-let poses: Pose[] = [];
-let inputFrame: Graphics;
+// let inputFrame: Graphics;
 let frame: Graphics;
 
 ////////////////////
@@ -50,24 +50,18 @@ function setup() {
   // @ts-ignore
   frame = createGraphics(WIDTH, HEIGHT);
   // @ts-ignore
-  inputFrame = createGraphics(WIDTH, HEIGHT);
+  // inputFrame = createGraphics(WIDTH, HEIGHT);
 
-  createGestureRecognizer().then((gestureRecognizer) => {
-    enableCam();
-  });
+  // createGestureRecognizer().then((gestureRecognizer) => {
+  //   enableCam();
+  // });
 }
 
 function draw() {
-  background(200);
-  fill(0);
   scale(-1, 1);
   translate(-width, 0);
-  const gestureResult = getGestures();
-  gestureResult?.landmarks?.[0]?.forEach((landmark: any) => {
-    const { x, y } = landmark;
-    ellipse(x * width, y * height, 10, 10);
-  });
-  // image(frame, 0, 0, WIDTH, HEIGHT);
+  generateSuprematismImage(staticGesture, frame);
+  image(frame, 0, 0, WIDTH, HEIGHT);
 
   recorder.step();
 }
