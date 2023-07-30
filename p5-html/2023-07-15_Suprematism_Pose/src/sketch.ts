@@ -3,9 +3,9 @@ import { Graphics, Image, MediaElement, Vector } from 'p5';
 
 import { Modulate } from '../../utils/p5.modulate';
 import { Recorder } from '../../utils/Recorder';
-import { getPoses, init } from './PoseDetector';
 import { Pose } from '@tensorflow-models/pose-detection';
 import { generateSuprematismImage } from './suprematismGenerator';
+import { enableCam, createGestureRecognizer, getGestures } from './gesture';
 
 // sketch constants
 // const CONSTANT = 10;
@@ -21,7 +21,7 @@ const OUTPUT_FILENAME = 'square';
 //////////////////////
 
 // config
-const WIDTH = 640;
+const WIDTH = 480;
 const HEIGHT = 360;
 /////////////////////
 
@@ -32,8 +32,6 @@ let img: Image;
 let poses: Pose[] = [];
 let inputFrame: Graphics;
 let frame: Graphics;
-let vid: MediaElement;
-let initPromise: Promise<void>;
 
 ////////////////////
 
@@ -54,17 +52,22 @@ function setup() {
   // @ts-ignore
   inputFrame = createGraphics(WIDTH, HEIGHT);
 
-  vid = createVideo(VIDEO_NAME);
-  vid.size(width, height);
-  vid.hide();
-  vid.time(0);
-
-  initPromise = init();
-  generatePoseForNextFrame();
+  createGestureRecognizer().then((gestureRecognizer) => {
+    enableCam();
+  });
 }
 
 function draw() {
-  image(frame, 0, 0, WIDTH, HEIGHT);
+  background(200);
+  fill(0);
+  scale(-1, 1);
+  translate(-width, 0);
+  const gestureResult = getGestures();
+  gestureResult?.landmarks?.[0]?.forEach((landmark: any) => {
+    const { x, y } = landmark;
+    ellipse(x * width, y * height, 10, 10);
+  });
+  // image(frame, 0, 0, WIDTH, HEIGHT);
 
   recorder.step();
 }
@@ -73,35 +76,6 @@ function mouseClicked(event?: object) {
   console.log('frameCount', frameCount);
 }
 
-function generatePoseForNextFrame() {
-  initPromise
-    .then(() => {
-      inputFrame.copy(vid, 0, 0, width, height, 0, 0, inputFrame.width, inputFrame.height);
-      inputFrame.loadPixels();
-      let imgDataArray = new Uint8ClampedArray(inputFrame.pixels); // Convert to a typed array
-      let imageData = new ImageData(imgDataArray, width, height);
-      // Get the poses
-      return getPoses(imageData);
-    })
-    .then((p) => {
-      poses = p;
-      // console.log('===========================');
-      // console.log(poses);
-      // console.log('===========================');
-      generateSuprematismImage(poses, frame, inputFrame);
-      document
-        .getElementsByTagName('video')[0]
-        .seekToNextFrame()
-        .then(() => {
-          generatePoseForNextFrame();
-        });
-    })
-    .catch((err) => {
-      console.log('===========================');
-      console.log(err);
-      console.log('===========================');
-    });
-}
 //#region add globals
 window.preload = preload;
 window.setup = setup;
