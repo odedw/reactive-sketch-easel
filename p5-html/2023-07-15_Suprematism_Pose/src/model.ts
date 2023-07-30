@@ -17,6 +17,7 @@ export const createGestureRecognizer = async () => {
       delegate: 'GPU',
     },
     runningMode: 'VIDEO',
+    numHands: 2,
   });
 };
 let webcamRunning: Boolean = false;
