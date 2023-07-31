@@ -4,7 +4,7 @@ import { Graphics, Image, MediaElement, Vector } from 'p5';
 import { Modulate } from '../../utils/p5.modulate';
 import { Recorder } from '../../utils/Recorder';
 import { generateSuprematismImage } from './suprematismGenerator';
-import { enableCam, createGestureRecognizer, getGestures } from './model';
+import { createHandLandmarker, enableCam, getLandmarks } from './model';
 import { staticGesture } from './types';
 
 // sketch constants
@@ -51,7 +51,7 @@ function setup() {
   // @ts-ignore
   // inputFrame = createGraphics(WIDTH, HEIGHT);
 
-  createGestureRecognizer().then((gestureRecognizer) => {
+  createHandLandmarker().then(() => {
     enableCam();
   });
 }
@@ -59,8 +59,8 @@ function setup() {
 function draw() {
   scale(-1, 1);
   translate(-width, 0);
-  // generateSuprematismImage(getGestures(), frame);
-  generateSuprematismImage(staticGesture, frame);
+  generateSuprematismImage(getLandmarks(), frame);
+  // generateSuprematismImage(staticGesture, frame);
   image(frame, 0, 0, WIDTH, HEIGHT);
 
   recorder.step();
@@ -69,7 +69,7 @@ function draw() {
 function mouseClicked(event?: object) {
   console.log('frameCount', frameCount);
   console.log('===========================');
-  console.log(getGestures());
+  console.log(getLandmarks());
   console.log('===========================');
 }
 

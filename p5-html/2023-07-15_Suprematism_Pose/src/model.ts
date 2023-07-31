@@ -1,32 +1,32 @@
-import { GestureRecognizer, FilesetResolver, DrawingUtils } from '@mediapipe/tasks-vision';
-let runningMode = 'IMAGE';
-let gestureResult: any = {};
-export const getGestures = () => gestureResult;
-let gestureRecognizer: GestureRecognizer;
+import { HandLandmarker, FilesetResolver } from '@mediapipe/tasks-vision';
+let landmarks: any = {};
+let handLandmarker: HandLandmarker;
+
+export const getLandmarks = () => landmarks;
 // Before we can use HandLandmarker class we must wait for it to finish
 // loading. Machine Learning models can be large and take a moment to
 // get everything needed to run.
-export const createGestureRecognizer = async () => {
+export const createHandLandmarker = async () => {
   const vision = await FilesetResolver.forVisionTasks(
     'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.0/wasm'
   );
-  gestureRecognizer = await GestureRecognizer.createFromOptions(vision, {
+  handLandmarker = await HandLandmarker.createFromOptions(vision, {
     baseOptions: {
-      modelAssetPath:
-        'https://storage.googleapis.com/mediapipe-models/gesture_recognizer/gesture_recognizer/float16/1/gesture_recognizer.task',
+      modelAssetPath: `https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task`,
       delegate: 'GPU',
     },
     runningMode: 'VIDEO',
     numHands: 2,
   });
 };
+
 let webcamRunning: Boolean = false;
 const video = document.getElementById('webcam') as HTMLVideoElement;
 
 // Enable the live webcam view and start detection.
 export function enableCam() {
-  if (!gestureRecognizer) {
-    alert('Please wait for gestureRecognizer to load');
+  if (!handLandmarker) {
+    alert('Please wait for handLandmarker to load');
     return;
   }
 
@@ -43,21 +43,16 @@ export function enableCam() {
     video.addEventListener('loadeddata', predictWebcam);
   });
 }
+
 const videoHeight = '360px';
 const videoWidth = '480px';
 let lastVideoTime = -1;
 async function predictWebcam() {
   const webcamElement = document.getElementById('webcam') as HTMLVideoElement;
-  // Now let's start detecting the stream.
-  if (runningMode === 'IMAGE') {
-    runningMode = 'VIDEO';
-    await gestureRecognizer.setOptions({ runningMode: 'VIDEO' });
-  }
   let nowInMs = Date.now();
   if (video.currentTime !== lastVideoTime) {
     lastVideoTime = video.currentTime;
-    const results = gestureRecognizer.recognizeForVideo(video, nowInMs);
-    gestureResult = results;
+    landmarks = handLandmarker.detectForVideo(video, nowInMs);
   }
 
   // canvasCtx.save();
