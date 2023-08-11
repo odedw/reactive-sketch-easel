@@ -44,8 +44,8 @@ export function enableCam() {
   });
 }
 
-const videoHeight = '360px';
-const videoWidth = '480px';
+const videoHeight = '600px';
+const videoWidth = '800px';
 let lastVideoTime = -1;
 async function predictWebcam() {
   const webcamElement = document.getElementById('webcam') as HTMLVideoElement;

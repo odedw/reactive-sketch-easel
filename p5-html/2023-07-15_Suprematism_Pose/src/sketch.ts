@@ -5,11 +5,11 @@ import { Modulate } from '../../utils/p5.modulate';
 import { Recorder } from '../../utils/Recorder';
 import { generateSuprematismImage } from './suprematismGenerator';
 import { createHandLandmarker, enableCam, getLandmarks } from './model';
-import { staticGesture } from './types';
+import { staticReading } from './types';
 
 // sketch constants
 // const CONSTANT = 10;
-const IMAGE_NAME = 'photo-1524160741206-983df146510a.jpg';
+const IMAGE_NAME = 'abstract-white-canvas-textures-surface.jpg';
 const VIDEO_NAME = 'production_id_3873059 (360p).mp4';
 ///////////////////
 
@@ -21,8 +21,8 @@ const OUTPUT_FILENAME = 'square';
 //////////////////////
 
 // config
-const WIDTH = 480;
-const HEIGHT = 360;
+const WIDTH = 800;
+const HEIGHT = 600;
 /////////////////////
 
 // locals
@@ -59,8 +59,8 @@ function setup() {
 function draw() {
   scale(-1, 1);
   translate(-width, 0);
-  generateSuprematismImage(getLandmarks(), frame);
-  // generateSuprematismImage(staticGesture, frame);
+  // generateSuprematismImage(staticReading, frame, img);
+  generateSuprematismImage(getLandmarks(), frame, img);
   image(frame, 0, 0, WIDTH, HEIGHT);
 
   recorder.step();
