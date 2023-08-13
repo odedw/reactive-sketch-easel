@@ -46,6 +46,8 @@ function setup() {
   frameRate(60);
   noStroke();
   fill(255);
+  rectMode(CENTER);
+  ellipseMode(CENTER);
   // @ts-ignore
   frame = createGraphics(WIDTH, HEIGHT);
   // @ts-ignore
