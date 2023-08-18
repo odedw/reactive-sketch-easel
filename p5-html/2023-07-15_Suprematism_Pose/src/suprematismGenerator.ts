@@ -3,26 +3,26 @@ import { Graphics, Image } from 'p5';
 import { chains } from './types';
 import { PALETTE } from '../../utils/colors.ts';
 
-// enum Shape {
-//   Circle,
-//   Square,
-// }
-
 abstract class Shape {
   constructor(public color: any) {}
   draw(frame: Graphics, x: number, y: number) {
+    frame.push();
+    frame.translate(x, y);
     frame.fill(this.color);
     frame.noStroke();
+    this.drawShape(frame);
+    frame.pop();
   }
+
+  abstract drawShape(frame: Graphics): void;
 }
 
 class Square extends Shape {
   constructor(public color: any, public size: number) {
     super(color);
   }
-  draw(frame: Graphics, x: number, y: number) {
-    super.draw(frame, x, y);
-    frame.rect(x, y, this.size, this.size);
+  drawShape(frame: Graphics) {
+    frame.rect(0, 0, this.size, this.size);
   }
 }
 
@@ -30,9 +30,8 @@ class Circle extends Shape {
   constructor(public color: any, public size: number) {
     super(color);
   }
-  draw(frame: Graphics, x: number, y: number) {
-    super.draw(frame, x, y);
-    frame.ellipse(x, y, this.size, this.size);
+  drawShape(frame: Graphics) {
+    frame.ellipse(0, 0, this.size, this.size);
   }
 }
 
@@ -40,9 +39,8 @@ class Rectangle extends Shape {
   constructor(public color: any, public width: number, public height: number) {
     super(color);
   }
-  draw(frame: Graphics, x: number, y: number) {
-    super.draw(frame, x, y);
-    frame.rect(x, y, this.width, this.height);
+  drawShape(frame: Graphics) {
+    frame.rect(0, 0, this.width, this.height);
   }
 }
 
@@ -52,9 +50,8 @@ class Line extends Shape {
     super(color);
     this.orientation = Math.random();
   }
-  draw(frame: Graphics, x: number, y: number) {
-    super.draw(frame, x, y);
-    frame.rect(x, y, this.orientation < 0.5 ? 5 : this.width, this.orientation < 0.5 ? this.width : 5);
+  drawShape(frame: Graphics) {
+    frame.rect(0, 0, this.orientation < 0.5 ? 5 : this.width, this.orientation < 0.5 ? this.width : 5);
   }
 }
 
