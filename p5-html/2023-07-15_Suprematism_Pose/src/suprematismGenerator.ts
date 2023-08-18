@@ -55,8 +55,9 @@ class Line extends Shape {
     frame.rect(0, 0, this.orientation < 0.5 ? 5 : this.width, this.orientation < 0.5 ? this.width : 5);
   }
 }
+let template: Shape[] = [];
 
-function generateTemplate(): Shape[] {
+export function generateTemplate() {
   let result: Shape[] = [];
   const numShapes = 3;
   for (const chain of chains) {
@@ -73,10 +74,9 @@ function generateTemplate(): Shape[] {
       }
     }
   }
-  return result;
+  template = result;
 }
 
-let template: Shape[] = [];
 function calculateAngle(x1: number, y1: number, x2: number, y2: number) {
   const dx = x2 - x1;
   const dy = y2 - y1;
@@ -85,9 +85,9 @@ function calculateAngle(x1: number, y1: number, x2: number, y2: number) {
 }
 
 export function generateSuprematismImage(result: HandLandmarkerResult, frame: Graphics, img: Image) {
-  if (frameCount === 1) {
-    template = generateTemplate();
-  }
+  // if (frameCount === 1) {
+  //   template = generateTemplate();
+  // }
   frame.image(img, 0, 0, frame.width, frame.height);
   if (!result?.landmarks?.length) return;
   for (let landmark of result.landmarks) {

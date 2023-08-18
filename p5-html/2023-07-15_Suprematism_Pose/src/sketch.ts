@@ -3,7 +3,7 @@ import { Graphics, Image, MediaElement, Vector } from 'p5';
 
 import { Modulate } from '../../utils/p5.modulate';
 import { Recorder } from '../../utils/Recorder';
-import { generateSuprematismImage } from './suprematismGenerator';
+import { generateSuprematismImage, generateTemplate } from './suprematismGenerator';
 import { createHandLandmarker, enableCam, getLandmarks } from './model';
 import { staticReading } from './types';
 
@@ -31,7 +31,7 @@ let recorder: Recorder;
 let img: Image;
 // let inputFrame: Graphics;
 let frame: Graphics;
-
+let regeneratedSinceLastClearCanvas = false;
 ////////////////////
 
 function preload() {
@@ -61,8 +61,17 @@ function setup() {
 function draw() {
   scale(-1, 1);
   translate(-width, 0);
-  // generateSuprematismImage(staticReading, frame, img);
-  generateSuprematismImage(getLandmarks(), frame, img);
+  const modelResult = getLandmarks();
+  if (!modelResult.landmarks?.length) {
+    if (!regeneratedSinceLastClearCanvas) {
+      generateTemplate();
+      regeneratedSinceLastClearCanvas = true;
+      console.log('regenerated template');
+    }
+  } else {
+    regeneratedSinceLastClearCanvas = false;
+  }
+  generateSuprematismImage(modelResult, frame, img);
   image(frame, 0, 0, WIDTH, HEIGHT);
 
   recorder.step();
