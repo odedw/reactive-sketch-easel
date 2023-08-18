@@ -1,13 +1,14 @@
 import { HandLandmarkerResult } from '@mediapipe/tasks-vision';
 import { Graphics, Image } from 'p5';
-import { chains } from './types';
+import { chains, pair } from './types';
 import { PALETTE } from '../../utils/colors.ts';
 
 abstract class Shape {
   constructor(public color: any) {}
-  draw(frame: Graphics, x: number, y: number) {
+  draw(frame: Graphics, x: number, y: number, a: number) {
     frame.push();
     frame.translate(x, y);
+    frame.rotate(a);
     frame.fill(this.color);
     frame.noStroke();
     this.drawShape(frame);
@@ -76,6 +77,13 @@ function generateTemplate(): Shape[] {
 }
 
 let template: Shape[] = [];
+function calculateAngle(x1: number, y1: number, x2: number, y2: number) {
+  const dx = x2 - x1;
+  const dy = y2 - y1;
+  const angle = Math.atan2(dy, dx); // Result in radians
+  return angle;
+}
+
 export function generateSuprematismImage(result: HandLandmarkerResult, frame: Graphics, img: Image) {
   if (frameCount === 1) {
     template = generateTemplate();
@@ -88,7 +96,10 @@ export function generateSuprematismImage(result: HandLandmarkerResult, frame: Gr
       const { x, y } = marker;
       if (!template[i]) return;
 
-      template[i].draw(frame, x * frame.width, y * frame.height);
+      const pairMarker = landmark[pair[i]];
+
+      const angle = !!pairMarker ? calculateAngle(marker.x, marker.y, pairMarker.x, pairMarker.y) : 0;
+      template[i].draw(frame, x * frame.width, y * frame.height, angle);
     }
   }
 }
