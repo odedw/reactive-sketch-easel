@@ -3,6 +3,14 @@ import { Graphics, Image } from 'p5';
 import { chains, pair } from './types';
 import { PALETTE } from '../../utils/colors.ts';
 
+const WEIGHTS = [
+  2, // square
+  2, // circle
+  4, // line
+  10, // rectangle
+  3, //none
+];
+
 abstract class Shape {
   constructor(public color: any) {}
   draw(frame: Graphics, x: number, y: number, a: number) {
@@ -59,18 +67,17 @@ let template: Shape[] = [];
 
 export function generateTemplate() {
   let result: Shape[] = [];
-  const numShapes = 3;
   for (const chain of chains) {
     for (const markerIndex of chain) {
-      let p = Math.random();
-      if (p < 1 / numShapes) {
+      let p = int(random(WEIGHTS.reduce((a, b) => a + b, 0)));
+      if (p < WEIGHTS[0]) {
         result[markerIndex] = new Square(random(PALETTE), random(10, 60));
-      } else if (p < 2 / numShapes) {
+      } else if (p < WEIGHTS[0] + WEIGHTS[1]) {
         result[markerIndex] = new Circle(random(PALETTE), random(10, 60));
-      } else if (p < 3 / numShapes) {
+      } else if (p < WEIGHTS[0] + WEIGHTS[1] + WEIGHTS[2]) {
         result[markerIndex] = new Line(random(PALETTE), random(100, 300));
-      } else {
-        result[markerIndex] = new Rectangle(random(PALETTE), random(10, 60), random(10, 60));
+      } else if (p < WEIGHTS[0] + WEIGHTS[1] + WEIGHTS[2] + WEIGHTS[3]) {
+        result[markerIndex] = new Rectangle(random(PALETTE), random(50, 200), random(50, 200));
       }
     }
   }
