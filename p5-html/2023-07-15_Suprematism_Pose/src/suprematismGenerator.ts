@@ -154,3 +154,13 @@ export function generateSuprematismImage(result: HandLandmarkerResult, frame: Gr
     }
   }
 }
+
+export function randomizeColors() {
+  randomPalette();
+  template.forEach((shape) => {
+    // @ts-ignore
+    const c: string = color(random(PALETTE) as string);
+    const shapeColor = color(red(c), green(c), blue(c), 255);
+    shape.color = shapeColor;
+  });
+}
