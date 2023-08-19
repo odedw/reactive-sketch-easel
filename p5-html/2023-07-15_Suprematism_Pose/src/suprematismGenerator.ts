@@ -3,6 +3,8 @@ import { Graphics, Image } from 'p5';
 import { chains, pair } from './types';
 import { randomPalette, PALETTE } from '../../utils/colors.ts';
 // const PALETTE = ['#010191', '#0D6311', '#000000', '#FAC93C', '#C51311', '#6600CC'];
+// @ts-ignore
+import OpenSimplexNoise from '../../utils/OpenSimplexNoise';
 
 const WEIGHTS = [
   0.1, // square
@@ -11,6 +13,8 @@ const WEIGHTS = [
   0.4, // rectangle
 ];
 
+// @ts-ignore
+const noise = new OpenSimplexNoise(Date.now());
 const MEDIAN = 12;
 const VARIANCE = 4;
 
@@ -80,42 +84,46 @@ export function generateTemplate() {
   arr.forEach((index) => {
     // for (let index = 0; index < 21; index++) {
     let p = random();
+    // @ts-ignore
+    const c: string = color(random(PALETTE) as string);
+    const shapeColor = color(red(c), green(c), blue(c), 255);
     if (p < WEIGHTS[0]) {
       // console.log(index, 'square');
-      result[index] = new Square(random(PALETTE), random(30, 90));
+      result[index] = new Square(shapeColor, random(30, 90));
     } else if (p < WEIGHTS[1] + WEIGHTS[1]) {
       // console.log(index, 'circle');
-      result[index] = new Circle(random(PALETTE), random(30, 90));
+      result[index] = new Circle(shapeColor, random(30, 90));
     } else if (p < WEIGHTS[0] + WEIGHTS[1] + WEIGHTS[2]) {
       // console.log(index, 'line');
-      result[index] = new Line(random(PALETTE), random(100, 500));
+      result[index] = new Line(shapeColor, random(100, 500));
     } else {
       // console.log(index, 'rect');
-      result[index] = new Rectangle(random(PALETTE), random(50, 300), random(50, 300));
+      result[index] = new Rectangle(shapeColor, random(50, 300), random(50, 300));
     }
   });
-  console.log('===========================');
-  console.log(numOfShapes);
-  console.log(arr);
+  // console.log('===========================');
+  // console.log(numOfShapes);
+  // console.log(arr);
 
-  console.log('===========================');
+  // console.log('===========================');
 
   template = result;
 
   // @ts-ignore
-  noiseBackground = createGraphics(width, height);
-  noiseBackground.background(255); // Clear the graphics buffer
+  if (!noiseBackground) noiseBackground = createGraphics(width, height);
+  // noiseBackground = createGraphics(width, height);
+  // noiseBackground.background(255); // Clear the graphics buffer
 
   // Generate Perlin noise for the entire buffer
   noiseBackground.loadPixels();
   for (let x = 0; x < noiseBackground.width; x++) {
     for (let y = 0; y < noiseBackground.height; y++) {
       const index = (x + y * noiseBackground.width) * 4;
-      const brightness = map(noise(x * 0.01, y * 0.01), 0, 1, 0, 255);
+      const brightness = map(noise.noise3D(x * 0.8, y * 0.8, 0), 0, 1, 230, 255);
       noiseBackground.pixels[index] = brightness;
       noiseBackground.pixels[index + 1] = brightness;
       noiseBackground.pixels[index + 2] = brightness;
-      noiseBackground.pixels[index + 3] = 255; // Fully opaque
+      noiseBackground.pixels[index + 3] = 200; // Fully opaque
     }
   }
   noiseBackground.updatePixels();
