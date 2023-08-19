@@ -1,4 +1,4 @@
-let paletteName = 'Troll';
+let paletteName = 'Cheddar';
 
 // const cga = [#ff55ff, #55ffff, #ffffff];
 const palettes = [

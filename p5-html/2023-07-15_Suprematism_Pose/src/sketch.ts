@@ -58,6 +58,7 @@ function setup() {
   createHandLandmarker().then(() => {
     enableCam();
   });
+  
 }
 
 function draw() {

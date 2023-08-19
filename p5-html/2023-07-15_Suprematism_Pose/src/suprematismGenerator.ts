@@ -1,7 +1,8 @@
 import { HandLandmarkerResult } from '@mediapipe/tasks-vision';
 import { Graphics, Image } from 'p5';
 import { chains, pair } from './types';
-import { PALETTE } from '../../utils/colors.ts';
+import { randomPalette, PALETTE } from '../../utils/colors.ts';
+// const PALETTE = ['#010191', '#0D6311', '#000000', '#FAC93C', '#C51311', '#6600CC'];
 
 const WEIGHTS = [
   0.1, // square
@@ -66,8 +67,10 @@ class Line extends Shape {
   }
 }
 let template: Shape[] = [];
+let noiseBackground: Graphics;
 
 export function generateTemplate() {
+  randomPalette();
   let result: Shape[] = [];
   let numOfShapes = int(randomGaussian(MEDIAN, VARIANCE));
   numOfShapes = numOfShapes > 21 ? 21 : numOfShapes < 5 ? 5 : numOfShapes; //clamp
@@ -98,6 +101,24 @@ export function generateTemplate() {
   console.log('===========================');
 
   template = result;
+
+  // @ts-ignore
+  noiseBackground = createGraphics(width, height);
+  noiseBackground.background(255); // Clear the graphics buffer
+
+  // Generate Perlin noise for the entire buffer
+  noiseBackground.loadPixels();
+  for (let x = 0; x < noiseBackground.width; x++) {
+    for (let y = 0; y < noiseBackground.height; y++) {
+      const index = (x + y * noiseBackground.width) * 4;
+      const brightness = map(noise(x * 0.01, y * 0.01), 0, 1, 0, 255);
+      noiseBackground.pixels[index] = brightness;
+      noiseBackground.pixels[index + 1] = brightness;
+      noiseBackground.pixels[index + 2] = brightness;
+      noiseBackground.pixels[index + 3] = 255; // Fully opaque
+    }
+  }
+  noiseBackground.updatePixels();
 }
 
 function calculateAngle(x1: number, y1: number, x2: number, y2: number) {
@@ -110,7 +131,7 @@ function calculateAngle(x1: number, y1: number, x2: number, y2: number) {
 export function generateSuprematismImage(result: HandLandmarkerResult, frame: Graphics, img: Image, capture: Element) {
   // @ts-ignore
   // frame.image(capture, 0, 0, frame.width, frame.height);
-  frame.image(img, 0, 0, frame.width, frame.height);
+  frame.image(noiseBackground, 0, 0, frame.width, frame.height);
   if (!result?.landmarks?.length) return;
   for (let landmark of result.landmarks) {
     for (let i = 0; i < landmark.length; i++) {
