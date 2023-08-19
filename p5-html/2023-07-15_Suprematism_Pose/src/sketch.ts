@@ -2,7 +2,7 @@
 import { Graphics } from 'p5';
 
 import { Recorder } from '../../utils/Recorder';
-import { generateSuprematismImage, generateTemplate, randomizeColors } from './suprematismGenerator';
+import { addToNumOfShapes, generateSuprematismImage, generateTemplate, randomizeColors } from './suprematismGenerator';
 import { createHandLandmarker, enableCam, getLandmarks } from './model';
 
 // sketch constants
@@ -102,6 +102,10 @@ function keyPressed(event: any) {
     link.click();
   } else if (event.key === 'c') {
     randomizeColors();
+  } else if (event.key === 'w') {
+    addToNumOfShapes(1);
+  } else if (event.key === 'q') {
+    addToNumOfShapes(-1);
   }
 
   // console.log('===========================');

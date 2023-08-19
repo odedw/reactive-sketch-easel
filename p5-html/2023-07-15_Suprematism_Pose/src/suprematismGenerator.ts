@@ -71,17 +71,17 @@ class Line extends Shape {
   }
 }
 let template: Shape[] = [];
+let markerOrder: number[] = [];
+let numOfShapes = 0;
 let noiseBackground: Graphics;
 
 export function generateTemplate() {
   randomPalette();
   let result: Shape[] = [];
-  let numOfShapes = int(randomGaussian(MEDIAN, VARIANCE));
+  numOfShapes = int(randomGaussian(MEDIAN, VARIANCE));
   numOfShapes = numOfShapes > 21 ? 21 : numOfShapes < 5 ? 5 : numOfShapes; //clamp
-  const arr = Array.from({ length: 21 }, (_, index) => index)
-    .sort(() => Math.random() - 0.5)
-    .slice(0, numOfShapes);
-  arr.forEach((index) => {
+  markerOrder = Array.from({ length: 21 }, (_, index) => index).sort(() => Math.random() - 0.5);
+  markerOrder.forEach((index) => {
     // for (let index = 0; index < 21; index++) {
     let p = random();
     // @ts-ignore
@@ -139,6 +139,7 @@ function calculateAngle(x1: number, y1: number, x2: number, y2: number) {
 export function generateSuprematismImage(result: HandLandmarkerResult, frame: Graphics) {
   // @ts-ignore
   // frame.image(capture, 0, 0, frame.width, frame.height);
+  const includedMarkers = markerOrder.slice(0, numOfShapes);
   frame.image(noiseBackground, 0, 0, frame.width, frame.height);
   if (!result?.landmarks?.length) return;
   for (let landmark of result.landmarks) {
@@ -146,6 +147,7 @@ export function generateSuprematismImage(result: HandLandmarkerResult, frame: Gr
       const marker = landmark[i];
       const { x, y } = marker;
       if (!template[i]) continue;
+      if (!includedMarkers.includes(i)) continue;
 
       const pairMarker = landmark[pair[i]];
 
@@ -163,4 +165,10 @@ export function randomizeColors() {
     const shapeColor = color(red(c), green(c), blue(c), 255);
     shape.color = shapeColor;
   });
+}
+
+export function addToNumOfShapes(n: number) {
+  numOfShapes += n;
+  // clamp
+  numOfShapes = numOfShapes > 21 ? 21 : numOfShapes < 0 ? 0 : numOfShapes;
 }
