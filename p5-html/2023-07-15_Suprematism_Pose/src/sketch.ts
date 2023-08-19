@@ -32,6 +32,7 @@ let img: Image;
 // let inputFrame: Graphics;
 let frame: Graphics;
 let regeneratedSinceLastClearCanvas = false;
+let capture: Element;
 ////////////////////
 
 function preload() {
@@ -52,7 +53,8 @@ function setup() {
   frame = createGraphics(WIDTH, HEIGHT);
   // @ts-ignore
   // inputFrame = createGraphics(WIDTH, HEIGHT);
-
+  capture = createCapture(VIDEO);
+  capture.hide();
   createHandLandmarker().then(() => {
     enableCam();
   });
@@ -71,7 +73,7 @@ function draw() {
   } else {
     regeneratedSinceLastClearCanvas = false;
   }
-  generateSuprematismImage(modelResult, frame, img);
+  generateSuprematismImage(modelResult, frame, img, capture);
   image(frame, 0, 0, WIDTH, HEIGHT);
 
   recorder.step();

@@ -107,10 +107,9 @@ function calculateAngle(x1: number, y1: number, x2: number, y2: number) {
   return angle;
 }
 
-export function generateSuprematismImage(result: HandLandmarkerResult, frame: Graphics, img: Image) {
-  // if (frameCount === 1) {
-  //   template = generateTemplate();
-  // }
+export function generateSuprematismImage(result: HandLandmarkerResult, frame: Graphics, img: Image, capture: Element) {
+  // @ts-ignore
+  // frame.image(capture, 0, 0, frame.width, frame.height);
   frame.image(img, 0, 0, frame.width, frame.height);
   if (!result?.landmarks?.length) return;
   for (let landmark of result.landmarks) {
