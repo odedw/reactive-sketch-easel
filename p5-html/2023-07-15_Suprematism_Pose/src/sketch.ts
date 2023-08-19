@@ -94,6 +94,12 @@ function keyPressed(event: any) {
   // console.log('===========================');
   if (event.key === ' ') {
     freeze = !freeze;
+  } else if (event.key === 's') {
+    var link = document.createElement('a');
+    link.download = `Handcrafted_Suprematism_${new Date().toISOString()}.png`;
+    // @ts-ignore
+    link.href = document.getElementById('defaultCanvas0').toDataURL('image/png');
+    link.click();
   }
 
   // console.log('===========================');
