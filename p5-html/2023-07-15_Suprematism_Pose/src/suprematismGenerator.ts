@@ -4,12 +4,14 @@ import { chains, pair } from './types';
 import { PALETTE } from '../../utils/colors.ts';
 
 const WEIGHTS = [
-  2, // square
-  2, // circle
-  4, // line
-  10, // rectangle
-  3, //none
+  0.1, // square
+  0.2, // circle
+  0.3, // line
+  0.4, // rectangle
 ];
+
+const MEDIAN = 12;
+const VARIANCE = 4;
 
 abstract class Shape {
   constructor(public color: any) {}
@@ -67,20 +69,34 @@ let template: Shape[] = [];
 
 export function generateTemplate() {
   let result: Shape[] = [];
-  for (const chain of chains) {
-    for (const markerIndex of chain) {
-      let p = int(random(WEIGHTS.reduce((a, b) => a + b, 0)));
-      if (p < WEIGHTS[0]) {
-        result[markerIndex] = new Square(random(PALETTE), random(10, 60));
-      } else if (p < WEIGHTS[0] + WEIGHTS[1]) {
-        result[markerIndex] = new Circle(random(PALETTE), random(10, 60));
-      } else if (p < WEIGHTS[0] + WEIGHTS[1] + WEIGHTS[2]) {
-        result[markerIndex] = new Line(random(PALETTE), random(100, 300));
-      } else if (p < WEIGHTS[0] + WEIGHTS[1] + WEIGHTS[2] + WEIGHTS[3]) {
-        result[markerIndex] = new Rectangle(random(PALETTE), random(50, 200), random(50, 200));
-      }
+  let numOfShapes = int(randomGaussian(MEDIAN, VARIANCE));
+  numOfShapes = numOfShapes > 21 ? 21 : numOfShapes < 5 ? 5 : numOfShapes; //clamp
+  const arr = Array.from({ length: 21 }, (_, index) => index)
+    .sort(() => Math.random() - 0.5)
+    .slice(0, numOfShapes);
+  arr.forEach((index) => {
+    // for (let index = 0; index < 21; index++) {
+    let p = random();
+    if (p < WEIGHTS[0]) {
+      // console.log(index, 'square');
+      result[index] = new Square(random(PALETTE), random(30, 90));
+    } else if (p < WEIGHTS[1] + WEIGHTS[1]) {
+      // console.log(index, 'circle');
+      result[index] = new Circle(random(PALETTE), random(30, 90));
+    } else if (p < WEIGHTS[0] + WEIGHTS[1] + WEIGHTS[2]) {
+      // console.log(index, 'line');
+      result[index] = new Line(random(PALETTE), random(100, 500));
+    } else {
+      // console.log(index, 'rect');
+      result[index] = new Rectangle(random(PALETTE), random(50, 300), random(50, 300));
     }
-  }
+  });
+  console.log('===========================');
+  console.log(numOfShapes);
+  console.log(arr);
+
+  console.log('===========================');
+
   template = result;
 }
 
@@ -101,7 +117,7 @@ export function generateSuprematismImage(result: HandLandmarkerResult, frame: Gr
     for (let i = 0; i < landmark.length; i++) {
       const marker = landmark[i];
       const { x, y } = marker;
-      if (!template[i]) return;
+      if (!template[i]) continue;
 
       const pairMarker = landmark[pair[i]];
 
