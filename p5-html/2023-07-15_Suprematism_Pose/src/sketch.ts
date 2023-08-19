@@ -33,6 +33,7 @@ let regeneratedSinceLastClearCanvas = false;
 // let capture: Element;
 let freeze = false;
 let modelResult: any;
+let showHelp = true;
 ////////////////////
 
 function preload() {
@@ -58,6 +59,12 @@ function setup() {
   createHandLandmarker().then(() => {
     enableCam();
   });
+
+  setTimeout(() => {
+    if (showHelp) {
+      toggleHelp(false);
+    }
+  }, 5000);
 }
 
 function draw() {
@@ -106,11 +113,23 @@ function keyPressed(event: any) {
     addToNumOfShapes(1);
   } else if (event.key === 'q') {
     addToNumOfShapes(-1);
+  } else if (event.key === 'h') {
+    toggleHelp();
   }
 
   // console.log('===========================');
   // console.log(stage);
   // console.log('===========================');
+}
+
+function toggleHelp(val?: boolean) {
+  showHelp = val ?? !showHelp;
+  const element = document.getElementById('help');
+  if (showHelp) {
+    element!.style.display = 'block';
+  } else {
+    element!.style.display = 'none';
+  }
 }
 
 //#region add globals
