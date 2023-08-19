@@ -1,8 +1,8 @@
 import { HandLandmarkerResult } from '@mediapipe/tasks-vision';
-import { Graphics, Image } from 'p5';
-import { chains, pair } from './types';
+import { Graphics } from 'p5';
+import { pair } from './types';
+// @ts-ignore
 import { randomPalette, PALETTE } from '../../utils/colors.ts';
-// const PALETTE = ['#010191', '#0D6311', '#000000', '#FAC93C', '#C51311', '#6600CC'];
 // @ts-ignore
 import OpenSimplexNoise from '../../utils/OpenSimplexNoise';
 
@@ -136,7 +136,7 @@ function calculateAngle(x1: number, y1: number, x2: number, y2: number) {
   return angle;
 }
 
-export function generateSuprematismImage(result: HandLandmarkerResult, frame: Graphics, img: Image, capture: Element) {
+export function generateSuprematismImage(result: HandLandmarkerResult, frame: Graphics) {
   // @ts-ignore
   // frame.image(capture, 0, 0, frame.width, frame.height);
   frame.image(noiseBackground, 0, 0, frame.width, frame.height);

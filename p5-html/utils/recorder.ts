@@ -40,6 +40,7 @@ export class Recorder {
       this.downloadFrame();
     } else {
       // 2d
+      // @ts-ignore
       let ctx = document.getElementById('defaultCanvas0').getContext('2d');
       this.encoder.addFrameRgba(ctx.getImageData(0, 0, this.encoder.width, this.encoder.height).data);
     }
@@ -62,6 +63,7 @@ export class Recorder {
   downloadFrame() {
     var link = document.createElement('a');
     link.download = `frame-${this.frames}.png`;
+    // @ts-ignore
     link.href = document.getElementById('defaultCanvas0').toDataURL('image/png');
     link.click();
   }

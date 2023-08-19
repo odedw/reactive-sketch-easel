@@ -1,16 +1,14 @@
 /// <reference path="../node_modules/@types/p5/global.d.ts" />
-import { Graphics, Image, MediaElement, Vector } from 'p5';
+import { Graphics } from 'p5';
 
-import { Modulate } from '../../utils/p5.modulate';
 import { Recorder } from '../../utils/Recorder';
 import { generateSuprematismImage, generateTemplate } from './suprematismGenerator';
 import { createHandLandmarker, enableCam, getLandmarks } from './model';
-import { staticReading } from './types';
 
 // sketch constants
 // const CONSTANT = 10;
-const IMAGE_NAME = 'abstract-white-canvas-textures-surface.jpg';
-const VIDEO_NAME = 'production_id_3873059 (360p).mp4';
+// const IMAGE_NAME = 'abstract-white-canvas-textures-surface.jpg';
+// const VIDEO_NAME = 'production_id_3873059 (360p).mp4';
 ///////////////////
 
 // record
@@ -28,17 +26,19 @@ const HEIGHT = 600;
 // locals
 let recorder: Recorder;
 // let theShader: Shader;
-let img: Image;
+// let img: Image;
 // let inputFrame: Graphics;
 let frame: Graphics;
 let regeneratedSinceLastClearCanvas = false;
-let capture: Element;
+// let capture: Element;
+let freeze = false;
+let modelResult: any;
 ////////////////////
 
 function preload() {
   recorder = new Recorder(SHOULD_RECORD, WIDTH, HEIGHT, FPS, RECORD_FRAMES, OUTPUT_FILENAME);
   // theShader = loadShader('shader.vert', 'shader.frag');
-  img = loadImage(IMAGE_NAME) as Image;
+  // img = loadImage(IMAGE_NAME) as Image;
 }
 
 function setup() {
@@ -53,18 +53,19 @@ function setup() {
   frame = createGraphics(WIDTH, HEIGHT);
   // @ts-ignore
   // inputFrame = createGraphics(WIDTH, HEIGHT);
-  capture = createCapture(VIDEO);
-  capture.hide();
+  // capture = createCapture(VIDEO);
+  // capture.hide();
   createHandLandmarker().then(() => {
     enableCam();
   });
-  
 }
 
 function draw() {
   scale(-1, 1);
   translate(-width, 0);
-  const modelResult = getLandmarks();
+  if (!freeze) {
+    modelResult = getLandmarks();
+  }
   if (!modelResult.landmarks?.length) {
     if (!regeneratedSinceLastClearCanvas) {
       generateTemplate();
@@ -74,22 +75,39 @@ function draw() {
   } else {
     regeneratedSinceLastClearCanvas = false;
   }
-  generateSuprematismImage(modelResult, frame, img, capture);
+  generateSuprematismImage(modelResult, frame); //, img, capture);
   image(frame, 0, 0, WIDTH, HEIGHT);
 
   recorder.step();
 }
 
-function mouseClicked(event?: object) {
+function mouseClicked() {
   console.log('frameCount', frameCount);
   console.log('===========================');
   console.log(getLandmarks());
   console.log('===========================');
 }
 
+function keyPressed(event: any) {
+  // console.log('===========================');
+  // console.log(event);
+  // console.log('===========================');
+  if (event.key === ' ') {
+    freeze = !freeze;
+  }
+
+  // console.log('===========================');
+  // console.log(stage);
+  // console.log('===========================');
+}
+
 //#region add globals
+// @ts-ignore
 window.preload = preload;
+// @ts-ignore
 window.setup = setup;
+// @ts-ignore
 window.draw = draw;
 window.mouseClicked = mouseClicked;
+window.keyPressed = keyPressed;
 //#endregion
