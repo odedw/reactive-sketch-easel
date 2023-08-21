@@ -34,6 +34,7 @@ let regeneratedSinceLastClearCanvas = false;
 let freeze = false;
 let modelResult: any;
 let showHelp = true;
+let showHands = false;
 ////////////////////
 
 function preload() {
@@ -82,7 +83,7 @@ function draw() {
   } else {
     regeneratedSinceLastClearCanvas = false;
   }
-  generateSuprematismImage(modelResult, frame); //, img, capture);
+  generateSuprematismImage(modelResult, frame, showHands); //, img, capture);
   image(frame, 0, 0, WIDTH, HEIGHT);
 
   recorder.step();
@@ -115,6 +116,8 @@ function keyPressed(event: any) {
     addToNumOfShapes(-1);
   } else if (event.key === 'h') {
     toggleHelp();
+  } else if (event.key === 'z') {
+    showHands = !showHands;
   }
 
   // console.log('===========================');
