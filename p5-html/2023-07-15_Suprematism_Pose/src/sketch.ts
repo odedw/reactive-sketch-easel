@@ -34,7 +34,7 @@ let regeneratedSinceLastClearCanvas = false;
 let freeze = false;
 let modelResult: any;
 let showHelp = true;
-let showHands = false;
+let showHands = true;
 ////////////////////
 
 function preload() {

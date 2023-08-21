@@ -15,8 +15,8 @@ const WEIGHTS = [
 
 // @ts-ignore
 const noise = new OpenSimplexNoise(Date.now());
-const MEDIAN = 12;
-const VARIANCE = 4;
+// const MEDIAN = 12;
+// const VARIANCE = 4;
 
 abstract class Shape {
   constructor(public color: any) {}
