@@ -167,8 +167,8 @@ export function randomizeColors() {
   });
 }
 
-export function addToNumOfShapes(n: number) {
-  numOfShapes += n;
+export function setNumShapes(n: number) {
+  numOfShapes = n;
   // clamp
   numOfShapes = numOfShapes > 21 ? 21 : numOfShapes < 0 ? 0 : numOfShapes;
 }

@@ -2,7 +2,8 @@
 import { Graphics, Shader, Vector } from 'p5';
 import { Modulate } from '../../utils/p5.modulate';
 import { Recorder } from '../../utils/Recorder';
-import { generateSuprematismImage, generateTemplate } from './suprematismGenerator';
+import { generateSuprematismImage, generateTemplate, setNumShapes } from './suprematismGenerator';
+import { Input, init, listInputs } from './midi';
 
 // sketch constants
 // const CONSTANT = 10;
@@ -13,6 +14,7 @@ const FPS = 60;
 const SHOULD_RECORD = false;
 const RECORD_FRAMES = 60;
 const OUTPUT_FILENAME = 'square';
+const MIDI_IN = '2- Launch Control XL';
 //////////////////////
 
 // config
@@ -44,6 +46,16 @@ function setup() {
     points.push(new Vector(random(), random()));
   }
   generateTemplate();
+  init().then(() => {
+    listInputs();
+    const input = new Input(MIDI_IN);
+    input.midiInput?.addListener('controlchange', (e) => {
+      if (e.controller.number === 77) {
+        const v = map(e.value as number, 0, 1, 0, 20);
+        setNumShapes(v);
+      }
+    });
+  });
 }
 
 function draw() {
