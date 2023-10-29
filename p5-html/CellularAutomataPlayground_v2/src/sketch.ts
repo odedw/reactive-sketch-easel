@@ -2,9 +2,11 @@
 import { Graphics, Shader } from 'p5';
 import { Modulate } from '../../utils/p5.modulate';
 import { Recorder } from '../../utils/Recorder';
+import './hand';
+import { createHandLandmarker, drawHand, enableCam, getLandmarks } from './hand';
 
 // sketch constants
-// const CONSTANT = 10;
+const ENABLE_HAND = false;
 ///////////////////
 
 // record
@@ -23,6 +25,9 @@ const HEIGHT = window.innerHeight;
 // let recorder: Recorder;
 let theShader: Shader;
 let prevFrame: Graphics;
+let drawingFrame: Graphics;
+let modelResult: any;
+
 ////////////////////
 
 function preload() {
@@ -36,31 +41,45 @@ function setup() {
   pixelDensity(1);
   frameRate(60);
   stroke(255);
-  shader(theShader);
-  theShader.setUniform('u_resolution', [1.0 / width, 1.0 / height]);
 
   // @ts-ignore
   prevFrame = createGraphics(width, height);
   prevFrame.pixelDensity(1);
   prevFrame.noSmooth();
+
+  handInit();
 }
 
 function draw() {
   // background(0);
-
+  resetShader();
   if (mouseIsPressed) {
     line(pmouseX - width / 2, pmouseY - height / 2, mouseX - width / 2, mouseY - height / 2);
   }
 
-  // Copy the rendered image into our prevFrame image
+  handDraw();
+
   // @ts-ignore
   prevFrame.image(get(), 0, 0);
-  // Set the image of the previous frame into our shader
+  shader(theShader);
+  theShader.setUniform('u_resolution', [1.0 / width, 1.0 / height]);
   theShader.setUniform('u_texture', prevFrame);
-
   rect(-width / 2, -height / 2, width, height);
+}
 
-  // recorder.step();
+function handInit() {
+  if (!ENABLE_HAND) return;
+  createHandLandmarker().then(() => {
+    enableCam();
+  });
+}
+function handDraw() {
+  if (!ENABLE_HAND) return;
+  // hand recognition
+  modelResult = getLandmarks();
+  if (modelResult.landmarks?.length) {
+    drawHand(modelResult);
+  }
 }
 
 function mouseClicked(event?: object) {
