@@ -134,7 +134,7 @@ function calculateAngle(x1: number, y1: number, x2: number, y2: number) {
   return angle;
 }
 
-export function generateSuprematismImage(points: Vector[], frame: Graphics, show: boolean) {
+export function generateSuprematismImage(points: Vector[], frame: Graphics, showPoints: boolean) {
   // @ts-ignore
   // frame.image(capture, 0, 0, frame.width, frame.height);
   const includedMarkers = markerOrder.slice(0, numOfShapes);
@@ -152,9 +152,12 @@ export function generateSuprematismImage(points: Vector[], frame: Graphics, show
     const angle = !!pairMarker ? calculateAngle(marker.x, marker.y, pairMarker.x, pairMarker.y) : 0;
     template[i].draw(frame, x * frame.width, y * frame.height, angle);
   }
-  // if (showHands) {
-  //   drawHand(result, frame);
-  // }
+  if (showPoints) {
+    frame.fill(0);
+    points.forEach((p) => {
+      frame.ellipse(p.x * frame.width, p.y * frame.height, 10, 10);
+    });
+  }
 }
 
 export function randomizeColors() {
